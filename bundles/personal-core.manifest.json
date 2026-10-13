@@ -1,0 +1,134 @@
+{
+  "library_version": "1.0.0",
+  "rules": [
+    "core.context",
+    "core.authority",
+    "core.collaboration",
+    "core.verification",
+    "core.language",
+    "process.bootstrap",
+    "process.planning",
+    "process.exploration",
+    "process.document-ownership",
+    "process.ui-design",
+    "process.change-control",
+    "process.delivery",
+    "engineering.common.architecture",
+    "engineering.common.contracts",
+    "engineering.common.errors",
+    "tools.code-intelligence",
+    "tools.terminal-output",
+    "tools.document-search",
+    "tools.exploration",
+    "process.stack-sourcing"
+  ],
+  "files": [
+    {
+      "path": "guides/personal/core/authority.md",
+      "sha256": "d63bb67eac48aa0c6a215df8d54b445015867845c3b910819202c6ecfaa1742d"
+    },
+    {
+      "path": "guides/personal/core/collaboration.md",
+      "sha256": "84025177d262cb62f24b542e99c7fcfd91c86f29e74f9873b2422547d1410ed5"
+    },
+    {
+      "path": "guides/personal/core/context.md",
+      "sha256": "e3c24c36750628574c190d28af6d82026ce390af6f0d35d3c34f83db7cec6d53"
+    },
+    {
+      "path": "guides/personal/core/index.md",
+      "sha256": "5d5ca05f8ec45ab05c892baa16e06aaeb4c29f4902da06b88e5597177aa03137"
+    },
+    {
+      "path": "guides/personal/core/language.md",
+      "sha256": "b4053ccd328c79a52da2a8faedd157f879eb88f9b778855ccb746c342f7f0306"
+    },
+    {
+      "path": "guides/personal/core/verification.md",
+      "sha256": "a2d82b0d519b2528830dc148bd3aaf31fc7e435f04895fa39292053817925090"
+    },
+    {
+      "path": "guides/personal/engineering/common/architecture.md",
+      "sha256": "96714a0359f046627b34da7ea5fe7b9632df0153154ac488e7d02e704399f8a1"
+    },
+    {
+      "path": "guides/personal/engineering/common/contracts.md",
+      "sha256": "ddacb4adf89cdc88bdd0ad4039728e8a73d035ac6d68040a56ace7a8524aa341"
+    },
+    {
+      "path": "guides/personal/engineering/common/errors.md",
+      "sha256": "1b737ab90bf3b90cd18d9fb43f864eaea8875713f9d702b2c29a604627e2224f"
+    },
+    {
+      "path": "guides/personal/engineering/index.md",
+      "sha256": "b0bc15ff81715b72f0f2ac372ebfb00697567fe44a5487577ebf61c0bdadb167"
+    },
+    {
+      "path": "guides/personal/index.md",
+      "sha256": "ac537aa435b82a759ccc8e590c89caab14809bc19ac8aeb6ce27b8d6e55f9d23"
+    },
+    {
+      "path": "guides/personal/process/bootstrap.md",
+      "sha256": "e959a6df44f629be9a791f1acfb31967eacae2685af0f03793a9621854ce4b47"
+    },
+    {
+      "path": "guides/personal/process/change-control.md",
+      "sha256": "e29c068ec6d105b27dbe051fb0dc3440bbd83ef8e7ec15fc0d0171b32211f473"
+    },
+    {
+      "path": "guides/personal/process/delivery.md",
+      "sha256": "0afd3cd727acd53082f18f7dadb78cc302ced8dff56b8122938b91f421007860"
+    },
+    {
+      "path": "guides/personal/process/document-ownership.md",
+      "sha256": "f58dbdfc71f41c53399623c069dcd2d0d7de3d24ffce419e60f420881f66e356"
+    },
+    {
+      "path": "guides/personal/process/exploration.md",
+      "sha256": "87d2f93e8269dd33c4d47187a468876857ad1b192c813fb36c6e1a98a4e56a7e"
+    },
+    {
+      "path": "guides/personal/process/index.md",
+      "sha256": "042bf8cbd77b04090f6ed69209431232230372b8b540439c3576fa4ff1540653"
+    },
+    {
+      "path": "guides/personal/process/planning.md",
+      "sha256": "c0fe6bf91fd6ed706cafd22b1f3430edfe23343d991297732e830e46fe5b7552"
+    },
+    {
+      "path": "guides/personal/process/stack-sourcing.md",
+      "sha256": "6e230d77e838b02d7f6de06cc27d90beb3c2eefc3c8929378af2b8adb773a4f7"
+    },
+    {
+      "path": "guides/personal/process/ui-design.md",
+      "sha256": "f8aa736a237594043dad87e40b7b64bd2dcc689ac796443a5a63865ea7a83ae7"
+    },
+    {
+      "path": "guides/personal/tools/code-intelligence/usage.md",
+      "sha256": "202f8cf58aa2f719af10985c2e82683a756a0e1370b6bd1539a99ffec83100e4"
+    },
+    {
+      "path": "guides/personal/tools/document-search/usage.md",
+      "sha256": "e202b21b8955e8cd9b2072eb8c74959183c8ae905b44f59986671bb7f8de32e3"
+    },
+    {
+      "path": "guides/personal/tools/exploration/usage.md",
+      "sha256": "04c479006cfb835d1d22ae7043b048d56b537d18b711d7541146c17025549951"
+    },
+    {
+      "path": "guides/personal/tools/index.md",
+      "sha256": "be52d42e55f2736b0f8aea04398541376478c5cc35195bf99ddef79bb739dc74"
+    },
+    {
+      "path": "guides/personal/tools/terminal-output/usage.md",
+      "sha256": "59c4296ec5597f067520ef806ac17ef9dcf99fe8b981732e8052efe249b3f6d0"
+    }
+  ],
+  "source_hashes": {
+    "catalog.json": "81a9e3b30aa57b1285e2d94450f972233b12f252d8ca9f360f277d8ab9aba454",
+    "stack-definitions.json": "df7311c9de159c60d6af946b5f5f979304995d1962dbd59c8b06e0aa7c99a328",
+    "official-sources.lock.json": "3a867824693724b4cdcd37e2fc09cd098209d78e54f389a6582eb96c3124740a",
+    "stack-sources.json": "184451ddd6e60d5fb35af14fe3e2bf0298b57b4e12a01e1d18c695300a22450d",
+    "STACKS.zh-CN.md": "c4cde1f7468ec00e4e07368a188a3a31c172d8e02c2525a226ac4a37b9f728e6"
+  }
+}

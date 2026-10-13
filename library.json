@@ -1,0 +1,11 @@
+{
+  "name": "personal-trellis-library",
+  "version": "1.0.0",
+  "python": ">=3.9",
+  "tested_trellis": "0.6.9",
+  "publication": "not_published",
+  "language": {
+    "ai": "en",
+    "user": "zh-CN"
+  }
+}

@@ -1,0 +1,1497 @@
+{
+  "schema_version": 1,
+  "groups": [
+    {
+      "id": "language",
+      "title_zh": "语言与运行时"
+    },
+    {
+      "id": "web",
+      "title_zh": "Web 框架"
+    },
+    {
+      "id": "backend",
+      "title_zh": "后端框架"
+    },
+    {
+      "id": "client",
+      "title_zh": "移动、桌面与小程序"
+    },
+    {
+      "id": "data",
+      "title_zh": "数据存储"
+    },
+    {
+      "id": "orm",
+      "title_zh": "ORM 与数据映射"
+    },
+    {
+      "id": "build",
+      "title_zh": "构建与容器"
+    }
+  ],
+  "stacks": [
+    {
+      "id": "java",
+      "name": "Java",
+      "group": "language",
+      "summary_zh": "JDK/编译目标、模块依赖和测试入口",
+      "detection_zh": "Maven 项目；Gradle Java 插件/工具链；官方 Java 镜像",
+      "capabilities": [],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "feature",
+          "names": [
+            "java"
+          ],
+          "version": true
+        },
+        {
+          "kind": "gradle-plugin",
+          "names": [
+            "java",
+            "java-library"
+          ],
+          "version": false
+        },
+        {
+          "kind": "image",
+          "names": [
+            "eclipse-temurin",
+            "openjdk"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "kotlin",
+      "name": "Kotlin",
+      "group": "language",
+      "summary_zh": "空值互操作、协程取消和编译器约束",
+      "detection_zh": "Kotlin JVM/Android/多平台插件或准确 Maven 依赖；Kotlin DSL 本身不命中",
+      "capabilities": [],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "gradle-plugin",
+          "names": [
+            "org.jetbrains.kotlin.jvm",
+            "org.jetbrains.kotlin.android",
+            "org.jetbrains.kotlin.multiplatform"
+          ],
+          "version": true
+        },
+        {
+          "kind": "maven",
+          "names": [
+            "org.jetbrains.kotlin:kotlin-stdlib",
+            "org.jetbrains.kotlin:kotlin-maven-plugin"
+          ],
+          "version": true
+        },
+        {
+          "kind": "gradle",
+          "names": [
+            "org.jetbrains.kotlin:kotlin-stdlib"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "javascript",
+      "name": "JavaScript",
+      "group": "language",
+      "summary_zh": "模块环境、异步错误和资源归属",
+      "detection_zh": "实际 package.json",
+      "capabilities": [],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "feature",
+          "names": [
+            "javascript"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "typescript",
+      "name": "TypeScript",
+      "group": "language",
+      "summary_zh": "真实 tsconfig、外部解码与类型检查",
+      "detection_zh": "准确 npm typescript 依赖/对应锁文件",
+      "capabilities": [],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "npm",
+          "names": [
+            "typescript"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "python",
+      "name": "Python",
+      "group": "language",
+      "summary_zh": "解释器范围、环境归属和 CLI 契约",
+      "detection_zh": "requirements/pyproject 与 .python-version；官方 Python 镜像",
+      "capabilities": [],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "feature",
+          "names": [
+            "python"
+          ],
+          "version": true
+        },
+        {
+          "kind": "image",
+          "names": [
+            "python"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "go",
+      "name": "Go",
+      "group": "language",
+      "summary_zh": "包边界、goroutine 取消和测试",
+      "detection_zh": "go.mod 的 go 声明；保持官方资料获取",
+      "capabilities": [],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "feature",
+          "names": [
+            "go"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "rust",
+      "name": "Rust",
+      "group": "language",
+      "summary_zh": "所有权、错误类型和 Cargo 工作区",
+      "detection_zh": "Cargo.toml 的 rust-version；保持官方资料获取",
+      "capabilities": [],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "feature",
+          "names": [
+            "rust"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "csharp",
+      "name": "C#",
+      "group": "language",
+      "summary_zh": "可空引用、异步取消和资源释放",
+      "detection_zh": "csproj；语言版本只读 LangVersion，不从 TFM 推断",
+      "capabilities": [],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "feature",
+          "names": [
+            "csharp"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "dotnet",
+      "name": ".NET",
+      "group": "language",
+      "summary_zh": "SDK/TFM、依赖注入生命周期和发布目标",
+      "detection_zh": "csproj TargetFramework(s) 与 global.json SDK 分开记证据",
+      "capabilities": [],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "feature",
+          "names": [
+            "dotnet"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "php",
+      "name": "PHP",
+      "group": "language",
+      "summary_zh": "类型/错误、Composer 自动加载和请求资源",
+      "detection_zh": "composer.json 的 require.php 与锁文件",
+      "capabilities": [],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "feature",
+          "names": [
+            "php"
+          ],
+          "version": true
+        },
+        {
+          "kind": "image",
+          "names": [
+            "php"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "swift",
+      "name": "Swift",
+      "group": "language",
+      "summary_zh": "值/引用语义、并发隔离和可选值",
+      "detection_zh": "Package.swift/Xcode；tools-version 和语言模式不当编译器版本",
+      "capabilities": [],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "feature",
+          "names": [
+            "swift"
+          ],
+          "version": true
+        },
+        {
+          "kind": "image",
+          "names": [
+            "swift"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "dart",
+      "name": "Dart",
+      "group": "language",
+      "summary_zh": "sound null safety、异步流和 isolate 边界",
+      "detection_zh": "pubspec environment.sdk；不当 Flutter SDK 版本",
+      "capabilities": [],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "feature",
+          "names": [
+            "dart"
+          ],
+          "version": true
+        },
+        {
+          "kind": "image",
+          "names": [
+            "dart"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "node",
+      "name": "Node.js",
+      "group": "language",
+      "summary_zh": "进程生命周期、模块格式和非阻塞 IO",
+      "detection_zh": "engines.node、.nvmrc/.node-version 或官方 Node 镜像",
+      "capabilities": [],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "feature",
+          "names": [
+            "node"
+          ],
+          "version": true
+        },
+        {
+          "kind": "image",
+          "names": [
+            "node"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "c",
+      "name": "C",
+      "group": "language",
+      "summary_zh": "缓冲区长度、所有权和编译器检查",
+      "detection_zh": "CMake 显式 C/C 标准字段；其余需声明/源码确认",
+      "capabilities": [],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "feature",
+          "names": [
+            "c"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "cpp",
+      "name": "C++",
+      "group": "language",
+      "summary_zh": "RAII、值语义和构建目标契约",
+      "detection_zh": "CMake 显式 CXX/C++ 标准字段；标准号不当编译器版本",
+      "capabilities": [],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "feature",
+          "names": [
+            "cpp"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "vue",
+      "name": "Vue",
+      "group": "web",
+      "summary_zh": "Vue 3 生命周期/响应式；Vue 2 独立兼容规则",
+      "detection_zh": "准确 npm vue 依赖与对应锁文件",
+      "capabilities": [
+        "ui"
+      ],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "npm",
+          "names": [
+            "vue"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "react",
+      "name": "React",
+      "group": "web",
+      "summary_zh": "组件/状态/Effect 边界；官方获取后项目核对",
+      "detection_zh": "准确 npm react 依赖与对应锁文件",
+      "capabilities": [
+        "ui"
+      ],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "npm",
+          "names": [
+            "react"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "nextjs",
+      "name": "Next.js",
+      "group": "web",
+      "summary_zh": "实际 App/Pages Router、服务端边界与缓存",
+      "detection_zh": "准确 npm next 依赖与对应锁文件",
+      "capabilities": [
+        "ui"
+      ],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "npm",
+          "names": [
+            "next"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "nuxt",
+      "name": "Nuxt",
+      "group": "web",
+      "summary_zh": "服务端请求隔离、路由和部署 target",
+      "detection_zh": "准确 npm nuxt 依赖与对应锁文件",
+      "capabilities": [
+        "ui"
+      ],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "npm",
+          "names": [
+            "nuxt"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "angular",
+      "name": "Angular",
+      "group": "web",
+      "summary_zh": "workspace target、依赖注入和订阅释放",
+      "detection_zh": "准确 npm @angular/core 依赖与对应锁文件",
+      "capabilities": [
+        "ui"
+      ],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "npm",
+          "names": [
+            "@angular/core"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "svelte",
+      "name": "Svelte",
+      "group": "web",
+      "summary_zh": "响应式模式、组件销毁和编译检查",
+      "detection_zh": "准确 npm svelte 依赖与对应锁文件",
+      "capabilities": [
+        "ui"
+      ],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "npm",
+          "names": [
+            "svelte"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "sveltekit",
+      "name": "SvelteKit",
+      "group": "web",
+      "summary_zh": "路由/load/action、服务端数据与 adapter",
+      "detection_zh": "准确 npm @sveltejs/kit 依赖与对应锁文件",
+      "capabilities": [
+        "ui"
+      ],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "npm",
+          "names": [
+            "@sveltejs/kit"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "astro",
+      "name": "Astro",
+      "group": "web",
+      "summary_zh": "岛屿 hydration、内容边界和输出模式",
+      "detection_zh": "准确 npm astro 依赖与对应锁文件",
+      "capabilities": [
+        "ui"
+      ],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "npm",
+          "names": [
+            "astro"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "spring",
+      "name": "Spring Boot",
+      "group": "backend",
+      "summary_zh": "Boot 3/4 与 Boot 2 独立规则；bean/事务边界",
+      "detection_zh": "准确 Boot parent/BOM/依赖/插件；核心 Spring 版本不当 Boot 版本",
+      "capabilities": [],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "maven",
+          "names": [],
+          "version": true,
+          "prefixes": [
+            "org.springframework.boot:spring-boot"
+          ]
+        },
+        {
+          "kind": "gradle",
+          "names": [],
+          "version": false,
+          "prefixes": [
+            "org.springframework.boot:spring-boot"
+          ]
+        },
+        {
+          "kind": "gradle-plugin",
+          "names": [
+            "org.springframework.boot"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "django",
+      "name": "Django",
+      "group": "backend",
+      "summary_zh": "settings、ORM 事务、迁移与部署职责",
+      "detection_zh": "准确 Python 依赖；动态/间接配置需声明",
+      "capabilities": [],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "python",
+          "names": [
+            "django"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "fastapi",
+      "name": "FastAPI",
+      "group": "backend",
+      "summary_zh": "Pydantic/路由契约、lifespan 和 async IO",
+      "detection_zh": "准确 Python 依赖；动态/间接配置需声明",
+      "capabilities": [],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "python",
+          "names": [
+            "fastapi"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "flask",
+      "name": "Flask",
+      "group": "backend",
+      "summary_zh": "app factory、请求上下文和 WSGI 部署",
+      "detection_zh": "准确 Python 依赖；动态/间接配置需声明",
+      "capabilities": [],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "python",
+          "names": [
+            "flask"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "express",
+      "name": "Express",
+      "group": "backend",
+      "summary_zh": "中间件顺序、异步错误和服务关闭",
+      "detection_zh": "准确 npm express 依赖",
+      "capabilities": [],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "npm",
+          "names": [
+            "express"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "nestjs",
+      "name": "NestJS",
+      "group": "backend",
+      "summary_zh": "module/provider 生命周期和传输边界",
+      "detection_zh": "准确 npm @nestjs/core 依赖",
+      "capabilities": [],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "npm",
+          "names": [
+            "@nestjs/core"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "fastify",
+      "name": "Fastify",
+      "group": "backend",
+      "summary_zh": "插件封装、schema、hook 与关闭",
+      "detection_zh": "准确 npm fastify 依赖",
+      "capabilities": [],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "npm",
+          "names": [
+            "fastify"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "aspnet",
+      "name": "ASP.NET Core",
+      "group": "backend",
+      "summary_zh": "middleware、请求作用域、配置和宿主生命周期",
+      "detection_zh": "Web SDK、Microsoft.AspNetCore.App FrameworkReference 或准确包",
+      "capabilities": [],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "feature",
+          "names": [
+            "aspnet"
+          ],
+          "version": true
+        },
+        {
+          "kind": "nuget",
+          "names": [
+            "microsoft.aspnetcore.app"
+          ],
+          "version": false
+        },
+        {
+          "kind": "nuget",
+          "names": [
+            "microsoft.aspnetcore.mvc"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "laravel",
+      "name": "Laravel",
+      "group": "backend",
+      "summary_zh": "服务层、Eloquent、队列提交和迁移",
+      "detection_zh": "Composer laravel/framework 与 composer.lock",
+      "capabilities": [],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "composer",
+          "names": [
+            "laravel/framework"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "gin",
+      "name": "Gin",
+      "group": "backend",
+      "summary_zh": "路由/绑定/代理、goroutine 与 HTTP 服务边界",
+      "detection_zh": "go.mod 精确 github.com/gin-gonic/gin 依赖",
+      "capabilities": [],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "go",
+          "names": [
+            "github.com/gin-gonic/gin"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "flutter",
+      "name": "Flutter",
+      "group": "client",
+      "summary_zh": "widget 生命周期、路由、平台插件与测试",
+      "detection_zh": "pubspec 的 flutter sdk 依赖；版本只取 environment.flutter/显式声明",
+      "capabilities": [
+        "ui"
+      ],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "feature",
+          "names": [
+            "flutter"
+          ],
+          "version": true
+        },
+        {
+          "kind": "pub",
+          "names": [
+            "flutter"
+          ],
+          "version": false
+        }
+      ]
+    },
+    {
+      "id": "react-native",
+      "name": "React Native",
+      "group": "client",
+      "summary_zh": "JS/native 边界、导航、平台构建和设备验证",
+      "detection_zh": "准确 react-native npm 依赖",
+      "capabilities": [
+        "ui"
+      ],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "npm",
+          "names": [
+            "react-native"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "swiftui",
+      "name": "SwiftUI",
+      "group": "client",
+      "summary_zh": "状态归属、视图 identity、task 取消和 actor 隔离",
+      "detection_zh": "实际 .swift 的 import SwiftUI；SDK 可用性不当 Swift 版本",
+      "capabilities": [
+        "ui"
+      ],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "feature",
+          "names": [
+            "swiftui"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "electron",
+      "name": "Electron",
+      "group": "client",
+      "summary_zh": "main/preload/renderer、IPC 校验和窗口资源",
+      "detection_zh": "准确 electron npm 依赖",
+      "capabilities": [
+        "ui"
+      ],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "npm",
+          "names": [
+            "electron"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "tauri",
+      "name": "Tauri",
+      "group": "client",
+      "summary_zh": "Rust/前端命令边界、capabilities 和打包",
+      "detection_zh": "准确 tauri Cargo 或 @tauri-apps/api/cli npm 依赖；v1/v2 配置需核实",
+      "capabilities": [
+        "ui"
+      ],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "cargo",
+          "names": [
+            "tauri"
+          ],
+          "version": true
+        },
+        {
+          "kind": "npm",
+          "names": [
+            "@tauri-apps/api",
+            "@tauri-apps/cli"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "wechat",
+      "name": "微信小程序",
+      "group": "client",
+      "summary_zh": "页面/session 生命周期、请求状态和平台约束",
+      "detection_zh": "project.config.json compileType=miniprogram；不凭任意 app.json 猜测",
+      "capabilities": [
+        "ui"
+      ],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "feature",
+          "names": [
+            "wechat"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "postgres",
+      "name": "PostgreSQL",
+      "group": "data",
+      "summary_zh": "schema/search_path、隔离、索引与恢复",
+      "detection_zh": "精确驱动依赖仅识别引擎；官方配置镜像 tag 可作目标证据；实际服务器待确认",
+      "capabilities": [
+        "database"
+      ],
+      "database_provider": "dbhub",
+      "markers": [
+        {
+          "kind": "npm",
+          "names": [
+            "pg",
+            "postgres"
+          ],
+          "version": false
+        },
+        {
+          "kind": "python",
+          "names": [
+            "psycopg",
+            "psycopg2",
+            "psycopg2-binary",
+            "asyncpg",
+            "pg8000"
+          ],
+          "version": false
+        },
+        {
+          "kind": "maven",
+          "names": [
+            "org.postgresql:postgresql"
+          ],
+          "version": false
+        },
+        {
+          "kind": "gradle",
+          "names": [
+            "org.postgresql:postgresql"
+          ],
+          "version": false
+        },
+        {
+          "kind": "go",
+          "names": [
+            "github.com/lib/pq",
+            "github.com/jackc/pgx/v5"
+          ],
+          "version": false
+        },
+        {
+          "kind": "cargo",
+          "names": [
+            "postgres",
+            "tokio-postgres"
+          ],
+          "version": false
+        },
+        {
+          "kind": "composer",
+          "names": [
+            "ext-pgsql",
+            "ext-pdo_pgsql"
+          ],
+          "version": false
+        },
+        {
+          "kind": "nuget",
+          "names": [
+            "npgsql"
+          ],
+          "version": false
+        },
+        {
+          "kind": "image",
+          "names": [
+            "postgres"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "mysql",
+      "name": "MySQL",
+      "group": "data",
+      "summary_zh": "SQL mode、collation、隐式提交与读回",
+      "detection_zh": "精确驱动依赖仅识别引擎；官方配置镜像 tag 可作目标证据；实际服务器待确认",
+      "capabilities": [
+        "database"
+      ],
+      "database_provider": "dbhub",
+      "markers": [
+        {
+          "kind": "npm",
+          "names": [
+            "mysql",
+            "mysql2"
+          ],
+          "version": false
+        },
+        {
+          "kind": "python",
+          "names": [
+            "mysqlclient",
+            "mysql-connector-python",
+            "pymysql",
+            "aiomysql"
+          ],
+          "version": false
+        },
+        {
+          "kind": "maven",
+          "names": [
+            "com.mysql:mysql-connector-j",
+            "mysql:mysql-connector-java"
+          ],
+          "version": false
+        },
+        {
+          "kind": "gradle",
+          "names": [
+            "com.mysql:mysql-connector-j",
+            "mysql:mysql-connector-java"
+          ],
+          "version": false
+        },
+        {
+          "kind": "go",
+          "names": [
+            "github.com/go-sql-driver/mysql"
+          ],
+          "version": false
+        },
+        {
+          "kind": "cargo",
+          "names": [
+            "mysql",
+            "mysql_async"
+          ],
+          "version": false
+        },
+        {
+          "kind": "composer",
+          "names": [
+            "ext-mysqli",
+            "ext-pdo_mysql"
+          ],
+          "version": false
+        },
+        {
+          "kind": "nuget",
+          "names": [
+            "mysqlconnector",
+            "mysql.data"
+          ],
+          "version": false
+        },
+        {
+          "kind": "image",
+          "names": [
+            "mysql"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "sqlite",
+      "name": "SQLite",
+      "group": "data",
+      "summary_zh": "文件归属、外键、并发/journal 和迁移",
+      "detection_zh": "精确驱动依赖仅识别引擎；官方配置镜像 tag 可作目标证据；实际服务器待确认",
+      "capabilities": [
+        "database"
+      ],
+      "database_provider": "dbhub",
+      "markers": [
+        {
+          "kind": "npm",
+          "names": [
+            "sqlite3",
+            "better-sqlite3"
+          ],
+          "version": false
+        },
+        {
+          "kind": "python",
+          "names": [
+            "aiosqlite"
+          ],
+          "version": false
+        },
+        {
+          "kind": "maven",
+          "names": [
+            "org.xerial:sqlite-jdbc"
+          ],
+          "version": false
+        },
+        {
+          "kind": "gradle",
+          "names": [
+            "org.xerial:sqlite-jdbc"
+          ],
+          "version": false
+        },
+        {
+          "kind": "go",
+          "names": [
+            "github.com/mattn/go-sqlite3",
+            "modernc.org/sqlite"
+          ],
+          "version": false
+        },
+        {
+          "kind": "cargo",
+          "names": [
+            "rusqlite"
+          ],
+          "version": false
+        },
+        {
+          "kind": "composer",
+          "names": [
+            "ext-sqlite3",
+            "ext-pdo_sqlite"
+          ],
+          "version": false
+        },
+        {
+          "kind": "nuget",
+          "names": [
+            "microsoft.data.sqlite",
+            "system.data.sqlite.core"
+          ],
+          "version": false
+        }
+      ]
+    },
+    {
+      "id": "mariadb",
+      "name": "MariaDB",
+      "group": "data",
+      "summary_zh": "引擎身份、SQL mode、锁与迁移兼容",
+      "detection_zh": "精确驱动依赖仅识别引擎；官方配置镜像 tag 可作目标证据；实际服务器待确认",
+      "capabilities": [
+        "database"
+      ],
+      "database_provider": "dbhub",
+      "markers": [
+        {
+          "kind": "npm",
+          "names": [
+            "mariadb"
+          ],
+          "version": false
+        },
+        {
+          "kind": "python",
+          "names": [
+            "mariadb"
+          ],
+          "version": false
+        },
+        {
+          "kind": "maven",
+          "names": [
+            "org.mariadb.jdbc:mariadb-java-client"
+          ],
+          "version": false
+        },
+        {
+          "kind": "gradle",
+          "names": [
+            "org.mariadb.jdbc:mariadb-java-client"
+          ],
+          "version": false
+        },
+        {
+          "kind": "image",
+          "names": [
+            "mariadb"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "mongodb",
+      "name": "MongoDB",
+      "group": "data",
+      "summary_zh": "document/schema、索引、session 和一致性",
+      "detection_zh": "精确驱动依赖仅识别引擎；官方配置镜像 tag 可作目标证据；实际服务器待确认",
+      "capabilities": [
+        "database"
+      ],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "npm",
+          "names": [
+            "mongodb",
+            "mongoose"
+          ],
+          "version": false
+        },
+        {
+          "kind": "python",
+          "names": [
+            "pymongo",
+            "motor"
+          ],
+          "version": false
+        },
+        {
+          "kind": "maven",
+          "names": [
+            "org.mongodb:mongodb-driver-sync",
+            "org.mongodb:mongodb-driver-reactivestreams",
+            "org.springframework.boot:spring-boot-starter-data-mongodb"
+          ],
+          "version": false
+        },
+        {
+          "kind": "gradle",
+          "names": [
+            "org.mongodb:mongodb-driver-sync"
+          ],
+          "version": false
+        },
+        {
+          "kind": "go",
+          "names": [
+            "go.mongodb.org/mongo-driver",
+            "go.mongodb.org/mongo-driver/v2"
+          ],
+          "version": false
+        },
+        {
+          "kind": "cargo",
+          "names": [
+            "mongodb"
+          ],
+          "version": false
+        },
+        {
+          "kind": "composer",
+          "names": [
+            "mongodb/mongodb",
+            "ext-mongodb"
+          ],
+          "version": false
+        },
+        {
+          "kind": "nuget",
+          "names": [
+            "mongodb.driver"
+          ],
+          "version": false
+        },
+        {
+          "kind": "image",
+          "names": [
+            "mongo"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "redis",
+      "name": "Redis",
+      "group": "data",
+      "summary_zh": "key/TTL、原子更新、缓存/持久化边界",
+      "detection_zh": "精确驱动依赖仅识别引擎；官方配置镜像 tag 可作目标证据；实际服务器待确认",
+      "capabilities": [
+        "database"
+      ],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "npm",
+          "names": [
+            "redis",
+            "ioredis"
+          ],
+          "version": false
+        },
+        {
+          "kind": "python",
+          "names": [
+            "redis"
+          ],
+          "version": false
+        },
+        {
+          "kind": "maven",
+          "names": [
+            "redis.clients:jedis",
+            "io.lettuce:lettuce-core",
+            "org.springframework.boot:spring-boot-starter-data-redis"
+          ],
+          "version": false
+        },
+        {
+          "kind": "gradle",
+          "names": [
+            "redis.clients:jedis",
+            "io.lettuce:lettuce-core"
+          ],
+          "version": false
+        },
+        {
+          "kind": "go",
+          "names": [
+            "github.com/redis/go-redis/v9"
+          ],
+          "version": false
+        },
+        {
+          "kind": "cargo",
+          "names": [
+            "redis"
+          ],
+          "version": false
+        },
+        {
+          "kind": "composer",
+          "names": [
+            "predis/predis",
+            "ext-redis"
+          ],
+          "version": false
+        },
+        {
+          "kind": "nuget",
+          "names": [
+            "stackexchange.redis"
+          ],
+          "version": false
+        },
+        {
+          "kind": "image",
+          "names": [
+            "redis"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "prisma",
+      "name": "Prisma",
+      "group": "orm",
+      "summary_zh": "schema/client 生成、事务边界和迁移漂移",
+      "detection_zh": "准确 prisma/@prisma/client 等依赖；不据 ORM 猜引擎",
+      "capabilities": [],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "npm",
+          "names": [
+            "prisma",
+            "@prisma/client",
+            "@prisma/orm",
+            "@prisma/orm-mongo"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "sqlalchemy",
+      "name": "SQLAlchemy",
+      "group": "orm",
+      "summary_zh": "Session 单元工作、async 归属和事务释放",
+      "detection_zh": "准确 Python sqlalchemy 依赖",
+      "capabilities": [],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "python",
+          "names": [
+            "sqlalchemy"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "mybatis",
+      "name": "MyBatis",
+      "group": "orm",
+      "summary_zh": "mapper/XML 参数、事务与批处理",
+      "detection_zh": "准确 MyBatis/MyBatis Spring/Boot Maven/Gradle 坐标",
+      "capabilities": [],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "maven",
+          "names": [
+            "org.mybatis:mybatis",
+            "org.mybatis:mybatis-spring",
+            "org.mybatis.spring.boot:mybatis-spring-boot-starter"
+          ],
+          "version": true
+        },
+        {
+          "kind": "gradle",
+          "names": [
+            "org.mybatis:mybatis",
+            "org.mybatis:mybatis-spring"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "hibernate",
+      "name": "Hibernate ORM",
+      "group": "orm",
+      "summary_zh": "持久化上下文、懒加载、flush 和乐观锁",
+      "detection_zh": "准确 Hibernate core 坐标；JPA/Boot 本身不猜 provider",
+      "capabilities": [],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "maven",
+          "names": [
+            "org.hibernate:hibernate-core",
+            "org.hibernate.orm:hibernate-core"
+          ],
+          "version": true
+        },
+        {
+          "kind": "gradle",
+          "names": [
+            "org.hibernate:hibernate-core",
+            "org.hibernate.orm:hibernate-core"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "maven",
+      "name": "Maven",
+      "group": "build",
+      "summary_zh": "reactor、plugin/BOM 和干净验证",
+      "detection_zh": "有效 pom.xml；版本需要 wrapper/显式确认",
+      "capabilities": [],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "feature",
+          "names": [
+            "maven"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "gradle",
+      "name": "Gradle",
+      "group": "build",
+      "summary_zh": "wrapper/toolchain、任务图和多项目边界",
+      "detection_zh": "build.gradle(.kts) 与 wrapper distributionUrl；不推断 Kotlin 应用",
+      "capabilities": [],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "feature",
+          "names": [
+            "gradle"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "vite",
+      "name": "Vite",
+      "group": "build",
+      "summary_zh": "开发/构建差异、env 和插件/产物",
+      "detection_zh": "准确 npm vite 依赖",
+      "capabilities": [],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "npm",
+          "names": [
+            "vite"
+          ],
+          "version": true
+        }
+      ]
+    },
+    {
+      "id": "docker",
+      "name": "Docker",
+      "group": "build",
+      "summary_zh": "镜像/构建上下文、权限、健康与数据卷",
+      "detection_zh": "Dockerfile/Compose；不执行 build/up/下载镜像",
+      "capabilities": [],
+      "database_provider": null,
+      "markers": [
+        {
+          "kind": "feature",
+          "names": [
+            "docker"
+          ],
+          "version": true
+        }
+      ]
+    }
+  ]
+}

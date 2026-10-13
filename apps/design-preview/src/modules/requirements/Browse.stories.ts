@@ -1,0 +1,11 @@
+import type {Meta,StoryObj} from '@storybook/vue3-vite';
+import design from '../../design/design.json';
+import RequirementsWorkspace from './RequirementsWorkspace.vue';
+const meta={title:'02 需求管理/F01 浏览需求',component:RequirementsWorkspace,args:{initialRoute:'list'},parameters:{personal:{module:'M01',feature:'F01',version:design.version}}} satisfies Meta<typeof RequirementsWorkspace>;
+export default meta;
+type Story=StoryObj<typeof meta>;
+export const Normal:Story={name:'B01 正常列表',args:{initialScenario:'normal'}};
+export const Empty:Story={name:'B02 搜索无结果',args:{initialScenario:'empty'}};
+export const Error:Story={name:'B03 加载失败',args:{initialScenario:'error'}};
+export const Denied:Story={name:'B04 无访问权限',args:{initialScenario:'denied'}};
+export const Detail:Story={name:'B05 需求详情',args:{initialRoute:'detail',initialScenario:'normal'}};

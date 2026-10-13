@@ -1,0 +1,196 @@
+{
+  "schema_version": 1,
+  "id": "personal-workspace-ui",
+  "version": "v1.2",
+  "status": "draft_for_review",
+  "title": "需求工作台",
+  "target_stack": "Storybook + Vue 3 + Vite preview; application stack chosen per project",
+  "tokens": {
+    "background": "#F4F6F8",
+    "surface": "#FFFFFF",
+    "text": "#182633",
+    "muted": "#5D6C7A",
+    "line": "#E2E8ED",
+    "primary": "#177E74",
+    "primaryText": "#116A60",
+    "primarySoft": "#E7F4F1",
+    "info": "#3264AB",
+    "infoSoft": "#EDF2FC",
+    "warning": "#865C16",
+    "warningSoft": "#FFF4D9",
+    "neutralSoft": "#EEF1F4",
+    "danger": "#B63838",
+    "dangerSoft": "#FCEDED",
+    "sidebar": "#162D35",
+    "sidebarText": "#E5F1F1",
+    "sidebarLine": "#35515B",
+    "sidebarMuted": "#C4D9DD",
+    "radius": 10,
+    "space": 8,
+    "font": "PingFang SC",
+    "fontSize": 14
+  },
+  "layout": {
+    "width": 1200,
+    "height": 800,
+    "sidebar": 208,
+    "header": 72,
+    "padding": 32,
+    "contentTop": 104,
+    "rowHeight": 64,
+    "mobileBreakpoint": 760,
+    "mobileList": "cards"
+  },
+  "statusStyles": {
+    "待讨论": {"foreground": "muted", "background": "neutralSoft"},
+    "设计中": {"foreground": "info", "background": "infoSoft"},
+    "待评审": {"foreground": "warning", "background": "warningSoft"},
+    "实施中": {"foreground": "primaryText", "background": "primarySoft"}
+  },
+  "typeScale": {"caption": 12, "secondary": 13, "body": 14, "label": 15, "control": 16, "section": 17, "subheading": 18, "brand": 19, "title": 26},
+  "radiusScale": {"field": 7, "control": 8, "surface": 10, "preview": 12, "dialog": 14},
+  "components": [
+    {
+      "id": "button.primary",
+      "label": "主操作",
+      "states": [
+        "default",
+        "focus",
+        "disabled",
+        "loading"
+      ],
+      "contract": "一次提交；处理中禁用；完成后反馈"
+    },
+    {
+      "id": "field.text",
+      "label": "文本输入",
+      "states": [
+        "default",
+        "focus",
+        "invalid"
+      ],
+      "contract": "明确标签；错误紧邻字段；保留输入"
+    },
+    {
+      "id": "table.requirements",
+      "label": "需求列表",
+      "states": [
+        "normal",
+        "empty",
+        "error",
+        "denied"
+      ],
+      "contract": "标题可进入详情；空和失败提供恢复入口"
+    }
+  ],
+  "modules": [
+    {
+      "id": "M01",
+      "name": "需求管理",
+      "features": [
+        {
+          "id": "F01",
+          "name": "浏览需求",
+          "prd": "docs/prd.zh-CN.md#f01",
+          "tdd": "docs/tdd.zh-CN.md#f01",
+          "acceptance": [
+            "AC01",
+            "AC02",
+            "AC03",
+            "AC04",
+            "AC08"
+          ],
+          "boards": [
+            {
+              "id": "B01",
+              "name": "需求列表",
+              "state": "normal"
+            },
+            {
+              "id": "B02",
+              "name": "搜索无结果",
+              "state": "empty"
+            },
+            {
+              "id": "B03",
+              "name": "加载失败",
+              "state": "error"
+            },
+            {
+              "id": "B04",
+              "name": "无访问权限",
+              "state": "denied"
+            },
+            {
+              "id": "B05",
+              "name": "需求详情",
+              "state": "detail"
+            }
+          ],
+          "implementation": "src/modules/requirements/RequirementsWorkspace.vue",
+          "story": "src/modules/requirements/Browse.stories.ts"
+        },
+        {
+          "id": "F02",
+          "name": "新建需求",
+          "prd": "docs/prd.zh-CN.md#f02",
+          "tdd": "docs/tdd.zh-CN.md#f02",
+          "acceptance": [
+            "AC05",
+            "AC06",
+            "AC07"
+          ],
+          "boards": [
+            {
+              "id": "B06",
+              "name": "填写需求",
+              "state": "create"
+            },
+            {
+              "id": "B07",
+              "name": "字段校验失败",
+              "state": "invalid"
+            },
+            {
+              "id": "B08",
+              "name": "提交成功",
+              "state": "success"
+            }
+          ],
+          "implementation": "src/modules/requirements/RequirementsWorkspace.vue",
+          "story": "src/modules/requirements/Create.stories.ts"
+        }
+      ]
+    }
+  ],
+  "seed": [
+    {
+      "id": "REQ-001",
+      "title": "统一项目初始化入口",
+      "module": "规范库",
+      "status": "设计中",
+      "description": "识别技术栈，安装匹配规范并验证工具状态。"
+    },
+    {
+      "id": "REQ-002",
+      "title": "模块设计与交互评审",
+      "module": "设计交付",
+      "status": "待评审",
+      "description": "按模块查看功能及页面状态，确认交互后再实施。"
+    },
+    {
+      "id": "REQ-003",
+      "title": "数据库参数化读写",
+      "module": "工具接入",
+      "status": "实施中",
+      "description": "在明确的开发测试来源核对结构、读写和事务结果。"
+    }
+  ],
+  "success_sample": {
+    "id": "REQ-004",
+    "title": "统一设计交付流程",
+    "module": "设计交付",
+    "status": "待讨论",
+    "description": "验证设计文件与可操作参考使用相同的功能和版本。"
+  }
+}

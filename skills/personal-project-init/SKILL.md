@@ -1,0 +1,16 @@
+---
+name: personal-project-init
+description: "Initialize or repair a personal Trellis project: detect stacks, acquire matching rules, install missing helper tools and verify real client/index/database capabilities."
+---
+
+# personal-project-init
+
+Before adoption, run `personal.py query-stacks --project <target>`; for a blank project add confirmed `--stacks` / `--stack-versions`. Use `--stack-registry` for a local manifest or `gh:OWNER/REPO[/subdir]#FULL_COMMIT_SHA`; use `--offline` for bundled/cache-only operation. The executable contract is `.trellis/spec/guides/personal/process/stack-sourcing.md` after adoption, or the library's `specs/process/stack-sourcing.md` beforehand.
+
+Inspect the scoped sources report and only the relevant downloaded references/current package code. For unknown stacks, perform the reported focused query using available Web/MCP, read primary sources, and register a reviewed profile before rerunning acquisition. Adapt directory/ownership/type/error/test contracts to the real package; record local adjustments and validation in the existing task/spec. Do not leave an acquired common guide presented as completed project adaptation. Install writes five category short indexes and Chinese `spec-sources.zh-CN.md`; modified local documents remain protected candidates.
+
+For a project with UI, also read `.trellis/spec/guides/personal/tools/ui-design.md`. Run the installed `tools.py` helper after asset adoption; its default UI profile installs/reuses Impeccable and UI UX Pro Max. Declare `--ui` for a blank UI project, or select `--tools impeccable ui-ux-pro-max` when repairing just this profile. Verify actual engine detection and design-data search, protect local skill/hook changes, and report client loading separately. Pure backend projects skip the UI profile.
+
+Read the project's current rules and `.trellis/spec/guides/personal/process/bootstrap.md`. Use the installed `.trellis/personal/personal.py` helper; asset installation is separate from tool verification. Detect real manifests; blank projects need declared choices. Prefer the fixed-ref library catalog, then official versioned sources; record adaptations and pending facts. Preserve local rule/config changes and workflow choices. Check baseline CodeGraph/RTK/QMD and one database MCP only when applicable. Actually initialize/index/connect/query; write validation uses disposable fixtures. Keep credentials local references. Report installation, client readiness, indexes/connection, real calls and gaps separately in Chinese. Do not infer success from config files, lazy connection or tool lists.
+
+For exploration, read `.trellis/spec/guides/personal/tools/exploration/usage.md` (before adoption: `specs/tools/exploration/usage.md`). Honor explicit source/provider constraints, reuse available capabilities/evidence, and initialize only selected gaps under its budgets/state rules. Load selected provider guidance/schema on demand; unrequested special sources are `not_requested`, selected missing authentication is `pending`. Do not let unrequested sources block selected-scope completion or claim asset adoption installed research servers. Report actual loaded tool count if observed, otherwise unknown.
