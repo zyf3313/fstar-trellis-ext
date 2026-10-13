@@ -1,6 +1,6 @@
 # v1.0.0 本地交付候选
 
-本包为可复现的本地发布候选，`library.json` 保持 `1.0.0 / not_published`。用户已选定 `zyf3313/personal-trellis` 私有 GitHub 源库用于跨项目消费；私有源码同步与正式发布分别记录，本说明不宣称建仓、推送或原生远程拉取已通过。个人库许可证尚未选择（`license_decision=pending`），未创建正式标签或 release；候选政策仍为 `local_candidate`，清单的 `externally_publishable=false` 保留公开发行门禁。第三方身份与许可记录见 [来源说明](THIRD_PARTY_NOTICES.md)，不把任何第三方许可推定为本库许可。
+本包为可复现的本地发布候选，`library.json` 保持 `1.0.0 / not_published`。`zyf3313/personal-trellis` 私有 GitHub 源库已建立并同步；固定提交的原生 SSH 规范/工作流获取已实测，范围见下节。个人库许可证尚未选择（`license_decision=pending`），未创建正式标签或 release；候选政策仍为 `local_candidate`，清单的 `externally_publishable=false` 保留公开发行门禁。第三方身份与许可记录见 [来源说明](THIRD_PARTY_NOTICES.md)，不把任何第三方许可推定为本库许可。
 
 需要 Python 3.9+；已验证原生 CLI 基线为 Trellis 0.6.9。预览和工具的实际环境要求分别见锁文件和各自 README，资产安装不安装这些运行依赖。Python 3.9/3.10 TOML 解析限制沿用主 README，运行平台/客户端/模型状态需要目标环境另验收。
 
@@ -48,7 +48,11 @@ python3 /path/to/NEXT_FIXED_CANDIDATE/scripts/personal.py rollback --project /pa
 
 与已安装基线相同的本地文件可更新；用户编辑保留，目标内容形成 `.new.<hash>` 冲突候选。相同版本重复安装复用不变资产；退出 2 表示来源缺口或冲突，需查看中文来源报告与 actions。手动比较/确认候选后再继续，不能把退出 2 当所有安装失败或全部通过。回滚只恢复该 revision 的受管理写入；后续本地编辑会成为冲突并保留。备份位于目标 `.trellis/personal/backups`，不能纳入分发包。本地相同版本更新与冲突/回滚可验证；不同远程版本升级尚未通过。
 
-## 私有源库与原生远程消费（待实际验收）
+## 私有源库与原生远程消费
+
+2026-10-13 在 macOS / Trellis 0.6.9 实测的完整提交为 `54d43df5356f493fdaff2f88459b5e83b19a1aaf`。独立 SSH 克隆的 252 文件摘要与冻结源一致，原生 init 的 25 份 spec 逐字节匹配，workflow 候选与固定提交一致，当前修改保留；同提交 append 保留修改并补回缺失文件。复制后的 helper 在原 checkout 不可用时 detect/validate 通过，修改保护与 revision 回滚通过。31 项检查通过；其他版本/ref 升级、公开 HTTP、用户/平台/设备/Linux/模型及第二次远程 workflow 调用分别保留未验收状态。这一提交是已验证运行基线；说明的后续提交不自动扩展该范围。
+
+首次原生 bundle + helper 组合安装会生成三份索引候选，并退出 `2`：`.trellis/spec/guides/personal/index.md`、`engineering/index.md` 和 `tools/index.md`（后两者位于同一 personal 目录）。原生 bundle 索引保留，按项目实际栈生成的新索引写为 `.new.<hash>`。查看 install 的 `actions` 和具体 candidate，比较并合并项目需要的链接，保留用户已有调整，再重新运行 install 和项目规范检查。资产与复制 helper 已可用，不把未处理候选称为初始化全部完成，也不整目录强制覆盖。唯一定义见 [registry adapter](adapters/registry/README.md)。
 
 完整库作为 `zyf3313/personal-trellis` 的仓库根，保持 private，排除任务、会话、证据、维护项目业务和依赖目录。消费前复用已有 GitHub SSH 身份并确认私有仓库读取权限；不写入 token，不修改全局 Git/SSH 或客户端配置。Trellis 0.6.9 的 GitHub HTTP registry index 不携带认证，`gh:`/`GIGET_AUTH` 不能单独解决私有库的 index 读取；SSH source 强制走 Git backend。
 

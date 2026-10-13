@@ -25,6 +25,8 @@ Trellis 0.6.9's GitHub HTTP index uses unauthenticated fetch. A `gh:` source plu
 
 `--append` fills missing specs; it is not an upgrade merge. `--create-new` always writes `.trellis/workflow.md.new` and preserves the current workflow and hash record, regardless of local edits. Without that flag, a pristine workflow may be installed directly; local edits need explicit handling. Helper `install` uses its Base/Local/Target comparison and revision rollback. These are distinct operations. Library `not_published` and pending license indicate no formal release; authorized private source synchronization does not grant public publication rights.
 
+Native bundle indexes and helper-selected indexes can differ during first combined initialization. Observed protected paths are `.trellis/spec/guides/personal/index.md`, `engineering/index.md` and `tools/index.md` under that personal directory. Helper exit 2 preserves current indexes and emits `.new.<hash>` candidates through its actions. Compare candidate/source/current content, merge links for actual project stacks while retaining local constraints, rerun install and verify the project indexes. Do not report all initialization completed while candidates remain unresolved. Same-ref protection is tested; cross-ref/version upgrade remains separate.
+
 ## 4. Validation & Error Matrix
 
 | Condition | Required behavior |
@@ -34,6 +36,7 @@ Trellis 0.6.9's GitHub HTTP index uses unauthenticated fetch. A `gh:` source plu
 | Missing identity, denied repository, nonexistent ref or download failure | Record failure; do not substitute mutable main or report consumption passed |
 | Clone HEAD differs from selected SHA | Stop helper execution |
 | Locally edited spec/workflow/helper-managed file | Preserve local bytes; inspect explicit candidate/protection result |
+| Fresh native bundle + different helper-selected indexes | Exit 2 with protected index candidates; explicit project merge/recheck required |
 | Private raw HTTP unavailable | Use the verified local checkout; do not claim HTTP authentication passed |
 
 ## 5. Good/Base/Bad Cases

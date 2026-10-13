@@ -2,7 +2,7 @@
 
 目标：跨项目复用开发行为，让 AI 先探索、设计，再依据确认的 PRD/TDD/UI 稳定实现和交付。
 
-当前是 **v1.0.0 本地发布候选**，`library.json` 保持 `1.0.0 / not_published`，库许可证待选择。用户已选定 **`zyf3313/personal-trellis` 私有 GitHub 源库**；私有源码同步与正式发布分别记录，当前说明不宣称远程拉取已通过。[交付与完整性说明](DISTRIBUTION.zh-CN.md)、[变更记录](CHANGELOG.md)和[第三方来源说明](THIRD_PARTY_NOTICES.md)随包提供。
+当前是 **v1.0.0 本地发布候选**，`library.json` 保持 `1.0.0 / not_published`，库许可证待选择。**`zyf3313/personal-trellis` 私有 GitHub 源库已建立并同步**；Trellis 0.6.9 的固定提交 SSH spec/workflow 获取已实测。私有源码同步与正式发布分别记录，首次组合初始化的索引候选需明确处理，范围见 [交付与完整性说明](DISTRIBUTION.zh-CN.md)。[变更记录](CHANGELOG.md)和[第三方来源说明](THIRD_PARTY_NOTICES.md)随包提供。
 
 ## 分类
 `specs/core` 管通用行为，`process` 管生命周期，`engineering` 管跨栈工程，`stacks` 管具体语言/框架/数据库，`tools` 管能力场景。每条规则有唯一 ID、触发条件、来源与目标落位。`catalog.json` 是个人引导输入，`index.json` 是 Trellis 原生 marketplace。工作流、技能、中文模板及 adapter 独立维护；bundle 从唯一源生成。
