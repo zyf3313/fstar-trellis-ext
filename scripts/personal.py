@@ -84,7 +84,7 @@ def catalog():
         paths.add(target)
         if set(entry.get('depends_on', [])) - ids:
             raise ValueError('Missing dependency for ' + entry['id'])
-        if entry['category'] not in {'core', 'process', 'engineering', 'stacks', 'tools'}:
+        if entry['category'] not in {'core', 'process', 'engineering', 'tools'}:
             raise ValueError('Unknown rule category')
     return data
 
@@ -163,52 +163,40 @@ def list_stacks(data=None):
             if definition['group'] != group['id']:
                 continue
             selected = [profile for profile in profiles if profile['stack'] == definition['id']]
-            if not selected:
-                raise ValueError('Stack definition has no source profile: ' + definition['id'])
             rows.append({**definition, 'profiles': selected,
-                         'coverage_state': 'bundled_baseline' if any(profile['kind'] == 'personal' for profile in selected)
-                         else 'official_acquisition', 'runtime_acceptance': 'not_certified_for_all_stacks'})
+                         'coverage_state': 'identification_only',
+                         'project_spec_state': 'project-spec-review-required',
+                         'runtime_acceptance': 'not_certified_for_all_stacks'})
         groups.append({**group, 'count': len(rows), 'stacks': rows})
     return {'schema_version': 1, 'total_stacks': len(known), 'groups': groups,
             'definition_sha256': digest((LIBRARY / 'stack-definitions.json').read_bytes()),
             'registry_sha256': digest(json_bytes(stack_registry(data))),
-            'scope': 'library coverage; acquisition, project adaptation and business runtime acceptance are separate'}
+            'scope': 'identification and UI/database tool routing only; no bundled stack coding rules'}
 
 
 def stack_overview(coverage):
-    lines = ['# 技术栈覆盖总览', '', '> 由 stack-definitions.json、catalog.json 和官方来源清单生成；修改源后运行 build。', '',
-             '当前提供 **' + str(coverage['total_stacks']) + ' 个技术栈入口**。这里列出整个规范库，不是三个获取验收样例的范围。', '',
-             'COMMON 是不绑定发布版本的工程基线：覆盖资源、模块、数据/交互和验证机制；不能当作所有版本 API 保证。',
-             '版本专用规则只匹配登记的 major；React、Go、Rust保留固定提交/摘要的官方获取链路，离线需要已验证缓存。',
-             '每个项目仍需 AI 阅读真实源码与官方对应版本，补项目规范并运行实际检查。规则/识别/复制消费通过不等于 53 种业务运行已验收。', '',
-             '命令：`python3 scripts/personal.py list-stacks`（分组 JSON）；加 `--format markdown` 阅读中文表格。', '']
+    lines = ['# 技术栈识别概览', '', '> 由 stack-definitions.json 生成；修改识别元数据后运行 build。', '',
+             '保留 **' + str(coverage['total_stacks']) + ' 个技术栈入口**，仅用于事实识别、版本报告与 UI/数据库工具路由。',
+             '个人库不提供技术栈编码规范，不默认下载官方通用规范，也不生成通用栈草案。',
+             '项目规范须从已有约束、真实代码和已确认架构中审核、沉淀；显式来源获取成功仍须项目核对。', '',
+             '命令：`python3 scripts/personal.py list-stacks`；加 `--format markdown` 阅读中文表格。', '']
     for group in coverage['groups']:
         lines += ['## ' + group['title_zh'] + '（' + str(group['count']) + '）', '',
-                  '| ID / 名称 | 具体覆盖 | 来源和版本边界 | 自动证据 / 缺口 |', '|---|---|---|---|']
+                  '| ID / 名称 | 识别证据与缺口 | 条件工具路由 |', '|---|---|---|']
         for row in group['stacks']:
-            sources = []
-            for profile in row['profiles']:
-                if profile['kind'] == 'personal':
-                    policy = 'COMMON' if profile.get('version_independent') else 'major ' + ','.join(map(str, profile['major_versions']))
-                    sources.append('[' + profile['id'] + '](' + profile['source']['path'] + ')：' + policy)
-                else:
-                    policy = 'COMMON' if profile.get('version_independent') else 'major ' + ','.join(map(str, profile.get('major_versions', [])))
-                    sources.append('[' + profile['id'] + '](' + profile['adaptation'] + ')：官方获取 ' + policy)
-            route = ''
+            routes = []
+            if 'ui' in row.get('capabilities', []):
+                routes.append('UI 设计工具')
             if 'database' in row.get('capabilities', []):
-                route = '；DBHub 候选，连接/运行待确认' if row.get('database_provider') else '；兼容 provider 待选择，不默认 DBHub'
-            lines.append('| `' + row['id'] + '` / ' + row['name'] + ' | ' + row['summary_zh'] + ' | ' + '<br>'.join(sources) + ' | ' + row['detection_zh'] + route + ' |')
+                routes.append('DBHub 候选，连接/运行待确认' if row.get('database_provider') else '兼容数据库 provider 待选择')
+            lines.append('| `' + row['id'] + '` / ' + row['name'] + ' | ' + row['detection_zh'] + ' | ' + '；'.join(routes or ['基线工具']) + ' |')
         lines.append('')
-    lines += ['## 配置、边界与扩展', '',
-              '- 识别定义使用 schema_version=1、groups/stacks、精确依赖 markers（kind/names/prefixes/version）及能力/provider 元数据。原生 index.json 保持独立。',
-              '- 空白或动态配置项目可用 --stacks / --stack-versions 声明；原始配置与版本证据保留，冲突不覆盖实际事实。',
-              '- 读取有字节上限，跳过 symlink/依赖/缓存目录和登记预览；不执行依赖、构建脚本、Docker 或下载资料中的命令。',
-              '- packageManager/对应锁文件决定 npm/pnpm/yarn/bun 命令；没有配置时 npm 仅为待确认示例。pnpm 常见 importer、Yarn descriptor 与 npm 锁解析有范围，未支持格式保留声明/诊断。',
-              '- Python 3.9/3.10 没有 tomli 时只支持静态单行 TOML；完整结构请使用 Python 3.11+ 或项目已有 tomli。Gradle alias/继承、复杂 YAML、CMake 动态语言等需显式声明/源码复核。',
-              '- Java 1.8/VERSION_1_8 归一化为 8 并保留原值；Kotlin DSL 不等于 Kotlin 应用；C# LangVersion 与 .NET TFM/SDK 分开。',
-              '- Dart 与 Flutter SDK、Swift 编译器与 tools-version/语言模式/SwiftUI SDK 分开；数据库驱动版本不当服务端版本，配置镜像只证明目标声明。',
-              '- 新增栈：维护定义与具体规则/catalog 或官方 profile/适配指南，保留来源/覆盖/版本边界，再 build/validate 与独立消费。安装器复制这些元数据与 helper，保护本地改动。', '',
-              '本轮保留的缺口：所有栈真实业务/设备/发布验证、未声明版本、动态/不支持清单、非 SQL provider，以及已有父任务的远程发布、客户端/模型/外部探索接入。', '']
+    lines += ['## 事实边界', '',
+              '- 空白项目先讨论目标，再用 --stacks / --stack-versions 声明；声明不覆盖冲突的实际版本。',
+              '- 不执行依赖、构建脚本或容器。动态清单、未知版本、未解析锁文件与语言/SDK差异保留诊断。',
+              '- 数据库驱动版本不充当服务端版本；镜像只证明配置目标。',
+              '- 识别元数据不构成编码规则覆盖，也不证明业务、设备或真实客户端验收。',
+              '- 默认来源 profiles 为空。自选规范用 --stack-registry，记录 ref/hash/版本、离线及本地修改状态。', '']
     return ('\n'.join(lines)).encode()
 
 
@@ -276,21 +264,19 @@ def build():
 
 
 def stack_registry(data):
-    profiles = []
-    for entry in data['entries']:
-        if entry['category'] != 'stacks':
-            continue
-        for stack in entry['stacks']:
-            profiles.append({'id': entry['id'], 'kind': 'personal', 'stack': stack,
-                             'major_versions': entry.get('major_versions', []),
-                             'version_independent': entry.get('version_independent', False),
-                             'source': {'path': entry['path'], 'sha256': digest(safe(LIBRARY, entry['path']).read_bytes())},
-                             'license': 'personal draft; publication license pending',
-                             'coverage': entry.get('coverage', ['project adaptation required']),
-                             'baseline_kind': entry.get('baseline_kind', 'common' if entry.get('version_independent') else 'major_scoped'),
-                             'source_ref': entry['source_ref'], 'reviewed_at': entry['retrieved_at']})
-    profiles.extend(load(LIBRARY / 'official-sources.lock.json')['profiles'])
-    return {'schema_version': 1, 'profiles': profiles}
+    # Stack definitions are identification metadata, never a coding-rule source.
+    return {'schema_version': 1, 'profiles': []}
+
+
+def withdrawn_source(row):
+    source = row.get('active_source', row.get('source'))
+    if not source:
+        return True
+    if str(source.get('ref', '')).startswith('library:'):
+        return True
+    profile_id = row.get('active_profile_id', row.get('profile_id'))
+    return any(profile['id'] == profile_id and profile['sha256'] == source.get('sha256')
+               for profile in load(LIBRARY / 'withdrawn-stack-sources.json')['sources'])
 
 
 def inventory(entries):
@@ -302,7 +288,7 @@ def inventory(entries):
             if source.is_file():
                 result[target + '/' + source.relative_to(LIBRARY / folder).as_posix()] = source.read_bytes()
     # Ship the source library and executable helper independently of Trellis spec downloads.
-    for name in ['catalog.json', 'index.json', 'library.json', 'tools.lock.json', 'stack-sources.json', 'stack-definitions.json', 'STACKS.zh-CN.md', 'official-sources.lock.json', 'README.md', 'CHANGELOG.md', 'DISTRIBUTION.zh-CN.md', 'THIRD_PARTY_NOTICES.md', 'release-policy.json', '.gitignore']:
+    for name in ['catalog.json', 'index.json', 'library.json', 'tools.lock.json', 'stack-sources.json', 'stack-definitions.json', 'STACKS.zh-CN.md', 'official-sources.lock.json', 'withdrawn-stack-sources.json', 'README.md', 'CHANGELOG.md', 'DISTRIBUTION.zh-CN.md', 'THIRD_PARTY_NOTICES.md', 'release-policy.json', '.gitignore']:
         source = LIBRARY / name
         if source.exists():
             result['.trellis/personal/library/' + name] = source.read_bytes()
@@ -369,19 +355,20 @@ def install(project, stacks=None, capabilities=None, adopt_workflow=False, previ
         active_source = prior.get('active_source', prior.get('source')) if prior else None
         failed_prior = prior and any(attempt['profile_id'] == active_profile and
                                      attempt['state'] == 'acquisition_failed' for attempt in row['attempts'])
-        if (prior and active_source and row['target'] in previous['files'] and
+        if (prior and active_source and not withdrawn_source(prior) and
+                row['target'] in previous['files'] and safe(project, row['target']).is_file() and
                 (row['status'] != 'acquired' or failed_prior and row.get('profile_id') != active_profile)):
             source_guards.add(row['target'])
             row['adoption_state'] = 'preserved_previous_rule'
             row['previous_profile_id'] = active_profile
             row['active_profile_id'], row['active_source'] = active_profile, active_source
-            row['candidate'] = row['target'] + '.new.' + digest(source_assets[row['target']])[:12]
-    # Different majors use distinct rules; unknown versions cannot choose between major-specific profiles.
-    entries = [entry for entry in entries if entry['category'] != 'stacks' or any(
-        facts['stack'] in entry['stacks'] and (facts.get('bundled_rule_id') == entry['id'] or
-            facts['status'] == 'version_unconfirmed' and stack_sources.compatible(entry, facts['version']) is None and
-            sum(facts['stack'] in candidate.get('stacks', []) for candidate in data['entries'] if candidate['category'] == 'stacks') == 1)
-        for facts in source_report['packages'])]
+            if row['target'] in source_assets:
+                row['candidate'] = row['target'] + '.new.' + digest(source_assets[row['target']])[:12]
+            else:
+                source_entries.append({'id': 'project.' + row['stack'] + '.' + digest(row['target'].encode())[:12],
+                                       'category': 'stacks', 'target': row['target'].removeprefix('.trellis/spec/'),
+                                       'title': row['stack'] + ' / ' + row['scope'],
+                                       'summary': 'preserved source; repair required'})
     revision = stamp()
     changes, actions, known, pending = [], [], dict(previous['files']), []
     marker_start, marker_end = '<!-- PERSONAL_TRELLIS:START -->', '<!-- PERSONAL_TRELLIS:END -->'
@@ -414,6 +401,39 @@ def install(project, stacks=None, capabilities=None, adopt_workflow=False, previ
             if source.is_file() and not set(relative.parts) & {'node_modules', 'dist', '.git', '.cache'}:
                 assets[Path(preview_scaffold).joinpath(relative).as_posix()] = source.read_bytes()
     assets['AGENTS.md'] = body.encode()
+    # Retire only the withdrawn stack namespace, using the previous ownership baseline.
+    # Unknown or edited files stay in place. External project guidelines are never withdrawn.
+    withdrawn = set()
+    for prefix in ('.trellis/personal/library/specs/stacks', '.trellis/spec/guides/personal/stacks'):
+        withdrawn.update(path for path in previous['files'] if path.startswith(prefix + '/'))
+        root = safe(project, prefix)
+        if root.is_dir():
+            withdrawn.update(path.relative_to(project).as_posix() for path in root.rglob('*')
+                             if path.is_file() or path.is_symlink())
+    for relative in sorted(withdrawn - assets.keys() - source_guards):
+        raw = project / relative
+        if any(path.is_symlink() for path in (raw, *raw.parents) if project == path or project in path.parents):
+            actions.append({'path': relative, 'action': 'conflict', 'reason': 'retired_stack_asset_linked'})
+            continue
+        destination = safe(project, relative)
+        if not destination.exists():
+            known.pop(relative, None)
+            continue
+        prior = prior_sources.get(relative, {})
+        source = prior.get('active_source', prior.get('source'))
+        external = bool(source and not withdrawn_source(prior))
+        tracked = previous['files'].get(relative)
+        old = destination.read_bytes() if destination.is_file() and not destination.is_symlink() else None
+        if external or not tracked or old is None or digest(old) != tracked.get('installed_sha256'):
+            actions.append({'path': relative, 'action': 'conflict',
+                            'reason': 'retired_stack_asset_modified_or_unowned' if not external else 'external_project_rule_preserved'})
+            continue
+        changes.append({'path': relative, 'before': base64.b64encode(old).decode(), 'after_sha256': None})
+        pending.append((destination, None))
+        known.pop(relative, None)
+        actions.append({'path': relative, 'action': 'removed', 'reason': 'withdrawn_stack_rule'})
+    for relative in sorted(source_guards - assets.keys()):
+        actions.append({'path': relative, 'action': 'conflict', 'reason': 'previous_project_source_preserved'})
     # Resolve every destination and conflict before changing the consumer.
     for relative, content in assets.items():
         destination = safe(project, relative)
@@ -454,8 +474,11 @@ def install(project, stacks=None, capabilities=None, adopt_workflow=False, previ
               'spec_adoption_conflicts': sorted(source_guards),
               'preview_scaffold': preview_scaffold or previous.get('preview_scaffold'),
               'selected_stacks': stacks, 'selected_capabilities': capabilities, 'database_route': database_route,
-              'unmatched_stacks': sorted({row['stack'] for row in source_report['packages'] if row['status'] != 'acquired'}),
-              'unmatched_catalog_stacks': sorted(set(stacks) - {stack for entry in data['entries'] for stack in entry.get('stacks', [])}),
+              'project_spec_review_stacks': sorted({row['stack'] for row in source_report['packages']
+                                                   if row['status'] == 'project-spec-review-required'}),
+              'unmatched_stacks': sorted({row['stack'] for row in source_report['packages']
+                                         if row['status'] not in {'acquired', 'project-spec-review-required'}}),
+              'unrecognized_stacks': sorted(set(stacks) - {row['id'] for row in definitions['stacks']}),
               'project_rules': [{'id': entry['id'], 'target': '.trellis/spec/' + entry['target']} for entry in source_entries],
               'rules': [entry['id'] for entry in entries], 'actions': actions,
               'status': 'conflicts' if any(row['action'] == 'conflict' for row in actions) else 'installed',
@@ -467,7 +490,10 @@ def install(project, stacks=None, capabilities=None, adopt_workflow=False, previ
     write(safe(project, '.trellis/personal/backups/' + revision + '.json'), json_bytes(backup))
     write(state_path, json_bytes({**report, 'status': 'installing'}))
     for destination, content in pending:
-        write(destination, content)
+        if content is None:
+            destination.unlink(missing_ok=True)
+        else:
+            write(destination, content)
     write(state_path, json_bytes(report))
     return report
 
@@ -476,12 +502,20 @@ def rollback(project, revision):
     record = load(safe(project, '.trellis/personal/backups/' + revision + '.json'))
     conflicts = []
     for row in reversed(record['changes']):
+        raw = project / row['path']
+        if any(path.is_symlink() for path in (raw, *raw.parents) if project == path or project in path.parents):
+            conflicts.append(row['path'])
+            continue
         destination = safe(project, row['path'])
+        if destination.exists() and not destination.is_file():
+            conflicts.append(row['path'])
+            continue
         current = destination.read_bytes() if destination.exists() else None
         before = base64.b64decode(row['before']) if row['before'] is not None else None
         if current == before:
             continue
-        if current is None or digest(current) != row['after_sha256']:
+        current_hash = digest(current) if current is not None else None
+        if current_hash != row['after_sha256']:
             conflicts.append(row['path'])
             continue
         if row['before'] is None:
@@ -603,7 +637,7 @@ def main():
     parser.add_argument('--stack-versions', nargs='*', default=None, metavar='STACK=VERSION',
                         help='Declare confirmed target versions; never override conflicting package facts')
     parser.add_argument('--stack-registry', help='Local stack-sources.json or gh:OWNER/REPO[/subdir]#FULL_COMMIT_SHA')
-    parser.add_argument('--offline', action='store_true', help='Use bundled rules and hash-verified source cache only')
+    parser.add_argument('--offline', action='store_true', help='Use hash-verified explicit source cache only')
     args = parser.parse_args()
     project = args.project.resolve()
     versions = None
@@ -633,7 +667,7 @@ def main():
                          versions, args.stack_registry, args.offline)
         result = {key: value for key, value in result.items() if key not in {'files', 'actions'}} | {
             'action_counts': {action: sum(row['action'] == action for row in result['actions'])
-                              for action in ['installed', 'updated', 'reused', 'conflict']}}
+                              for action in ['installed', 'updated', 'reused', 'removed', 'conflict']}}
     elif args.command == 'rollback':
         if not args.revision:
             parser.error('rollback requires --revision')

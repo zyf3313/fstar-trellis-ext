@@ -1,4 +1,4 @@
-"""Acquire data-only stack profiles, then project them into scoped draft rules."""
+"""Identify project facts and acquire explicitly selected, reviewable guidelines."""
 from datetime import datetime, timezone
 import hashlib
 import json
@@ -141,6 +141,8 @@ def validate_registry(data, root=None, remote_base=None, ref=None):
             raise ValueError('Reference documents need a maintained adaptation guide')
         if item.get('adaptation'):
             relative(item['adaptation'])
+            if remote_base and not re.fullmatch(r'[0-9a-f]{64}', item.get('adaptation_sha256', '')):
+                raise ValueError('Remote adaptation requires a SHA-256 digest')
         item['_root'], item['_remote_base'], item['_registry_ref'] = root, remote_base, ref
     return data['profiles']
 
@@ -311,7 +313,7 @@ def markdown(row, body):
         lines.append('- Raw manifest version: `' + row['raw_version'] + '` (normalization does not erase evidence).')
     lines += ['- Detection diagnostic: ' + message for message in row.get('diagnostics', [])]
     if row.get('version_state') in {'unknown', 'unbounded_or_unparseable'}:
-        lines.append('- Release compatibility remains pending; COMMON guidance does not supply a missing runtime/API version.')
+        lines.append('- Release compatibility remains pending; Acquired guidance does not supply a missing runtime/API version.')
     source = row.get('source')
     if source:
         lines += ['', '## Provenance', '', '- Profile: `' + row['profile_id'] + '` (' + row['kind'] + ')',
@@ -334,32 +336,20 @@ def resolve(project, library, catalog, detected, stacks, versions, registry, off
     except OSError as error:
         external, registry_record = [], {'locator': registry, 'state': str(error)}
         errors.append(str(error))
-    bundled = []
-    for entry in catalog['entries']:
-        if entry['category'] != 'stacks':
-            continue
-        content = io.safe(library, entry['path']).read_bytes()
-        for stack in entry['stacks']:
-            bundled.append({'id': entry['id'], 'stack': stack, 'kind': 'personal',
-                            'version_independent': entry.get('version_independent', False),
-                            'major_versions': entry.get('major_versions', []),
-                            'source': {'path': entry['path'], 'sha256': sha(content)},
-                            'license': 'personal draft; publication license pending',
-                            'coverage': entry.get('coverage', ['general conventions; project adaptation required']),
-                            'baseline_kind': entry.get('baseline_kind'),
-                            '_root': library, '_registry_ref': 'library:' + catalog['version'], '_bundled': True})
-    official = [profile for profile in validate_registry(json.loads((library / 'stack-sources.json').read_text()),
-                root=library, ref='library:' + catalog['version']) if profile['kind'] != 'personal']
-    ordered = ([profile for profile in external if profile['kind'] == 'personal'] + bundled +
-               [profile for profile in external if profile['kind'] == 'official'] + official +
+    receipts = json.loads((library / 'withdrawn-stack-sources.json').read_text())['sources']
+    withdrawn_profiles = [profile['id'] for profile in external if any(
+        row['id'] == profile['id'] and row['sha256'] == profile['source']['sha256'] for row in receipts)]
+    external = [profile for profile in external if profile['id'] not in withdrawn_profiles]
+    ordered = ([profile for profile in external if profile['kind'] == 'personal'] +
+               [profile for profile in external if profile['kind'] == 'official'] +
                [profile for profile in external if profile['kind'] == 'opensource'])
     assets, entries, rows = {}, [], []
     for facts in scopes(detected, set(stacks) | set(versions), versions):
         row = {**facts, 'attempts': [], 'source': None, 'adaptation_state': 'pending_project_review'}
         row['version_state'] = 'unknown' if not row['version'] else 'major_constrained' if major_set(row['version']) else 'unbounded_or_unparseable'
-        body = 'No compatible guideline acquired. Use focused official-source research and record unsupported contracts.'
+        body = None
         candidates = [profile for profile in ordered if profile['stack'] == row['stack']]
-        row['status'] = 'missing_source' if not candidates else 'version_unconfirmed'
+        row['status'] = 'project-spec-review-required' if not candidates else 'version_unconfirmed'
         if row.get('version_conflict'):
             row['status'] = 'version_conflict'
         elif row['declaration_conflict']:
@@ -376,6 +366,16 @@ def resolve(project, library, catalog, detected, stacks, versions, registry, off
                 try:
                     raw, record = acquire(profile, project, library, offline, io, deadline)
                     text = raw.decode('utf-8')
+                    if profile['kind'] != 'personal':
+                        if profile.get('_remote_base'):
+                            adapted, _ = cached(project, profile['_remote_base'] + quote(profile['adaptation']),
+                                                profile['adaptation_sha256'], offline, io, deadline)
+                        else:
+                            adapted = read_local(profile['_root'], profile['adaptation'])
+                            if profile.get('adaptation_sha256') and sha(adapted) != profile['adaptation_sha256']:
+                                raise ValueError('Local adaptation digest mismatch')
+                        text = adapted.decode('utf-8')
+                        row['adaptation_sha256'] = sha(adapted)
                 except (OSError, ValueError) as error:
                     row['attempts'].append({'profile_id': profile['id'], 'state': 'acquisition_failed', 'reason': str(error)})
                     row['status'] = 'acquisition_failed'
@@ -383,50 +383,51 @@ def resolve(project, library, catalog, detected, stacks, versions, registry, off
                 row.update({'status': 'acquired', 'profile_id': profile['id'], 'kind': profile['kind'],
                             'source': record, 'license': profile['license'], 'coverage': profile['coverage'],
                             'version_policy': 'version_independent' if profile.get('version_independent') else 'major_scoped'})
-                row['bundled_rule_id'] = profile['id'] if profile.get('_bundled') else None
                 row['baseline_kind'] = profile.get('baseline_kind', 'official_reference' if profile['kind'] != 'personal' else 'project_guideline')
                 row['attempts'].append({'profile_id': profile['id'], 'state': 'acquired'})
-                if profile['kind'] == 'personal':
-                    body = ('Read the bundled base guideline for this stack; this file adds package-specific facts.'
-                            if profile.get('_bundled') else text)
-                else:
-                    # The downloaded page is reference data, never a workflow or executable instruction.
-                    body = read_local(library, profile['adaptation']).decode('utf-8')
+                body = text
+                if profile['kind'] != 'personal':
                     row['reference_state'] = 'downloaded_reference_not_executable'
                 break
         if row['status'] != 'acquired':
             if row['status'] not in {'declaration_conflict', 'version_conflict'} and row['attempts']:
                 states = {attempt['state'] for attempt in row['attempts']}
                 row['status'] = next(state for state in ('acquisition_failed', 'version_unconfirmed', 'version_mismatch') if state in states)
-            row['research_query'] = row['stack'] + ' ' + (row['version'] or '') + ' official coding conventions project structure testing'
         key = sha((row['scope'] + '\0' + row['stack']).encode())[:12]
         target = 'guides/personal/stacks/' + row['stack'] + '/project-' + key + '.md'
         row['target'] = '.trellis/spec/' + target
-        assets[row['target']] = markdown(row, body)
-        entries.append({'id': 'project.' + row['stack'] + '.' + key, 'category': 'stacks', 'target': target,
-                        'title': row['stack'] + ' / ' + row['scope'], 'summary': row['status'] + ': ' + row['scope']})
+        if body is not None:
+            assets[row['target']] = markdown(row, body)
+            entries.append({'id': 'project.' + row['stack'] + '.' + key, 'category': 'stacks', 'target': target,
+                            'title': row['stack'] + ' / ' + row['scope'], 'summary': row['status'] + ': ' + row['scope']})
         rows.append(row)
     report = {'schema_version': 1, 'date': datetime.now(timezone.utc).date().isoformat(),
               'detection_diagnostics': detected.get('diagnostics', []),
               'registry': registry_record, 'offline': offline, 'registry_errors': errors, 'packages': rows,
-              'acquisition_complete': bool(rows) and not errors and all(row['status'] == 'acquired' for row in rows),
-              'adaptation_complete': False, 'adaptation_state': 'pending_project_review'}
-    report['state'] = 'acquired' if report['acquisition_complete'] else 'incomplete' if rows else 'stack_undetermined'
+              'withdrawn_profiles': withdrawn_profiles,
+              'acquisition_complete': any(row['status'] == 'acquired' for row in rows) and not errors and
+                  all(row['status'] in {'acquired', 'project-spec-review-required'} for row in rows),
+              'project_spec_complete': False,
+              'adaptation_complete': False, 'adaptation_state': 'project-spec-review-required'}
+    failed = errors or any(row['status'] not in {'acquired', 'project-spec-review-required'} for row in rows)
+    report['state'] = 'incomplete' if failed else 'acquired' if report['acquisition_complete'] else 'project-spec-review-required'
     return report, assets, entries
 
 
 def chinese_report(report):
-    labels = {'acquired': '已获取，待项目核对', 'missing_source': '未命中来源', 'version_unconfirmed': '版本待确定',
+    labels = {'acquired': '已获取，待项目核对', 'project-spec-review-required': '项目规范待审核沉淀', 'version_unconfirmed': '版本待确定',
               'version_mismatch': '版本不匹配', 'acquisition_failed': '获取受限', 'declaration_conflict': '声明与项目版本冲突',
               'version_conflict': '同包清单版本冲突'}
-    states = {'acquired': '已获取', 'incomplete': '仍有缺口', 'stack_undetermined': '技术栈待确定'}
+    states = {'acquired': '显式来源已获取', 'incomplete': '仍有缺口', 'project-spec-review-required': '项目规范待审核沉淀'}
     lines = ['# 技术栈规范来源与适配记录', '', '> 获取状态：' + states[report['state']] + '；适配状态：待 AI 核对项目源码。', '',
              '| 技术栈 | 包/层 | 版本证据 | 获取结果 | 规范 |', '|---|---|---|---|---|']
     for row in report['packages']:
-        label = '保留原规范；新候选待处理' if row.get('candidate') else labels[row['status']]
+        label = '保留原规范；来源修复待处理' if row.get('adoption_state') == 'preserved_previous_rule' else labels[row['status']]
         target = row.get('candidate', row['target'])
+        link = ('[查看候选规范](../' + target.removeprefix('.trellis/') + ')' if
+                row['status'] == 'acquired' or row.get('adoption_state') == 'preserved_previous_rule' else '尚无项目规范')
         lines.append('| ' + row['stack'] + ' | `' + row['scope'] + '` | `' + (row['version'] or '未确定').replace('|', '\\|') +
-                     '` | ' + label + ' | [查看规范](../' + target.removeprefix('.trellis/') + ') |')
+                     '` | ' + label + ' | ' + link + ' |')
     lines += ['', '## 来源与缺口', '']
     if not report['packages']:
         lines.append('- 空白项目尚未声明技术栈。先讨论选型，再用 --stacks / --stack-versions 查询。')
@@ -440,10 +441,12 @@ def chinese_report(report):
             if attempt['state'] != 'acquired':
                 lines.append('- ' + attempt['profile_id'] + '：' + attempt['state'] + ('；' + attempt['reason'] if attempt.get('reason') else '') + '。')
         if row.get('version_state') in {'unknown', 'unbounded_or_unparseable'}:
-            lines.append('- ' + row['stack'] + ' / ' + row['scope'] + '：版本未完全确定；COMMON 获取成功仅提供共性机制，发布版本/API 兼容仍待核对。')
+            lines.append('- ' + row['stack'] + ' / ' + row['scope'] + '：版本未完全确定，发布版本/API 兼容待核对。')
     lines.extend('- 检测诊断：' + message for message in report.get('detection_diagnostics', []))
     lines.extend('- 个人 registry：' + error for error in report['registry_errors'])
-    lines += ['', '获取和摘要验证通过不等于项目工程适配完成。AI 需核对真实目录、模块/接口、错误和测试入口，补充本地调整及验证证据；已有规范优先保留。',
+    lines.extend('- 已撤销旧来源：' + profile for profile in report.get('withdrawn_profiles', []))
+    lines += ['', '默认只安装通用资产，不下载栈规范或生成通用草案。项目规范须从既有约束、真实源码和确认架构中审核沉淀；未来具体规范留在项目内。',
+              '显式来源获取和摘要验证不等于项目工程适配完成。AI 需核对真实目录、模块/接口、错误和测试入口，补充本地调整及验证证据；已有规范优先保留。',
               '数据库驱动版本不能当作数据库服务端版本；未发现的命令不伪造。初始化不执行下载资料中的代码或修改应用依赖。', '']
     return '\n'.join(lines).encode()
 

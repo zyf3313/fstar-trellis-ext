@@ -2,19 +2,9 @@
 
 本库许可证尚未选择；本地候选不代表对外分发许可。此账本不为本库指定许可证，也不替代发布前的完整许可审阅。第三方工具二进制、模型与 node_modules 不随候选交付。
 
-## 固定的官方文档来源
+## 技术栈来源边界
 
-身份、commit、内容/许可摘要来自 [official-sources.lock.json](official-sources.lock.json)。随包是适配规则与引用；官方资料按需下载，完整缓存不分发。不从项目名称推定许可类型。
-
-| profile | 固定 ref | 原文 | 许可/归属入口 |
-|---|---|---|---|
-| official.react.common | `046f17d04295ba047bb5739026b4ac3110f17028` | [固定源码](https://raw.githubusercontent.com/reactjs/react.dev/046f17d04295ba047bb5739026b4ac3110f17028/src/content/learn/thinking-in-react.md) | [锁定许可入口](https://raw.githubusercontent.com/reactjs/react.dev/046f17d04295ba047bb5739026b4ac3110f17028/LICENSE-DOCS.md) |
-| official.go.common | `575a6925e2d55ad160ed77f402bfaa4ec7458749` | [固定源码](https://raw.githubusercontent.com/golang/website/575a6925e2d55ad160ed77f402bfaa4ec7458749/_content/doc/effective_go.html) | [锁定许可入口](https://raw.githubusercontent.com/golang/website/575a6925e2d55ad160ed77f402bfaa4ec7458749/LICENSE) |
-| official.rust.common | `1500248d8f230566e4ec9f27fcbb8fe9e2898ab1` | [固定源码](https://raw.githubusercontent.com/rust-lang/book/1500248d8f230566e4ec9f27fcbb8fe9e2898ab1/src/ch04-01-what-is-ownership.md) | [锁定许可入口](https://raw.githubusercontent.com/rust-lang/book/1500248d8f230566e4ec9f27fcbb8fe9e2898ab1/LICENSE-MIT) |
-| official.javascript.common | `19370346042efad9e179fbf1f55deeeadee98c40` | [固定源码](https://raw.githubusercontent.com/mdn/content/19370346042efad9e179fbf1f55deeeadee98c40/files/en-us/web/javascript/guide/index.md) | [锁定许可入口](https://raw.githubusercontent.com/mdn/content/19370346042efad9e179fbf1f55deeeadee98c40/LICENSE.md) |
-| official.python.common | `193d435ad52b993d7ab2b133d543dd6b78fbcfbd` | [固定源码](https://raw.githubusercontent.com/python/peps/193d435ad52b993d7ab2b133d543dd6b78fbcfbd/peps/pep-0008.rst) | [锁定许可入口](https://raw.githubusercontent.com/python/peps/193d435ad52b993d7ab2b133d543dd6b78fbcfbd/peps/pep-0008.rst) |
-| official.typescript.common | `6556b08756b766fd41d0f887174cb0b042e5f72c` | [固定源码](https://raw.githubusercontent.com/microsoft/TypeScript-Website/6556b08756b766fd41d0f887174cb0b042e5f72c/packages/documentation/copy/en/handbook-v2/Everyday%20Types.md) | [锁定许可入口](https://raw.githubusercontent.com/microsoft/TypeScript-Website/6556b08756b766fd41d0f887174cb0b042e5f72c/LICENSE) |
-| official.vue.common | `40aa88af0094f7bab4aaf786e55c748a6a251d88` | [固定源码](https://raw.githubusercontent.com/vuejs/docs/40aa88af0094f7bab4aaf786e55c748a6a251d88/src/guide/introduction.md) | [锁定许可入口](https://raw.githubusercontent.com/vuejs/docs/40aa88af0094f7bab4aaf786e55c748a6a251d88/LICENSE) |
+未沉淀技术栈规则和七个官方 profile/adaptation 已删除。默认不下载或分发这些官方规范；[来源锁](official-sources.lock.json)保留空 profiles 协议。用户显式选择的来源须另记 ref/hash/许可与项目审核，缓存不分发。[撤销回执](withdrawn-stack-sources.json)仅记录旧身份/摘要供升级保护，不保留获取链接或旧规范。
 
 ## 安装时下载的工具
 
@@ -52,4 +42,4 @@
 
 ## 引用与随包内容边界
 
-技术栈规范的官方链接是工程依据，不表示复制整个项目。工作流沿用 Trellis 固定标题/Phase Index 结构；原生 CLI 单独安装，官方 [mindfold-ai/Trellis](https://github.com/mindfold-ai/Trellis) 发布包许可另核对。Figma/MasterGo 的名称与导入兼容性不是本库授权，真实平台反馈单列。获取到的完整文档/许可缓存、工具凭证和消费项目设计不分发。
+技术栈识别元数据不构成工程规范。工作流沿用 Trellis 固定标题/Phase Index 结构；原生 CLI 单独安装，官方 [mindfold-ai/Trellis](https://github.com/mindfold-ai/Trellis) 发布包许可另核对。Figma/MasterGo 的名称与导入兼容性不是本库授权，真实平台反馈单列。获取到的完整文档/许可缓存、工具凭证和消费项目设计不分发。

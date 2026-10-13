@@ -19,7 +19,7 @@ Use Trellis brainstorm and `personal-design`. Clarify scope, non-goals and obser
 #### 1.2 Research `[optional · repeatable]`
 For new projects, large work or key choices use `personal-project-explore`. The tools/exploration/usage.md rule owns routing and adjustable budgets: explicit source/provider first, reuse capabilities/evidence, fill selected gaps on demand. Verify focused originals/source and save Chinese adoption/fit decisions linked to PRD/TDD/UI. Completion covers selected capabilities; `not_requested` sources do not block it, selected unavailable requirements remain pending/restricted. Report actual client loading separately.
 #### 1.3 Configure context `[required · once]`
-Select only applicable package/layer/stacks/capabilities. Inline execution skips subagent JSONL curation; dispatch platforms curate required manifests.
+Select only applicable package/layer/capabilities. Stack facts route tools; they do not load bundled stack rules. Default adoption leaves project-spec-review-required; derive concrete specs in the project or review explicit --stack-registry candidates. Inline execution skips subagent JSONL curation; dispatch platforms curate required manifests.
 #### 1.4 Activate task `[required · once]`
 Present Chinese PRD and TDD; UI projects first confirm global language/shell and affected interactions. Freeze covered versions and actual user confirmation. Start only after approval of the latest reviewed design. Carry that authorization through routine work.
 

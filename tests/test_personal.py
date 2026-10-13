@@ -40,7 +40,7 @@ class InstallBehaviorTest(unittest.TestCase):
         self.assertEqual(result['detected']['stacks'], ['java', 'javascript', 'maven', 'spring', 'typescript', 'vue'])
         self.assertIn('tools.database.usage', result['rules'])
         self.assertIn('engineering.frontend.interaction', result['rules'])
-        self.assertIn('stacks.mysql', result['rules'])
+        self.assertFalse(any(rule.startswith('stacks.') for rule in result['rules']))
         self.assertNotIn('stacks.python', result['rules'])
         self.assertEqual(result['detected']['packages'][1]['versions']['vue'], '3.5.0')
 
@@ -55,7 +55,7 @@ class InstallBehaviorTest(unittest.TestCase):
     def test_declared_database_on_blank_project_enables_database_rules(self):
         result = personal.install(self.project, stacks=['python', 'sqlite'])
         self.assertIn('tools.database.usage', result['rules'])
-        self.assertIn('stacks.sqlite', result['rules'])
+        self.assertEqual(result['spec_sources_state'], 'project-spec-review-required')
         self.assertEqual(result['detected']['stack_state'], 'undetermined')
 
     def test_repeated_install_is_idempotent(self):
@@ -65,6 +65,15 @@ class InstallBehaviorTest(unittest.TestCase):
         self.assertTrue(all(row['action'] == 'reused' for row in second['actions']))
         self.assertEqual(self.project.joinpath('AGENTS.md').read_text().count('PERSONAL_TRELLIS:START'), 1)
         self.assertEqual(first['rules'], second['rules'])
+
+    def test_review_required_stack_is_not_reported_as_source_or_catalog_failure(self):
+        result = personal.install(self.project, stacks=['java', 'vue', 'sqlite', 'elixir'], offline=True)
+        self.assertEqual(result['status'], 'installed')
+        self.assertEqual(result['unmatched_stacks'], [])
+        self.assertNotIn('unmatched_catalog_stacks', result)
+        self.assertEqual(result['unrecognized_stacks'], ['elixir'])
+        self.assertEqual(result['project_spec_review_stacks'], ['elixir', 'java', 'sqlite', 'vue'])
+        self.assertEqual(result['spec_sources_state'], 'project-spec-review-required')
 
     def test_local_edits_are_preserved_and_candidate_is_rollback_owned(self):
         personal.install(self.project)
@@ -139,14 +148,88 @@ class InstallBehaviorTest(unittest.TestCase):
         self.assertEqual(rolled['status'], 'conflicts')
         self.assertEqual(target.read_text(), '# Change after install\n')
 
+    def old_managed_stack(self, relative, content='# Old managed rule\n'):
+        target = self.make(relative, content)
+        state = self.project / '.trellis/personal/install.json'
+        data = json.loads(state.read_text())
+        data['files'][relative] = {'installed_sha256': personal.digest(target.read_bytes()), 'library_version': '1.0.0'}
+        state.write_text(json.dumps(data))
+        return target
+
+    def test_retirement_removes_only_unchanged_owned_files_and_restores_backup(self):
+        personal.install(self.project)
+        paths = ['.trellis/spec/guides/personal/stacks/vue/index.md',
+                 '.trellis/personal/library/specs/stacks/vue/index.md']
+        owned = [self.old_managed_stack(path) for path in paths]
+        edited = self.old_managed_stack('.trellis/spec/guides/personal/stacks/vue/edited.md')
+        edited.write_text('# Project edit\n')
+        added = self.make('.trellis/spec/guides/personal/stacks/vue/team.md', '# Added locally\n')
+        result = personal.install(self.project, offline=True)
+        self.assertEqual({a['path'] for a in result['actions'] if a['action'] == 'removed'}, set(paths))
+        self.assertTrue(all(not path.exists() for path in owned))
+        self.assertEqual(edited.read_text(), '# Project edit\n')
+        self.assertEqual(added.read_text(), '# Added locally\n')
+        self.assertEqual(result['status'], 'conflicts')
+        self.assertFalse(any(a['action'] == 'removed' for a in personal.install(self.project)['actions']))
+        self.assertEqual(personal.rollback(self.project, result['revision'])['status'], 'rolled_back')
+        self.assertTrue(all(path.read_text() == '# Old managed rule\n' for path in owned))
+
+    def test_retirement_rollback_preserves_recreated_file_and_is_repeatable(self):
+        personal.install(self.project)
+        relative = '.trellis/spec/guides/personal/stacks/python/index.md'
+        target = self.old_managed_stack(relative)
+        result = personal.install(self.project)
+        self.assertFalse(target.exists())
+        target.write_text('# Recreated after retirement\n')
+        rolled = personal.rollback(self.project, result['revision'])
+        self.assertIn(relative, rolled['conflicts'])
+        self.assertEqual(target.read_text(), '# Recreated after retirement\n')
+        target.unlink()
+        self.assertEqual(personal.rollback(self.project, result['revision'])['status'], 'rolled_back')
+        self.assertEqual(target.read_text(), '# Old managed rule\n')
+
+    def test_default_install_never_fetches_or_generates_stack_rules(self):
+        for stacks in ([], ['python', 'sqlite'], ['vue'], ['elixir']):
+            with self.subTest(stacks=stacks), patch.object(personal.stack_sources, 'fetch', side_effect=AssertionError('unexpected fetch')):
+                result = personal.install(self.project, stacks=stacks, offline=False)
+                self.assertEqual(result['spec_sources_state'], 'project-spec-review-required')
+                self.assertEqual(result['project_rules'], [])
+                self.assertFalse((self.project / '.trellis/spec/guides/personal/stacks').exists())
+                report = json.loads((self.project / '.trellis/personal/spec-sources.json').read_text())
+                self.assertFalse(report['project_spec_complete'])
+                self.assertFalse(report['adaptation_complete'])
+                self.assertFalse((self.project / '.trellis/personal/library/specs/stacks').exists())
+
+    def test_remembered_old_registry_cannot_reintroduce_withdrawn_profile(self):
+        personal.install(self.project)
+        receipt = next(row for row in json.loads((self.library / 'withdrawn-stack-sources.json').read_text())['sources']
+                       if row['id'] == 'stacks.vue')
+        target = self.old_managed_stack('.trellis/spec/guides/personal/stacks/vue/project-old.md')
+        registry = self.make('old-registry/stack-sources.json', json.dumps({'schema_version': 1, 'profiles': [{
+            'id': receipt['id'], 'stack': 'vue', 'kind': 'personal', 'major_versions': [3],
+            'license': 'old candidate', 'coverage': ['withdrawn'],
+            'source': {'path': 'missing-old-rule.md', 'sha256': receipt['sha256']}
+        }]}))
+        state_path = self.project / '.trellis/personal/install.json'
+        state = json.loads(state_path.read_text())
+        state.update({'stack_registry': str(registry), 'declared_stacks': ['vue'], 'stack_versions': {'vue': '3.5'}})
+        state_path.write_text(json.dumps(state))
+        with patch.object(personal.stack_sources, 'fetch', side_effect=AssertionError('withdrawn sources must not fetch')):
+            result = personal.install(self.project)
+        self.assertEqual(result['project_rules'], [])
+        self.assertFalse(target.exists())
+        report = json.loads((self.project / '.trellis/personal/spec-sources.json').read_text())
+        self.assertIn(receipt['id'], report['withdrawn_profiles'])
+        self.assertEqual(result['spec_sources_state'], 'project-spec-review-required')
+
     def test_optional_dependency_cycle_and_path_escape_are_rejected(self):
         data = json.loads((self.library / 'catalog.json').read_text())
-        row = next(row for row in data['entries'] if row['id'] == 'stacks.vue')
-        row['depends_on'].append('stacks.vue')
+        row = next(row for row in data['entries'] if row['id'] == 'tools.ui-design')
+        row['depends_on'].append('tools.ui-design')
         (self.library / 'catalog.json').write_text(json.dumps(data))
         with self.assertRaises(ValueError):
             personal.validate()
-        row['depends_on'].remove('stacks.vue')
+        row['depends_on'].remove('tools.ui-design')
         row['path'] = '../outside.md'
         (self.library / 'catalog.json').write_text(json.dumps(data))
         with self.assertRaises(ValueError):

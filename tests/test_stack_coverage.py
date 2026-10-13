@@ -44,9 +44,9 @@ class StackCoverageTest(unittest.TestCase):
         self.assertEqual(set(rows), expected)
         self.assertEqual([group['count'] for group in coverage['groups']], [15, 8, 10, 6, 6, 4, 4])
         for stack in ('react', 'go', 'rust'):
-            self.assertEqual(rows[stack]['coverage_state'], 'official_acquisition')
-            self.assertTrue(all(profile['kind'] == 'official' for profile in rows[stack]['profiles']))
-        self.assertIn('stacks.vue.legacy-v2', {profile['id'] for profile in rows['vue']['profiles']})
+            self.assertEqual(rows[stack]['coverage_state'], 'identification_only')
+            self.assertEqual(rows[stack]['profiles'], [])
+        self.assertEqual(rows['vue']['profiles'], [])
 
     def test_npm_framework_orm_and_ui_detection_uses_exact_dependency_names(self):
         self.npm({'next': '15.3.0', 'nuxt': '3.16.0', '@angular/core': '19.0.0', 'svelte': '5.0.0',
@@ -102,8 +102,8 @@ class StackCoverageTest(unittest.TestCase):
         self.make('api/pom.xml', '<project xmlns="http://maven.apache.org/POM/4.0.0"><parent><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-parent</artifactId><version>2.7.18</version></parent><properties><java.version>1.8</java.version></properties></project>')
         self.make('web/package.json', json.dumps({'dependencies': {'vue':'2.7.16'}}))
         result = personal.install(self.project, offline=True)
-        self.assertEqual(result['spec_sources_state'], 'acquired')
-        self.assertTrue({'stacks.vue.legacy-v2','stacks.spring.legacy-v2','stacks.java'} <= set(result['rules']))
+        self.assertEqual(result['spec_sources_state'], 'project-spec-review-required')
+        self.assertFalse(any(rule.startswith('stacks.') for rule in result['rules']))
         self.assertNotIn('stacks.vue', result['rules'])
         self.assertNotIn('stacks.spring', result['rules'])
         row = result['detected']['packages'][0]
@@ -114,11 +114,11 @@ class StackCoverageTest(unittest.TestCase):
         self.npm({'vue':'workspace:*'})
         result = personal.install(self.project, offline=True)
         self.assertFalse({'stacks.vue','stacks.vue.legacy-v2'} & set(result['rules']))
-        self.assertEqual(result['spec_sources_state'], 'incomplete')
+        self.assertEqual(result['spec_sources_state'], 'project-spec-review-required')
         self.npm({'vue':'4.0.0'})
         report, _, _ = personal.query_stacks(self.project, offline=True)
         row = next(row for row in report['packages'] if row['stack']=='vue')
-        self.assertEqual(row['status'], 'version_mismatch')
+        self.assertEqual(row['status'], 'project-spec-review-required')
 
     def test_python_multiline_dependencies_and_pep_name_normalization(self):
         self.make('pyproject.toml', '[project]\nrequires-python=">=3.10,<4"\ndependencies=[\n "FastAPI>=0.110",\n "SQLAlchemy>=2.0",\n "psycopg2_binary==2.9.0",\n]\n[project.optional-dependencies]\nadmin=["Django==5.2", "Flask==3.1"]\n')
@@ -137,9 +137,9 @@ class StackCoverageTest(unittest.TestCase):
         self.npm({'express':'workspace:*'})
         report, assets, _ = personal.query_stacks(self.project, offline=True)
         row = next(row for row in report['packages'] if row['stack']=='express')
-        self.assertEqual(row['status'], 'acquired')
+        self.assertEqual(row['status'], 'project-spec-review-required')
         self.assertEqual(row['version_state'], 'unbounded_or_unparseable')
-        self.assertIn(b'Release compatibility remains pending', assets[row['target']])
+        self.assertEqual(assets, {})
 
     def test_dotnet_sdk_target_framework_and_csharp_version_are_distinct(self):
         self.make('api.csproj', '<Project Sdk="Microsoft.NET.Sdk.Web"><PropertyGroup><TargetFrameworks>net8.0;net9.0</TargetFrameworks><LangVersion>12.0</LangVersion></PropertyGroup><ItemGroup><PackageReference Include="Npgsql" Version="8.0.0"/></ItemGroup></Project>')
@@ -273,7 +273,7 @@ class StackCoverageTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'Invalid marker'):
             stack_definitions.load(library)
         data['stacks'][0]['markers'][0]['version'] = True
-        data['stacks'][0]['summary_zh'] += ' changed'
+        data['stacks'][0]['detection_zh'] += ' changed'
         path.write_text(json.dumps(data))
         with patch.object(personal, 'LIBRARY', library):
             with self.assertRaisesRegex(ValueError, 'Stale generated coverage'):
@@ -291,7 +291,7 @@ class StackCoverageTest(unittest.TestCase):
         self.make('.trellis/config.yaml', 'codex:\n  dispatch_mode: inline\n')
         self.make('AGENTS.md','Consumer policy: preserve this.\n')
         result = personal.install(self.project, offline=True)
-        self.assertEqual(result['spec_sources_state'], 'acquired')
+        self.assertEqual(result['spec_sources_state'], 'project-spec-review-required')
         helper = self.project/'.trellis/personal/personal.py'
         for command in ('detect','query-stacks','list-stacks','validate'):
             argv = [sys.executable,str(helper),command,'--project',str(self.project)]

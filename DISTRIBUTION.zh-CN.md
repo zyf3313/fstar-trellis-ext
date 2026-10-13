@@ -26,6 +26,8 @@ shasum -a 256 -c personal-trellis-1.0.0-local-candidate.zip.sha256
 
 ## 本地安装、更新、冲突与回滚
 
+当前候选含四类 24 条规则，不含旧 59 份栈文件及默认官方 profile。53 入口仅识别事实/路由；默认安装无栈草案或网络获取，返回 project-spec-review-required。显式来源获取与真实项目规范沉淀分开。旧受管理栈文件只有当前摘要等于安装基线才清除；编辑/新增/不明文件保留并报告。删除纳入 revision 备份，回滚不覆盖随后重建/修改的文件。历史 252 文件及 31 项私有验收属于旧版固定提交，不作为本次新候选证据。
+
 以下流程在隔离消费目标执行。先核验归档，再解包，固定使用解包后的 library；本地路径仅用于 helper，不能传给原生 registry：
 
 ```sh
@@ -72,7 +74,7 @@ git clone --no-checkout git@github.com:zyf3313/personal-trellis.git /path/to/per
 git -C /path/to/personal-trellis checkout --detach FIXED_COMMIT
 git -C /path/to/personal-trellis rev-parse HEAD
 python3 /path/to/personal-trellis/scripts/personal.py validate
-python3 /path/to/personal-trellis/scripts/personal.py install --project /path/to/project --stack-registry /path/to/personal-trellis/stack-sources.json
+python3 /path/to/personal-trellis/scripts/personal.py install --project /path/to/project
 ```
 
 核对 HEAD 与选定 SHA 一致后运行 helper。显式 `--adopt-workflow` 才选择个人工作流并备份原文，否则保留已有未管理工作流并生成候选。helper 升级使用新固定提交的 `install`，沿用上节基线/本地/目标比较、`.new.<hash>` 冲突与 revision 回滚；原生追加、工作流候选和 helper 升级是三个独立验收，不能通过整目录覆盖代替。

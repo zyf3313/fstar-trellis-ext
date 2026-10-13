@@ -69,7 +69,7 @@
     },
     {
       "path": "guides/personal/process/bootstrap.md",
-      "sha256": "e959a6df44f629be9a791f1acfb31967eacae2685af0f03793a9621854ce4b47"
+      "sha256": "843603a85036717c6c68d14cc3b7444a77df84e3f1de32b9b2b7b8764fa013a9"
     },
     {
       "path": "guides/personal/process/change-control.md",
@@ -97,7 +97,7 @@
     },
     {
       "path": "guides/personal/process/stack-sourcing.md",
-      "sha256": "6e230d77e838b02d7f6de06cc27d90beb3c2eefc3c8929378af2b8adb773a4f7"
+      "sha256": "51f16b34c3d8ce07e064df64c2fada645333b57231cf0fd765cbb8ded064e860"
     },
     {
       "path": "guides/personal/process/ui-design.md",
@@ -125,10 +125,10 @@
     }
   ],
   "source_hashes": {
-    "catalog.json": "81a9e3b30aa57b1285e2d94450f972233b12f252d8ca9f360f277d8ab9aba454",
+    "catalog.json": "7650c74e82201b1ac4b7dcdb75fa70fd55f746f0a59032151b0027dfbee2d985",
     "stack-definitions.json": "df7311c9de159c60d6af946b5f5f979304995d1962dbd59c8b06e0aa7c99a328",
-    "official-sources.lock.json": "3a867824693724b4cdcd37e2fc09cd098209d78e54f389a6582eb96c3124740a",
-    "stack-sources.json": "184451ddd6e60d5fb35af14fe3e2bf0298b57b4e12a01e1d18c695300a22450d",
-    "STACKS.zh-CN.md": "c4cde1f7468ec00e4e07368a188a3a31c172d8e02c2525a226ac4a37b9f728e6"
+    "official-sources.lock.json": "4dfaa8e5ed9db3f50cfbe62f9ec06603e87c6ce9a22fff5741629a578b4c1111",
+    "stack-sources.json": "4dfaa8e5ed9db3f50cfbe62f9ec06603e87c6ce9a22fff5741629a578b4c1111",
+    "STACKS.zh-CN.md": "76cef9b6870f4918a9c0be54df983104e48bccd43c68390942c4622d88721baa"
   }
 }

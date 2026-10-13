@@ -52,11 +52,11 @@ class StackSourceTest(unittest.TestCase):
 
     def official_go(self):
         raw = b'# Official Go reference\nGo source conventions.\n'
-        path = self.library / 'stack-sources.json'
-        data = json.loads(path.read_text())
-        row = next(row for row in data['profiles'] if row['stack'] == 'go')
-        row['source']['sha256'] = personal.digest(raw)
-        path.write_text(json.dumps(data))
+        self.registry, profile = self.local_registry(stack='go', major=1)
+        (self.registry.parent / 'adaptation.md').write_text('# Reviewed team Go adaptation\nGoroutines follow the real module ownership contract.\n')
+        profile.update({'kind':'official', 'adaptation':'adaptation.md',
+                        'source': {'url':'https://example.com/go-reference','ref':'fixed-fixture', 'sha256':personal.digest(raw)}})
+        self.registry.write_text(json.dumps({'schema_version':1,'profiles':[profile]}))
         self.make('service/go.mod', 'module fixture\n\ngo 1.24.0\n')
         return raw
 
@@ -80,28 +80,29 @@ class StackSourceTest(unittest.TestCase):
         path, _ = self.local_registry(major=2, body='# Vue 2 legacy-only rule\n')
         report, assets, _ = personal.query_stacks(self.project, registry=str(path), offline=True)
         row = next(row for row in report['packages'] if row['stack'] == 'vue')
-        self.assertEqual(row['profile_id'], 'stacks.vue')
+        self.assertEqual(row['status'], 'version_mismatch')
         self.assertEqual(row['attempts'][0]['state'], 'version_mismatch')
-        self.assertNotIn(b'legacy-only', assets[row['target']])
+        self.assertEqual(assets, {})
+        self.assertEqual(report['state'], 'incomplete')
 
     def test_official_fallback_fetches_once_and_reuses_verified_cache_offline(self):
         raw = self.official_go()
         with patch.object(sources, 'fetch', return_value=raw) as request:
-            report, assets, _ = personal.query_stacks(self.project)
+            report, assets, _ = personal.query_stacks(self.project, registry=str(self.registry))
         row = report['packages'][0]
         self.assertEqual(request.call_count, 1)
         self.assertEqual(row['kind'], 'official')
         self.assertEqual(row['source']['transport'], 'https_verified')
         self.assertIn(b'Goroutines'.lower(), assets[row['target']].lower())
         with patch.object(sources, 'fetch', side_effect=AssertionError('offline must not fetch')):
-            repeat, _, _ = personal.query_stacks(self.project, offline=True)
+            repeat, _, _ = personal.query_stacks(self.project, registry=str(self.registry), offline=True)
         self.assertTrue(repeat['acquisition_complete'])
         self.assertEqual(repeat['packages'][0]['source']['transport'], 'verified_cache')
 
     def test_offline_without_cache_preserves_explicit_gap(self):
         self.official_go()
         with patch.object(sources, 'fetch', side_effect=AssertionError('offline must not fetch')):
-            report, _, _ = personal.query_stacks(self.project, offline=True)
+            report, _, _ = personal.query_stacks(self.project, registry=str(self.registry), offline=True)
         self.assertFalse(report['acquisition_complete'])
         self.assertEqual(report['packages'][0]['status'], 'acquisition_failed')
         self.assertIn('offline_cache_miss', report['packages'][0]['attempts'][0]['reason'])
@@ -109,47 +110,43 @@ class StackSourceTest(unittest.TestCase):
     def test_modified_reference_and_wrong_download_hash_are_rejected(self):
         raw = self.official_go()
         with patch.object(sources, 'fetch', return_value=b'wrong data'):
-            report, _, _ = personal.query_stacks(self.project)
+            report, _, _ = personal.query_stacks(self.project, registry=str(self.registry))
         self.assertFalse(report['acquisition_complete'])
         with patch.object(sources, 'fetch', return_value=raw):
-            report, _, _ = personal.query_stacks(self.project)
+            report, _, _ = personal.query_stacks(self.project, registry=str(self.registry))
         cache = self.project / report['packages'][0]['source']['cache_path']
         cache.write_text('locally modified')
         with patch.object(sources, 'fetch', side_effect=AssertionError('must preserve modified cache')):
-            report, _, _ = personal.query_stacks(self.project, offline=True)
+            report, _, _ = personal.query_stacks(self.project, registry=str(self.registry), offline=True)
         self.assertIn('Cached source was modified', report['packages'][0]['attempts'][0]['reason'])
 
     def test_unknown_stack_and_blank_project_do_not_invent_rules_or_commands(self):
-        report, assets, _ = personal.query_stacks(self.project, ['elixir'], offline=True)
+        with patch.object(sources, 'fetch', side_effect=AssertionError('default must not fetch')):
+            report, assets, entries = personal.query_stacks(self.project, ['elixir'], offline=True)
+            empty, empty_assets, _ = personal.query_stacks(self.project, offline=True)
         row = report['packages'][0]
-        self.assertEqual(row['status'], 'missing_source')
+        self.assertEqual(row['status'], 'project-spec-review-required')
         self.assertIsNone(row['manifest'])
         self.assertEqual(row['commands'], [])
-        self.assertIn('official coding conventions', row['research_query'])
-        self.assertNotIn(b'passed', assets[row['target']])
-        empty, _, _ = personal.query_stacks(self.project, offline=True)
-        self.assertEqual(empty['state'], 'stack_undetermined')
+        self.assertEqual((assets, entries, empty_assets), ({}, [], {}))
+        self.assertEqual(empty['state'], 'project-spec-review-required')
+        self.assertFalse(empty['project_spec_complete'])
 
     def test_vue_two_cannot_install_vue_three_baseline(self):
         self.vue(version='2.7.16')
         result = personal.install(self.project, offline=True)
-        report = json.loads((self.project / '.trellis/personal/spec-sources.json').read_text())
-        row = next(row for row in report['packages'] if row['stack'] == 'vue')
-        self.assertEqual(row['status'], 'acquired')
-        self.assertEqual(row['profile_id'], 'stacks.vue.legacy-v2')
-        self.assertEqual(result['spec_sources_state'], 'acquired')
-        self.assertIn('stacks.vue.legacy-v2', result['rules'])
-        self.assertNotIn('stacks.vue', result['rules'])
-        self.assertFalse((self.project / '.trellis/spec/guides/personal/stacks/vue/index.md').exists())
+        self.assertEqual(result['spec_sources_state'], 'project-spec-review-required')
+        self.assertFalse(any(rule.startswith('stacks.') for rule in result['rules']))
+        self.assertFalse((self.project / '.trellis/spec/guides/personal/stacks').exists())
 
     def test_multistack_version_scopes_stay_distinct(self):
         self.vue('legacy', '2.7.16')
         self.vue('modern', '3.5.0')
         report, assets, entries = personal.query_stacks(self.project, offline=True)
         vue_rows = [row for row in report['packages'] if row['stack'] == 'vue']
-        self.assertEqual(len({row['target'] for row in vue_rows}), 2)
-        self.assertEqual({row['scope']: row['status'] for row in vue_rows}, {'legacy': 'acquired', 'modern': 'acquired'})
-        self.assertEqual(len({entry['id'] for entry in entries}), len(entries))
+        self.assertEqual({row['scope']: row['version'] for row in vue_rows}, {'legacy': '2.7.16', 'modern': '3.5.0'})
+        self.assertTrue(all(row['status'] == 'project-spec-review-required' for row in vue_rows))
+        self.assertEqual((assets, entries), ({}, []))
 
     def test_lock_version_and_configured_commands_are_evidence_without_execution(self):
         self.vue(version='>=2')
@@ -189,7 +186,7 @@ class StackSourceTest(unittest.TestCase):
         self.make('pyproject.toml', '[project]\nrequires-python=">=3.10"\n')
         report, _, _ = personal.query_stacks(self.project, versions={'python': '3.12.0'}, offline=True)
         self.assertEqual(report['packages'][0]['version'], '3.12.0')
-        self.assertEqual(report['packages'][0]['status'], 'acquired')
+        self.assertEqual(report['packages'][0]['status'], 'project-spec-review-required')
         bad, _, _ = personal.query_stacks(self.project, versions={'python': '3.9.0'}, offline=True)
         self.assertEqual(bad['packages'][0]['status'], 'declaration_conflict')
 
@@ -222,9 +219,10 @@ class StackSourceTest(unittest.TestCase):
 
     def test_missing_remote_registry_can_continue_with_local_rules_but_is_incomplete(self):
         self.vue()
-        report, _, _ = personal.query_stacks(self.project, registry='gh:team/rules#' + 'b' * 40, offline=True)
+        report, assets, _ = personal.query_stacks(self.project, registry='gh:team/rules#' + 'b' * 40, offline=True)
         self.assertFalse(report['acquisition_complete'])
-        self.assertEqual(report['packages'][1]['profile_id'], 'stacks.vue')
+        self.assertEqual(assets, {})
+        self.assertEqual(report['state'], 'incomplete')
         self.assertIn('offline_registry_cache_miss', report['registry_errors'])
 
     def test_bad_paths_credentials_and_schema_fail_before_asset_install(self):
@@ -245,7 +243,7 @@ class StackSourceTest(unittest.TestCase):
         io = type('IO', (), {'safe': staticmethod(personal.safe), 'write': staticmethod(personal.write)})
         with patch.object(sources, 'fetch', side_effect=AssertionError('deadline exhausted')):
             report, _, _ = sources.resolve(self.project, self.library, personal.catalog(), personal.detect(self.project),
-                                           ['go'], {}, None, False, io, budget=0)
+                                           ['go'], {}, str(self.registry), False, io, budget=0)
         self.assertIn('source_budget_exhausted', report['packages'][0]['attempts'][0]['reason'])
         with patch.object(sources.subprocess, 'run', side_effect=subprocess.TimeoutExpired('fetch', 20)):
             with self.assertRaisesRegex(OSError, 'source_download_timeout'):
@@ -267,11 +265,11 @@ class StackSourceTest(unittest.TestCase):
 
     def test_category_indexes_link_only_selected_rules_and_project_scopes(self):
         self.vue()
-        result = personal.install(self.project, offline=True)
+        path, _ = self.local_registry()
+        result = personal.install(self.project, stack_registry=str(path), offline=True)
         root = self.project / '.trellis/spec/guides/personal'
-        self.assertTrue((root / 'stacks/index.md').is_file())
         body = (root / 'stacks/index.md').read_text()
-        self.assertIn('vue/index.md', body)
+        self.assertNotIn('vue/index.md', body)
         self.assertIn('project-', body)
         self.assertNotIn('python/index.md', body)
         self.assertIn('## Quality Check', body)
@@ -288,23 +286,26 @@ class StackSourceTest(unittest.TestCase):
     def test_reference_content_is_not_promoted_to_executable_project_rules(self):
         raw = b'# Reference sample\nRun an unrelated destructive script.\n'
         self.official_go()
-        p = self.library / 'stack-sources.json'
+        p = self.registry
         data = json.loads(p.read_text())
         next(row for row in data['profiles'] if row['stack'] == 'go')['source']['sha256'] = personal.digest(raw)
         p.write_text(json.dumps(data))
         with patch.object(sources, 'fetch', return_value=raw):
-            report, assets, _ = personal.query_stacks(self.project)
+            report, assets, _ = personal.query_stacks(self.project, registry=str(self.registry))
         row = report['packages'][0]
         self.assertEqual(row['reference_state'], 'downloaded_reference_not_executable')
         self.assertNotIn(b'unrelated destructive script', assets[row['target']])
 
     def test_opensource_profile_can_fill_failed_official_acquisition(self):
         self.official_go()
-        path, profile = self.local_registry(stack='go', major=1)
-        profile['kind'] = 'opensource'
-        profile['adaptation'] = 'specs/stacks/go/adaptation.md'
-        path.write_text(json.dumps({'schema_version': 1, 'profiles': [profile]}))
-        report, _, _ = personal.query_stacks(self.project, registry=str(path), offline=True)
+        data = json.loads(self.registry.read_text())
+        raw = b'# Reviewed open source fixture\n'
+        (self.registry.parent/'rules.md').write_bytes(raw)
+        data['profiles'].append({'id':'opensource.go','stack':'go','kind':'opensource','major_versions':[1],
+           'license':'fixture','coverage':['reviewed team boundary'],'adaptation':'adaptation.md',
+           'source':{'path':'rules.md','sha256':personal.digest(raw)}})
+        self.registry.write_text(json.dumps(data))
+        report, _, _ = personal.query_stacks(self.project, registry=str(self.registry), offline=True)
         self.assertEqual(report['packages'][0]['kind'], 'opensource')
         self.assertEqual(report['packages'][0]['attempts'][0]['state'], 'acquisition_failed')
         self.assertTrue(report['acquisition_complete'])
@@ -323,7 +324,7 @@ class StackSourceTest(unittest.TestCase):
     def test_failed_source_repair_preserves_last_acquired_rule(self):
         raw = self.official_go()
         with patch.object(sources, 'fetch', return_value=raw):
-            personal.install(self.project)
+            personal.install(self.project, stack_registry=str(self.registry))
         previous = json.loads((self.project / '.trellis/personal/spec-sources.json').read_text())
         row = previous['packages'][0]
         target = self.project / row['target']
@@ -333,7 +334,7 @@ class StackSourceTest(unittest.TestCase):
         self.assertEqual(target.read_bytes(), before)
         self.assertEqual(result['status'], 'conflicts')
         conflict = next(action for action in result['actions'] if action['path'] == row['target'])
-        self.assertTrue((self.project / conflict['candidate']).exists())
+        self.assertEqual(conflict['reason'], 'previous_project_source_preserved')
         again = personal.install(self.project, offline=True)
         self.assertEqual(again['status'], 'conflicts')
         self.assertEqual(target.read_bytes(), before)
@@ -353,7 +354,7 @@ class StackSourceTest(unittest.TestCase):
         current = json.loads((self.project / '.trellis/personal/spec-sources.json').read_text())
         updated = next(row for row in current['packages'] if row['stack'] == 'vue')
         self.assertEqual(updated['adoption_state'], 'preserved_previous_rule')
-        self.assertTrue((self.project / updated['candidate']).is_file())
+        self.assertNotIn('candidate', updated)
         again = personal.install(self.project, offline=True)
         self.assertEqual(again['status'], 'conflicts')
         self.assertEqual(target.read_bytes(), before)

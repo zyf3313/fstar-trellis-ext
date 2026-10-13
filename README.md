@@ -15,7 +15,7 @@ python3 /path/to/personal-trellis/scripts/personal.py install --project /path/to
 ```
 `--adopt-workflow` 表示明确选择个人工作流，先保存原文件用于回滚。省略时已有未受本包管理的 workflow 保留，生成候选 `.new.<hash>`；其他本地改动同样保留。只安装本包资产不代表工具/索引/数据库初始化完成。
 
-空白项目先讨论并声明 `--stacks`；已有项目从真实构建配置识别，多个包组合。真实 UI 栈自动加载界面工程/设计工具规则；空白项目可用 `--capabilities ui` 声明；数据库依赖被识别或显式声明数据库栈时，使用数据库能力规则。没有命中的技术栈依据官方准确版本补充，不将通用原则冒充完整栈规范。
+空白项目先讨论并声明 `--stacks`；已有项目从真实构建配置识别，多个包组合。真实 UI 栈自动加载界面工程/设计工具规则；空白项目可用 `--capabilities ui` 声明；数据库依赖被识别或显式声明数据库栈时，使用数据库能力规则。识别与通用资产安装后仍需依据真实项目沉淀规范，不将通用原则冒充完整栈规范。
 
 ```sh
 python3 scripts/personal.py detect --project /path/to/project
@@ -53,37 +53,28 @@ trellis workflow --template chinese-design-first --marketplace 'git@github.com:z
 git clone --no-checkout git@github.com:zyf3313/personal-trellis.git /path/to/personal-trellis
 git -C /path/to/personal-trellis checkout --detach FIXED_COMMIT
 git -C /path/to/personal-trellis rev-parse HEAD
-python3 /path/to/personal-trellis/scripts/personal.py install --project /path/to/project --stack-registry /path/to/personal-trellis/stack-sources.json
+python3 /path/to/personal-trellis/scripts/personal.py install --project /path/to/project
 ```
 
-先核对 `rev-parse HEAD` 与选定完整 SHA 相同；helper 的本地来源清单由该 checkout 提供。私有 raw HTTPS 的认证消费尚未验证，当前不用远程 raw URL 代替此步骤。采用个人工作流时显式增加 `--adopt-workflow` 并保留备份；否则保留已有未管理工作流并生成候选。后续 helper 更新使用新固定提交的 `install`，比较基线/本地/目标，保留用户编辑与 `.new.<hash>` 冲突候选，再按安装 revision 回滚；不整目录覆盖。
+先核对 `rev-parse HEAD` 与选定完整 SHA 相同；helper 资产由该 checkout 提供，默认来源为空；自选规范源另传 --stack-registry。私有 raw HTTPS 的认证消费尚未验证，当前不用远程 raw URL 代替此步骤。采用个人工作流时显式增加 `--adopt-workflow` 并保留备份；否则保留已有未管理工作流并生成候选。后续 helper 更新使用新固定提交的 `install`，比较基线/本地/目标，保留用户编辑与 `.new.<hash>` 冲突候选，再按安装 revision 回滚；不整目录覆盖。
 
 私有源库同步不创建正式 tag/release，也不代表 `license_decision=pending` 或本地候选政策已解除。未来公开由用户自行决定，公开前另选本库许可证、审查第三方来源并完成发行与远程消费验收。
 
-## 技术栈规范查询与获取
+## 技术栈识别与项目规范责任
 
-初始化安装包含来源解析。已有项目按包读取依赖/锁定版本与配置命令；空白项目声明讨论确定的目标。先查询个人来源及随库规范，不匹配时获取固定提交/摘要的官方资料，生成项目范围的规范草案和中文来源报告。缓存可离线复用。
+当前保留 **53 个识别入口**，只用于版本事实与 UI/数据库工具路由。[识别概览](STACKS.zh-CN.md)与 `python3 scripts/personal.py list-stacks` 不表示编码规范覆盖。库含四类 **24 条规则**；全部 59 份未从实质项目沉淀的栈规则/适配文件已撤销，不搬迁为提醒。默认 `stack-sources.json` 与 `official-sources.lock.json` 的 profiles 为空，不自动下载官方通用规范或生成栈草案。
 
 ```sh
-# 安装前查询；获取缓存不等于项目适配完成。
 python3 scripts/personal.py query-stacks --project /path/to/project
-# 已确认的空白项目。
 python3 scripts/personal.py install --project /path/to/project --stacks python sqlite --stack-versions python=3.12.0
-# 私有源库已克隆并核对完整提交；用同版本地清单。
-python3 /path/to/personal-trellis/scripts/personal.py install --project /path/to/project --stack-registry /path/to/personal-trellis/stack-sources.json
-# 只用随库规则与摘要核对通过的缓存。
+# 用户已选择的实际项目沉淀/可信来源；不是空的库默认清单。
+python3 scripts/personal.py install --project /path/to/project --stack-registry /path/to/team/stack-sources.json
 python3 .trellis/personal/personal.py query-stacks --project . --offline
 ```
 
-`--stack-registry` 使用同一固定提交 checkout 中的本地 `stack-sources.json` 消费当前私有库。这是个人 helper 的 profile 清单，原生 marketplace 仍使用 `index.json`。[可执行合同](specs/process/stack-sourcing.md)定义格式与错误行为。`build` 根据 catalog 生成个人 profile 的路径/摘要，并组合 `official-sources.lock.json` 中的官方参考，产出根目录 `stack-sources.json`；私有远程 raw HTTPS 获取与原生 SSH 拉取分开验收。
+默认返回 `project-spec-review-required`；基础资产安装可退出 0，但项目规范仍须从已有约束、真实代码及确认架构中审核、沉淀，未来规范留在项目内。显式来源继续验证 ref/hash/版本，缓存离线、失败和本地修改保护；获取候选不等于工程适配完成。[来源合同](specs/process/stack-sourcing.md)定义来源格式与项目沉淀条件。四类基础短索引随安装生成，显式成功来源才有项目栈候选与栈索引，来源报告不会链接不存在的草案。
 
-当前有 **53 个技术栈入口、52 份随库栈规则**（含 Vue 2/Boot 2 两份专项），覆盖语言/运行时、Web/后端框架、移动/桌面/微信、存储/ORM 和构建工具。[完整中文分组清单](STACKS.zh-CN.md)说明每项机制、版本边界、识别证据和缺口；`python3 scripts/personal.py list-stacks` 输出整个规范库的分组 JSON，`--format markdown` 显示中文表格。React、Go、Rust保持固定提交/摘要的官方获取 fallback，三个验收样例不代表全部覆盖。
-
-新增大部分规则是 COMMON 共性工程基线，不承诺发布版本 API 或全部栈真实业务运行。`stack-definitions.json` 是可校验的精确依赖/清单 marker 与能力/provider 数据；改规则/catalog/定义/官方 profile 后运行 build/validate。build 生成 stack-sources.json、覆盖总览和带源哈希的默认 bundle；原生 index.json 保持独立。新增未列入的栈仍可声明并走官方来源补充。
-
-项目产物为五类短索引、按包的 `stacks/<stack>/project-<scope-hash>.md`、`.trellis/personal/spec-sources.json` 和中文 `spec-sources.zh-CN.md`。源码缓存留忽略目录。AI 仍需核对实际模块、错误/类型和验证命令并记录本地调整；不得把草案或命令发现写成已完成适配/测试。
-
-Vue 2/Boot 2 选择独立 major-2 规则，不安装 Vue 3/Boot 3–4 基线；未知版本不在两套规则中猜选。Java 1.8/VERSION_1_8 保留原值并归一化为 8；Gradle Kotlin DSL 不当 Kotlin 应用；C# LangVersion/.NET TFM/SDK、Dart/Flutter、Swift tools/编译器/SwiftUI SDK 分开。数据库精确依赖只识别引擎，驱动版本不作为服务端版本。未知栈/版本、无现成规范、离线未缓存或不匹配都保留缺口和定向检索问题。CLI `2` 表示有缺口/冲突，可用资产仍保留；`0` 只代表本步骤通过。已有规范优先，本地编辑生成候选，回滚只恢复本次受管理写入。
+旧版 helper 安装基线中的已撤销栈文件只有当前字节匹配管理摘要才删除；已编辑、用户新增或不明所有权保留并报告冲突。撤销身份/摘要仅作 [删除回执](withdrawn-stack-sources.json)，不含规则或获取路径。revision 备份可恢复删除，回滚拒绝覆盖随后重建/修改的文件。CLI 2 表示来源/资产冲突；0 不表示项目规范、工具/客户端或全部初始化完成。原生 append 不做撤销，helper 升级和真实旧版 Target 需独立验收。
 
 ## 主代理与执行子代理
 

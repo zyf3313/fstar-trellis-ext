@@ -2,7 +2,41 @@
   "schema_version": 1,
   "status": "local_candidate",
   "license_decision": "pending",
-  "required_files": ["examples/ui-module/runtime/prototype.js", "examples/ui-module/runtime/gallery.html", "examples/ui-module/runtime/gallery.js", "examples/ui-module/runtime/requirements.css", "examples/ui-module/runtime/prototype.html", "examples/ui-module/runtime/styles.css"],
-  "files": [".gitignore", "README.md", "CHANGELOG.md", "STACKS.zh-CN.md", "DISTRIBUTION.zh-CN.md", "THIRD_PARTY_NOTICES.md", "index.json", "catalog.json", "library.json", "official-sources.lock.json", "tools.lock.json", "stack-definitions.json", "stack-sources.json", "release-policy.json"],
-  "directories": ["specs", "workflows", "skills", "templates", "adapters", "bundles", "scripts", "tests", "apps", "examples"]
+  "required_files": [
+    "examples/ui-module/runtime/prototype.js",
+    "examples/ui-module/runtime/gallery.html",
+    "examples/ui-module/runtime/gallery.js",
+    "examples/ui-module/runtime/requirements.css",
+    "examples/ui-module/runtime/prototype.html",
+    "examples/ui-module/runtime/styles.css"
+  ],
+  "files": [
+    ".gitignore",
+    "README.md",
+    "CHANGELOG.md",
+    "STACKS.zh-CN.md",
+    "DISTRIBUTION.zh-CN.md",
+    "THIRD_PARTY_NOTICES.md",
+    "index.json",
+    "catalog.json",
+    "library.json",
+    "official-sources.lock.json",
+    "tools.lock.json",
+    "stack-definitions.json",
+    "stack-sources.json",
+    "release-policy.json",
+    "withdrawn-stack-sources.json"
+  ],
+  "directories": [
+    "specs",
+    "workflows",
+    "skills",
+    "templates",
+    "adapters",
+    "bundles",
+    "scripts",
+    "tests",
+    "apps",
+    "examples"
+  ]
 }
