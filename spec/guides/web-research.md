@@ -3,7 +3,9 @@
 Use for external facts, current documentation, source verification or a requested
 reference. Skip extra research when sufficient local evidence answers a stable
 question. Follow user-selected sources first and keep private queries out of public
-services. This guide authorizes no installation, login, purchase or account change.
+services. The optional personal initializer may prepare a missing GitHub CLI on a
+supported host; GitHub login, Exa/API credentials, purchases and account changes
+remain deferred to this scenario and explicit authorization.
 
 ## Minimum route
 

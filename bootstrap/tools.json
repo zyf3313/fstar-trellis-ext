@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "automatic": {
+    "codegraph": {
+      "executable": "codegraph",
+      "installer": ["npm", "install", "-g", "@colbymchenry/codegraph@1.6.2"],
+      "source": "https://github.com/colbymchenry/codegraph"
+    },
+    "qmd": {
+      "executable": "qmd",
+      "installer": ["npm", "install", "-g", "@tobilu/qmd@2.5.3"],
+      "source": "https://github.com/tobi/qmd"
+    },
+    "github_cli": {
+      "executable": "gh",
+      "macos_installer": ["brew", "install", "gh"],
+      "source": "https://cli.github.com/"
+    }
+  },
+  "skills": {
+    "repository": "emilkowalski/skills",
+    "installer": ["npx", "-y", "skills@1.7.0", "add", "emilkowalski/skills"],
+    "skill_option": "--skill",
+    "global_option": "-g",
+    "agent_option": "-a",
+    "yes_option": "--yes",
+    "names": [
+      "emil-design-eng",
+      "break-ui",
+      "review-animations",
+      "mobile-native"
+    ],
+    "agents": {
+      "codex": ".codex/skills",
+      "claude-code": ".claude/skills"
+    },
+    "automatic_install": true,
+    "next_action": "Install Node.js with npx support, then rerun the wrapper to install the missing Emil Skills.",
+    "source": "https://github.com/emilkowalski/skills"
+  },
+  "deferred": [
+    {
+      "id": "qmd_collection_embed_model",
+      "reason": "Create collections, embed documents and download models only when knowledge search first needs them."
+    },
+    {
+      "id": "github_auth",
+      "reason": "Run gh auth login only for an explicitly selected GitHub account and scope."
+    },
+    {
+      "id": "dbhub_connection_write",
+      "reason": "Configure DBHub datasource, credentials, read limits and write scope only in an authorized database task."
+    },
+    {
+      "id": "exa_api_key",
+      "reason": "Connect Exa and provide an API key only when external research requires it."
+    }
+  ]
+}

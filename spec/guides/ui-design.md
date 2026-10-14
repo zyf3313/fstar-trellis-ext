@@ -2,6 +2,15 @@
 
 Use for a new user-visible interface, a changed interaction or visual system, UI implementation, or UI review. Skip when behavior and presentation have no UI impact. Preserve the project's established visual language, components, accessibility and platform conventions.
 
+An explicit request for UI design, design boards, an interactive prototype, local
+preview or Figma/MasterGo delivery activates this guide directly. For a 0→1 UI
+project with no confirmed style/system, finish native requirements discussion and,
+at design time, ask once whether the user wants the complete project UI package.
+If declined, still confirm the minimum baseline needed for implementation: design
+language, tokens/components, application frame, navigation and key interactions.
+Existing projects and small UI changes reuse the confirmed baseline and design only
+the affected functionality; do not ask to redesign the whole project.
+
 ## Baseline and feature route
 
 For a new project, or one without an adequate UI baseline, read [the Chinese UI baseline template](../templates/ui-baseline.zh-CN.md). Define and present the design language, tokens, components, application frame, navigation, layout, responsive/device boundaries, critical paths and global states before implementation. Record the actual user confirmation and version.
@@ -10,7 +19,7 @@ For an existing project, discover and cite its confirmed baseline. Do not redesi
 
 ## Core and conditional references
 
-`emil-design-eng` is the single core design Skill for new directions and existing interactions. Load relevant sections when available; a mention in this guide does not prove installation or client loading. Do not route the same task through a competing core design Skill.
+`emil-design-eng` is the single core design Skill for new directions and existing interactions. The optional personal initializer detects it and the three conditional Skills for the selected Agent. When entries are missing and `npx` is available, it installs all missing Emil Skills in one pinned `skills@1.7.0` call and verifies each `SKILL.md` in the actual Agent directory; unavailable `npx` is reported as unsupported. Check the actual Skill entry after environment changes; an initializer report proves only installation state, not that the current client loaded the Skill or that this UI scenario should run. Do not route the same task through a competing core design Skill.
 
 | Task condition | Additional reference | Evidence to produce |
 |---|---|---|
@@ -18,7 +27,7 @@ For an existing project, discover and cite its confirmed baseline. Do not redesi
 | Motion is added, changed or implicated in a defect | `review-animations` | Applicable motion/accessibility review and target-browser checks |
 | Phone or touch interaction is targeted | `mobile-native` | Touch/layout review and critical paths on a real target device |
 
-These are conditional specialist checks. Explain applicable and skipped conditions. Project baselines and measured behavior take precedence over generic duration, scale or performance heuristics. If a Skill is unavailable, use the project baseline and existing checks, report the limitation and do not install it automatically.
+These are conditional specialist checks. Explain applicable and skipped conditions. Project baselines and measured behavior take precedence over generic duration, scale or performance heuristics. If a Skill is unavailable during the task, use the project baseline and existing checks or run the explicit personal preparation path; report the limitation rather than silently changing the Agent environment.
 
 ## Conditional delivery contract
 

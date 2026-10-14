@@ -5,6 +5,11 @@ Skip when local contracts or fixtures answer the task. DBHub is the selected opt
 access tool; configuration is not evidence of a successful connection or safe query.
 Use only an existing authorized source. Never place real DSNs or credentials here.
 
+The personal initializer deliberately defers DBHub runtime/source configuration,
+credentials and write scope. Its report can record that boundary but never proves a
+connection. Prepare DBHub only after this scenario identifies an authorized source,
+environment and read/write boundary.
+
 ## Read entry
 
 Require tool-level `readonly = true` and an explicit `max_rows` appropriate to the

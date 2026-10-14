@@ -3,7 +3,8 @@
 Read a known file directly. Use QMD for discovery across project documents or old
 decisions when an appropriate existing collection is available. Skip indexing for
 one small file. Selection does not prove collection access, model readiness or
-client loading; this guide does not create collections or download models.
+client loading. The optional personal initializer can install a missing QMD CLI,
+but collection creation, embedding and model download remain deferred to this scenario.
 
 ## Minimum route
 
@@ -31,5 +32,9 @@ to forced embedding. Model changes, collection deletion and downloads require th
 own authorized integration scope. Validate Chinese retrieval quality and resource
 use in the target environment. Missing collections/models or poor recall fall back
 to project indexes, scoped text search and original files; report the gap.
+
+If `.trellis/personal/bootstrap-report.json` says QMD was prepared, still inspect the
+actual CLI and collection state. Never interpret CLI installation as a completed
+collection, embedding, local model or retrieval-quality acceptance.
 
 Source: [QMD commands and maintenance](https://github.com/tobi/qmd#readme).

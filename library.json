@@ -1,12 +1,21 @@
 {
   "name": "personal-trellis-library",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "python": ">=3.9",
   "tested_trellis": "0.6.9",
   "publication": "not_published",
   "visibility": "private",
   "license_decision": "pending",
-  "layout": "native-spec-with-templates",
+  "layout": "native-spec-with-templates-and-optional-wrapper",
+  "bootstrap": {
+    "entrypoint": "bin/trellis-personal",
+    "report": ".trellis/personal/bootstrap-report.json",
+    "default_agent": "codex",
+    "supported_agents": [
+      "codex",
+      "claude-code"
+    ]
+  },
   "language": {
     "ai": "en",
     "user": "zh-CN"

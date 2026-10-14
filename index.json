@@ -5,11 +5,12 @@
       "id": "personal-core",
       "type": "spec",
       "name": "Personal scenario guides and Chinese templates",
-      "description": "Optional scenario guidance and local templates; native project workflow remains authoritative",
+      "description": "Optional scenario guidance and local templates; the separate wrapper preserves native project workflow ownership",
       "path": "spec",
       "tags": [
         "personal",
-        "optional"
+        "optional",
+        "bootstrap-compatible"
       ]
     }
   ]

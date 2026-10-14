@@ -3,7 +3,9 @@
 Use CodeGraph for definitions, signatures, calls and change impact when the current
 project has an available, initialized index. Use `rg` for literal strings, comments
 and logs; directly read a known small file. Skip graph setup for a task already
-answered by local evidence. This guide does not install or initialize anything.
+answered by local evidence. The optional personal initializer can install a missing
+CLI and initialize a missing index for an identifiable code project; that preparation
+does not activate this guide or prove index freshness.
 
 ## Minimum route
 
@@ -24,6 +26,8 @@ actual code identifier when a natural-language query misses; Chinese is not
 categorically unsupported. Fall back to scoped `rg` and source reads, and record the
 unresolved index gap. Do not generalize one missed construct into a universal blind spot.
 
+Check `.trellis/personal/bootstrap-report.json` when present, but verify actual tool
+and index status rather than trusting the report after the environment changes.
 Follow the project's own missing-index/repair authorization rule. Wait for watcher
 updates after edits; repair or rebuild only when evidence justifies it, not on a
 fixed full-reindex schedule. If CodeGraph is unavailable, use focused native search

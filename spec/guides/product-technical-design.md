@@ -1,11 +1,21 @@
 # Chinese product requirements and technical design
 
 Use within native Trellis discussion/planning when the user requests a Chinese PRD
-or TDD, or a new project or substantial task needs systematic requirements and
-technical design. TDD means Technical Design Document. Produce Chinese artifacts;
-follow the project's existing document locations and conventions. Small fixes reuse
-existing design and update only affected sections. A request for one document does
-not require both: cite existing requirements or technical context for the other.
+or TDD. For a new project, large iteration or substantial task, first let native
+Trellis requirements and design converge, then ask once before implementation
+whether the user wants the Chinese PRD, TDD, both or neither. Do not ask again when
+the user already requested or declined them for this scope. Small fixes do not
+trigger the question or full documents; reuse existing design and update only
+affected sections. TDD means Technical Design Document. Produce Chinese artifacts
+and follow the project's existing document locations and conventions. A request for
+one document does not require both: cite existing requirements or technical context
+for the other.
+
+A task is substantial when it crosses business modules, systems or clients; changes
+a core business flow, data model or public contract; needs migration, compatibility
+or staged delivery; or needs non-engineering review and independent acceptance.
+Local defects, copy/style changes and internal refactors without an observable
+contract change remain small unless the user explicitly asks for the documents.
 
 ## Obtain the actual templates
 
