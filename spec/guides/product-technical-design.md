@@ -9,37 +9,20 @@ not require both: cite existing requirements or technical context for the other.
 
 ## Obtain the actual templates
 
-The canonical paths are relative to the **personal library repository root**:
+The canonical templates are installed with this guide under `spec/templates/`:
 
-- `templates/product/prd.zh-CN.md`
-- `templates/technical/technical-design.zh-CN.md`
-- `templates/technical/technical-design-profiles.zh-CN.md`
-- For UI work, `templates/ui/ui-baseline.zh-CN.md` and
-  `templates/ui/ui-feature.zh-CN.md`, as needed.
+- [PRD](../templates/prd.zh-CN.md)
+- [TDD](../templates/technical-design.zh-CN.md)
+- [Project-type profiles](../templates/technical-design-profiles.zh-CN.md)
+- For UI work, [UI baseline](../templates/ui-baseline.zh-CN.md) and
+  [feature interaction](../templates/ui-feature.zh-CN.md), as needed.
 
-Native `personal-core` registry consumption copies `spec/` only. These templates
-are not bundled into the installed guide; never resolve them relative to
-`.trellis/spec/guides/` or assume `.trellis/templates/` exists. Find the library
-source and fixed commit recorded by the consuming project. Reuse an authorized
-independent checkout containing that commit, verify its remote identity and commit,
-and read only the needed template and adaptation notes. For example, **after**
-`LIBRARY_CHECKOUT` and `FIXED_COMMIT` have been resolved and the commit is present:
-
-```sh
-git -C "$LIBRARY_CHECKOUT" show "$FIXED_COMMIT:templates/product/prd.zh-CN.md"
-git -C "$LIBRARY_CHECKOUT" show "$FIXED_COMMIT:templates/technical/technical-design.zh-CN.md"
-git -C "$LIBRARY_CHECKOUT" show "$FIXED_COMMIT:templates/technical/technical-design-profiles.zh-CN.md"
-```
-
-If the project has not recorded a ref, first locate an already authorized library
-checkout and record its actual commit/source; a moving `main` is not a frozen ref.
-If local objects are missing, use existing Git authentication to obtain just the
-required files at that exact commit from the recorded repository, when accessible.
-Its authenticated repository file view can provide source content; a branch link
-alone does not prove the version. Do not default to cloning the whole library,
-reinstalling tools or copying templates into `spec/`. Report missing source/access
-and the affected document work; do not claim template-based generation until the
-actual template is available and read. Record template source/ref with the output.
+Read only the templates required by the requested artifact and project type. If a
+template is missing from the imported `spec/templates/` directory, report the
+missing registry content and do not claim template-based generation. Record the
+project's personal-library fixed ref with the output so the template version is
+traceable; no separate checkout, root-template lookup or tool installation is
+required.
 
 ## Establish scope and write the documents
 

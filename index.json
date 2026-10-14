@@ -4,8 +4,8 @@
     {
       "id": "personal-core",
       "type": "spec",
-      "name": "Personal optional guides",
-      "description": "Focused personal conventions; native Trellis workflow stays authoritative",
+      "name": "Personal scenario guides and Chinese templates",
+      "description": "Optional scenario guidance and local templates; native project workflow remains authoritative",
       "path": "spec",
       "tags": [
         "personal",

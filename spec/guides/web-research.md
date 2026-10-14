@@ -32,6 +32,13 @@ services. This guide authorizes no installation, login, purchase or account chan
    claims upstream, and report access limits. Use intranet tools only where the
    project already has authorized access. Never invent a special bypass or send
    internal material to a public search engine.
+5. When the task is reference-project exploration or a consequential selection,
+   inspect the relevant source at an exact release/ref instead of stopping at a
+   README. Use the [exploration template](../templates/exploration.zh-CN.md) to
+   record candidate/version, license, maintenance evidence, verified capability,
+   adaptation gaps, and an adopt/adapt/reject decision with reasons. Map accepted
+   findings back to the affected PRD/TDD/UI IDs and list remaining validation.
+   A simple factual lookup does not require an exploration report.
 
 ## Result and fallback
 

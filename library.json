@@ -6,7 +6,7 @@
   "publication": "not_published",
   "visibility": "private",
   "license_decision": "pending",
-  "layout": "native-spec-guides",
+  "layout": "native-spec-with-templates",
   "language": {
     "ai": "en",
     "user": "zh-CN"
