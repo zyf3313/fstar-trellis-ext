@@ -22,7 +22,8 @@ class NativeLayoutTest(unittest.TestCase):
         guides = {p.name for p in (ROOT / 'spec/guides').glob('*.md')}
         self.assertEqual(guides, {'personal-conventions.md', 'document-consistency.md',
                                   'tool-selection.md', 'code-search.md', 'knowledge-search.md',
-                                  'ui-design.md', 'database-access.md', 'web-research.md'})
+                                  'ui-design.md', 'database-access.md', 'web-research.md',
+                                  'product-technical-design.md'})
         self.assertFalse((ROOT / 'spec/guides/index.md').exists())
         for path in ['workflows', 'skills', 'specs', 'bundles', 'adapters', 'catalog.json', 'tools.lock.json',
                      'stack-definitions.json', 'scripts/personal.py', 'scripts/tools.py', 'scripts/ui_tools.py',

@@ -1,6 +1,8 @@
 # 私有候选分发与旧版退役
 
-版本保持 1.0.0 / not_published，私有，许可待定；不创建公开 release。当前原生 registry 仅 `personal-core` → `spec`，不包含 workflow。项目的 Trellis 原生流程、配置、hooks、索引和本地规范保持权威；按需在既有索引/JSONL 引用指南。不提供常驻个人初始化器。当前分发八个平铺指南，不创建 guides/index.md 覆盖消费者索引；五个场景按 README 导航按需使用。用途已选不等于工具已安装、已加载或已实测，接入/模型/连接另按明确任务处理。
+版本保持 1.0.0 / not_published，私有，许可待定；不创建公开 release。当前原生 registry 仅 `personal-core` → `spec`，不包含 workflow。项目的 Trellis 原生流程、配置、hooks、索引和本地规范保持权威；按需在既有索引/JSONL 引用指南。不提供常驻个人初始化器。当前分发九个平铺指南，不创建 guides/index.md 覆盖消费者索引；六个场景按 README 导航按需使用。用途已选不等于工具已安装、已加载或已实测，接入/模型/连接另按明确任务处理。
+
+原生规范分发只复制 `spec/`，不会复制库根的 11 份 `templates/`。中文 PRD/TDD 生成按[设计指南](spec/guides/product-technical-design.md)从消费项目记录的固定个人库提交读取所需模板和类型适配说明；复用已有独立 checkout 或 Git 认证，不默认拉取全库、不把移动分支当冻结版本。未取得模板时明确缺口，不声称已按模板生成。
 
 ## 旧消费项目的一次性退役
 

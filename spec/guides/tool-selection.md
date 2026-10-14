@@ -4,7 +4,8 @@ The selected uses are CodeGraph for code structure, QMD for document discovery,
 GitHub/gh for repository research, Exa for supplemental Web coverage, DBHub for
 optional database access, and `emil-design-eng` as the single UI design core.
 These are scenario choices, not a universal installation or activation list.
-Requirements use native Trellis discussion/tasks and optional templates; runtime
+Requirements use native Trellis discussion/tasks and
+[Chinese PRD/TDD templates on demand](product-technical-design.md); runtime
 acceptance reuses project commands, logs and applicable browser/device checks.
 Unselected capabilities remain project-specific choices.
 

@@ -36,6 +36,7 @@
     "spec/guides/knowledge-search.md",
     "spec/guides/ui-design.md",
     "spec/guides/database-access.md",
-    "spec/guides/web-research.md"
+    "spec/guides/web-research.md",
+    "spec/guides/product-technical-design.md"
   ]
 }

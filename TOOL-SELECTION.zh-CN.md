@@ -7,7 +7,7 @@
 | 探索 | [Web 调研](spec/guides/web-research.md)：已有 Web；GitHub 优先复用 gh，Exa 补充召回；linux.do 按相关性或用户指定 | Google / X 等按需；内网仅复用项目已授权入口 |
 | 代码理解 | [CodeGraph](spec/guides/code-search.md) 查结构；字面量 rg；已知小文件直读 | 缺图或异常用定向源码，遵循项目索引修复约定 |
 | 项目知识检索 | [QMD](spec/guides/knowledge-search.md) 跨文档关键词优先，语义按需 | 已知文件直接读；原生索引与文本检索兜底 |
-| 需求/方案表达 | 原生 Trellis 讨论/任务与按需中文模板 | 图示等随具体项目选，不加固定产物门禁 |
+| 需求/方案表达 | 原生 Trellis 讨论/任务内按[中文 PRD/TDD 指南](spec/guides/product-technical-design.md)读取固定来源模板，按项目类型生成与确认当前设计 | 小改复用已有设计，只请求一份不强制两份；无 UI 跳过；模板不随 spec 自动复制 |
 | UI 设计原型 | [emil-design-eng](spec/guides/ui-design.md) 唯一核心；break-ui / review-animations / mobile-native 按数据、动效、手机条件 | 已有项目设计基线优先；设计平台/本地预览按需 |
 | 运行调试验收 | 复用项目现有命令、日志和适用的浏览器/设备检查 | 其他调试工具按需；无设备时真机验收 pending |
 | 数据库 | [DBHub](spec/guides/database-access.md) 可选入口：显式只读与行上限，写入口独立授权范围 | 已授权项目入口、schema/fixtures 兜底 |

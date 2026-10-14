@@ -11,4 +11,7 @@ implementation detail only needs the project's applicable evidence.
 
 Record real user confirmation separately from synthetic fixtures or mechanical
 hash/link checks. Keep unresolved platform, device and environment checks explicit.
-The optional Chinese templates and UI example are resources, not mandatory gates.
+For requested Chinese PRD/TDD generation, template source lookup and scoped design
+confirmation, use [product and technical design](product-technical-design.md).
+Reuse existing confirmation; materially changed design needs review of the affected
+part. The optional templates and UI example do not impose a gate on every task.

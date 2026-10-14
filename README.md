@@ -2,7 +2,7 @@
 
 使用 Trellis 原生讨论、任务、实施、检查与收尾。当前为 **1.0.0 未正式发布候选**，私有仓库 `zyf3313/personal-trellis`，许可证待定。
 
-原生 `index.json` 只有 `personal-core` 规范条目，直接指向 `spec/`，不提供工作流或个人 Skill。八个按需指南平铺在 `spec/guides/`：[个人约定](spec/guides/personal-conventions.md)、[可选文档一致性](spec/guides/document-consistency.md)、[按需工具选型](spec/guides/tool-selection.md)，以及下表五个场景指南。按任务需要将相关链接加入项目现有规范索引或 JSONL，保留项目自己的索引、规则和原生工作流；无需每个任务完成 PRD/TDD/UI。
+原生 `index.json` 只有 `personal-core` 规范条目，直接指向 `spec/`，不提供工作流或个人 Skill。九个按需指南平铺在 `spec/guides/`：[个人约定](spec/guides/personal-conventions.md)、[可选文档一致性](spec/guides/document-consistency.md)、[按需工具选型](spec/guides/tool-selection.md)，以及下表六个场景指南。按任务需要将相关链接加入项目现有规范索引或 JSONL，保留项目自己的索引、规则和原生工作流；无需每个任务完成 PRD/TDD/UI。
 
 固定已核验提交后可使用原生规范入口（`FIXED_COMMIT` 为占位，先在独立项目验证）：
 
@@ -14,6 +14,7 @@ trellis init --registry 'git@github.com:zyf3313/personal-trellis#FIXED_COMMIT' -
 
 | 场景 | 使用指南 |
 |---|---|
+| 中文 PRD/TDD 按模板生成与设计确认 | [需求与技术设计](spec/guides/product-technical-design.md) |
 | 定义、调用、影响与字面量检索 | [CodeGraph / 源码](spec/guides/code-search.md) |
 | 跨文档发现与必要原文 | [QMD / 定向读取](spec/guides/knowledge-search.md) |
 | 新界面或既有 UI 交互 | [Emil 核心与条件专项](spec/guides/ui-design.md) |
@@ -21,6 +22,8 @@ trellis init --registry 'git@github.com:zyf3313/personal-trellis#FIXED_COMMIT' -
 | 公开资料、GitHub 和补充检索 | [Web 调研](spec/guides/web-research.md) |
 
 用途选定与安装、加载、实测分开；缺工具先走指南 fallback 或报告缺口。无默认必装、模型下载、数据库连接或额外流程门禁。UI 以 Emil 为唯一核心，已有设计基线优先；专项检查由任务条件决定。
+
+原生 registry 只复制 `spec/`，不包含库根 `templates/`；生成文档时按[需求与技术设计指南](spec/guides/product-technical-design.md)从项目记录的固定库提交实际读取所需模板，不能假定安装指南已取得模板。
 
 11 份 `templates/` 中文模板、[UI 示例](examples/ui-module/README.md)及 [Vue/Storybook 预览](apps/design-preview/README.md) 可主动复制使用。示例的历史工具记录不代表当前工具选择；预览依赖不为业务项目选择技术栈，不自动安装依赖。保留原有 92 文件字节。
 
