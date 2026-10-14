@@ -1,23 +1,6 @@
 # 第三方来源与许可记录
 
-本库许可证尚未选择；本地候选不代表对外分发许可。此账本不为本库指定许可证，也不替代发布前的完整许可审阅。第三方工具二进制、模型与 node_modules 不随候选交付。
-
-## 技术栈来源边界
-
-未沉淀技术栈规则和七个官方 profile/adaptation 已删除。默认不下载或分发这些官方规范；[来源锁](official-sources.lock.json)保留空 profiles 协议。用户显式选择的来源须另记 ref/hash/许可与项目审核，缓存不分发。[撤销回执](withdrawn-stack-sources.json)仅记录旧身份/摘要供升级保护，不保留获取链接或旧规范。
-
-## 安装时下载的工具
-
-身份与版本以 [tools.lock.json](tools.lock.json) 为准。provider 安装时获取软件及原有许可；候选只带 adapter/helper 和锁定信息。2026-10-13 核对的默认分支许可不冒充固定发布包许可已验收。
-
-| 工具 / 包 | 版本 / ref | 官方来源 | 许可入口与证据 |
-|---|---|---|---|
-| codegraph / `@colbymchenry/codegraph` | 0.9.3 / 锁定包版本，无源码 ref | [官方项目](https://github.com/colbymchenry/codegraph) | [核对入口](https://raw.githubusercontent.com/colbymchenry/codegraph/main/LICENSE)；MIT；默认分支原文核对，0.9.3 包许可另核对 |
-| rtk / `rtk` | 0.51.0 / 锁定包版本，无源码 ref | [官方项目](https://github.com/rtk-ai/rtk) | [核对入口](https://raw.githubusercontent.com/rtk-ai/rtk/v0.51.0/LICENSE)；Apache-2.0；v0.51.0 原文核对 |
-| qmd / `@tobilu/qmd` | 2.8.3 / 锁定包版本，无源码 ref | [官方项目](https://github.com/tobi/qmd) | [核对入口](https://raw.githubusercontent.com/tobi/qmd/main/LICENSE)；MIT；默认分支原文核对，2.8.3 包许可另核对 |
-| impeccable / `impeccable` | 4.5.2 / 245ad82def45831dc56a21b683c7a1ff530b06cc | [官方项目](https://github.com/pbakaus/impeccable) | [核对入口](https://raw.githubusercontent.com/pbakaus/impeccable/245ad82def45831dc56a21b683c7a1ff530b06cc/LICENSE)；Apache-2.0；锁文件既有记录 |
-| ui-ux-pro-max / `ui-ux-pro-max-cli` | 2.15.0 / 7246805992a42b7bba37d4cac83b01416f0c6c44 | [官方项目](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | [核对入口](https://raw.githubusercontent.com/nextlevelbuilder/ui-ux-pro-max-skill/7246805992a42b7bba37d4cac83b01416f0c6c44/LICENSE)；MIT；锁文件既有记录 |
-| dbhub / `@bytebase/dbhub` | 1.5.0 / 锁定包版本，无源码 ref | [官方项目](https://github.com/bytebase/dbhub) | [核对入口](https://github.com/bytebase/dbhub)；固定版本许可原文待核对；失败读取不推定许可 |
+本库许可证待定，保持私有未发布候选。工具、模型、node_modules 不随包分发。候选工具名见 [选型台账](TOOL-SELECTION.zh-CN.md)，没有默认安装包或锁定清单。
 
 ## 预览与交换示例依赖
 
@@ -40,6 +23,7 @@
 | examples/ui-module / `jszip` | 3.10.2 | [锁定 npm 包](https://registry.npmjs.org/jszip/-/jszip-3.10.2.tgz) | [(MIT OR GPL-3.0-or-later)](https://spdx.org/licenses/) |
 | examples/ui-module / `sketch-constructor` | 1.26.0 | [锁定 npm 包](https://registry.npmjs.org/sketch-constructor/-/sketch-constructor-1.26.0.tgz) | [Apache-2.0](https://spdx.org/licenses/Apache-2.0.html) |
 
-## 引用与随包内容边界
 
-技术栈识别元数据不构成工程规范。工作流沿用 Trellis 固定标题/Phase Index 结构；原生 CLI 单独安装，官方 [mindfold-ai/Trellis](https://github.com/mindfold-ai/Trellis) 发布包许可另核对。Figma/MasterGo 的名称与导入兼容性不是本库授权，真实平台反馈单列。获取到的完整文档/许可缓存、工具凭证和消费项目设计不分发。
+## 引用边界
+
+原生 Trellis 独立安装，候选不复制其工作流或托管技能。UI 历史工具试用不等于当前选择。Figma/MasterGo 手动导入兼容性和用户接受单独验收。公开前另做许可审阅。
