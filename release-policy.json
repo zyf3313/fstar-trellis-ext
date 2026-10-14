@@ -31,6 +31,11 @@
     "spec/guides/personal-conventions.md",
     "spec/guides/document-consistency.md",
     "spec/guides/tool-selection.md",
-    "scripts/retire-personal.py"
+    "scripts/retire-personal.py",
+    "spec/guides/code-search.md",
+    "spec/guides/knowledge-search.md",
+    "spec/guides/ui-design.md",
+    "spec/guides/database-access.md",
+    "spec/guides/web-research.md"
   ]
 }

@@ -19,7 +19,11 @@ class NativeLayoutTest(unittest.TestCase):
     def test_native_registry_and_removed_entries(self):
         entries = json.loads((ROOT / 'index.json').read_text())['templates']
         self.assertEqual([(e['id'], e['type'], e['path']) for e in entries], [('personal-core', 'spec', 'spec')])
-        self.assertEqual(len(list((ROOT / 'spec/guides').glob('*.md'))), 3)
+        guides = {p.name for p in (ROOT / 'spec/guides').glob('*.md')}
+        self.assertEqual(guides, {'personal-conventions.md', 'document-consistency.md',
+                                  'tool-selection.md', 'code-search.md', 'knowledge-search.md',
+                                  'ui-design.md', 'database-access.md', 'web-research.md'})
+        self.assertFalse((ROOT / 'spec/guides/index.md').exists())
         for path in ['workflows', 'skills', 'specs', 'bundles', 'adapters', 'catalog.json', 'tools.lock.json',
                      'stack-definitions.json', 'scripts/personal.py', 'scripts/tools.py', 'scripts/ui_tools.py',
                      'scripts/database.py', 'scripts/mcp_stdio.py', 'scripts/stack_facts.py']:
@@ -31,8 +35,9 @@ class NativeLayoutTest(unittest.TestCase):
         for key, expected in [('version', '1.0.0'), ('publication', 'not_published'),
                               ('visibility', 'private'), ('license_decision', 'pending')]:
             self.assertEqual(metadata[key], expected)
-        selection = (ROOT / 'TOOL-SELECTION.zh-CN.md').read_text()
-        self.assertEqual(selection.count('| 待定 |'), 7)
+        policy = json.loads((ROOT / 'release-policy.json').read_text())
+        guides = {p.relative_to(ROOT).as_posix() for p in (ROOT / 'spec/guides').glob('*.md')}
+        self.assertTrue(guides.issubset(policy['required_files']))
 
     def test_all_local_markdown_links(self):
         checked = 0

@@ -1,6 +1,6 @@
 # 私有候选分发与旧版退役
 
-版本保持 1.0.0 / not_published，私有，许可待定；不创建公开 release。当前原生 registry 仅 `personal-core` → `spec`，不包含 workflow。项目的 Trellis 原生流程、配置、hooks、索引和本地规范保持权威；按需在既有索引/JSONL 引用指南。不提供常驻个人初始化器。
+版本保持 1.0.0 / not_published，私有，许可待定；不创建公开 release。当前原生 registry 仅 `personal-core` → `spec`，不包含 workflow。项目的 Trellis 原生流程、配置、hooks、索引和本地规范保持权威；按需在既有索引/JSONL 引用指南。不提供常驻个人初始化器。当前分发八个平铺指南，不创建 guides/index.md 覆盖消费者索引；五个场景按 README 导航按需使用。用途已选不等于工具已安装、已加载或已实测，接入/模型/连接另按明确任务处理。
 
 ## 旧消费项目的一次性退役
 
