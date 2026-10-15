@@ -1,12 +1,26 @@
 # 变更记录
 
+## 2026-10-15 · 1.2.0 未公开发布候选
+
+初始化统一为 Trellis 原生 registry：固定提交、`personal-core`、`--append`。
+仓库级包装入口、安装实现、工具清单、状态报告与专属测试已退役，registry
+继续只导入 `spec/`。初始化不会安装或配置外部工具。
+
+代码、知识、UI、Web/GitHub 和数据库五份指南改为场景内 AI 软安装：先发现
+并评估本地等价 CLI、MCP、Skill、连接器或内建能力；满足任务则直接复用，
+不足时才说明筛选工具的官方来源、准确动作和影响。用户同意后由 AI 执行，
+并分别验证发现、客户端加载和最小真实任务。拒绝、失败或环境不支持时走
+指南 fallback。登录、API key、模型下载、数据库凭证/连接、写入和外部发布
+继续保持独立授权边界。
+
+README、场景索引、registry 元数据和能力对照图同步到上述边界。版本升级为
+1.2.0；私有、未公开发布和许可证待定状态不变。
+
 ## 2026-10-14 · 1.1.0 未公开发布候选
 
-新增可选的 `trellis-personal init`：先驱动原生 `trellis init`，再从固定个人提交 append `personal-core`，最后检测并准备缺失的 CodeGraph、QMD、受支持平台的 GitHub CLI 与 Emil Skills。Emil 使用一次固定的 `npx -y skills@1.7.0 add emilkowalski/skills` 调用，通过重复 `--skill` 只安装缺失项，以 `-g -a <agent> --yes` 选择 Codex 或 Claude Code，并在实际 Agent 目录逐项复核结果。命令非零时保留已验证成功的 Skill，同时整体形成 partial 报告；缺少 `npx` 才记为 unsupported。
-
-兼容 Trellis CLI 自行补 `.git` 的 registry 输入；除退出码外验证显式错误、个人索引实际生成，以及配置中固定 registry source/template 的持久化，避免旧索引或原生 CLI 错误仍返回零时误报成功。代码项目缺少索引时才执行 `codegraph init`；原生初始化失败会短路，后续工具失败会保留成功初始化并形成 partial 报告。初始化安装、客户端加载和 UI 场景触发继续分别记录。
-
-QMD collection/embed/模型、GitHub 登录、DBHub 真实连接/凭证/写权限和 Exa API key 保持 deferred。新增 dry-run、skip-tools、目标 Agent、固定 ref、原生参数透传、长短冲突参数拒绝、符号链接路径边界、脱敏报告和 fake PATH 隔离测试。原生 Trellis workflow/config/hooks 所有权不变。
+曾加入仓库级初始化与工具准备实验入口；该入口及相关报告和测试已经在
+1.2.0 退役，不再是当前分发面。原生 Trellis workflow、config 和 hooks
+所有权始终不变。
 
 ## 2026-10-14 · 1.0.0 未公开发布候选
 

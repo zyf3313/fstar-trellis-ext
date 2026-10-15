@@ -1,11 +1,39 @@
 # Code search
 
-Use CodeGraph for definitions, signatures, calls and change impact when the current
-project has an available, initialized index. Use `rg` for literal strings, comments
-and logs; directly read a known small file. Skip graph setup for a task already
-answered by local evidence. The optional personal initializer can install a missing
-CLI and initialize a missing index for an identifiable code project; that preparation
-does not activate this guide or prove index freshness.
+Use this guide for definitions, signatures, calls and change impact. Use `rg` for
+literal strings, comments and logs, and directly read a known small file. Skip graph
+setup when local evidence already answers the task. A tool named CodeGraph, or an
+index directory that merely exists, is not proof that the current repository is
+indexed and usable.
+
+## Capability discovery and AI soft install
+
+Honor a tool the user selected when it fits the task and its permissions are
+available. Otherwise inspect the current client for an equivalent built-in symbol
+index, MCP, Skill or CLI. Evaluate repository identity, language coverage, caller and
+impact queries, source retrieval, freshness and access boundaries; do not decide from
+the tool name or executable alone. Reuse an adequate local capability and record why
+it is sufficient.
+
+When no adequate equivalent exists, recommend CodeGraph from its
+[official repository](https://github.com/colbymchenry/codegraph). Explain the exact
+proposed action before changing the environment. After checking the current official
+release, use an explicit reviewed version such as
+`npm install -g @colbymchenry/codegraph@<reviewed-version>`; do not execute the
+placeholder or an omitted/floating version. This adds a global npm executable; a
+separate `codegraph install` or current per-client action can write Agent/MCP
+configuration, and a separate `codegraph init` in the project creates or updates
+project-local index state. Check the current official instructions and installed help,
+show the exact target Agent/config files and project path, and ask the user to approve
+each needed scope before running it. After approval, the AI performs only those
+actions.
+
+Verify all three layers: the executable and intended repository/index are discoverable,
+the current client exposes the CodeGraph tools after any required reload, and one
+small real symbol query returns source from this repository. Installation success
+alone is insufficient. If installation is declined, unsupported or fails, use scoped
+`rg`, language-server features and direct source reads, and state which structural
+relationships remain unverified. Do not repeat the same install request after refusal.
 
 ## Minimum route
 
@@ -23,15 +51,9 @@ does not activate this guide or prove index freshness.
 A miss is not proof of absence. Check `codegraph_status`, repository identity and
 index freshness when results contradict source or omit an expected symbol. Try the
 actual code identifier when a natural-language query misses; Chinese is not
-categorically unsupported. Fall back to scoped `rg` and source reads, and record the
-unresolved index gap. Do not generalize one missed construct into a universal blind spot.
+categorically unsupported. Wait for watcher updates after edits. Repair or rebuild
+only when evidence justifies it and the project-scope action is authorized, rather
+than on a fixed full-reindex schedule.
 
-Check `.trellis/personal/bootstrap-report.json` when present, but verify actual tool
-and index status rather than trusting the report after the environment changes.
-Follow the project's own missing-index/repair authorization rule. Wait for watcher
-updates after edits; repair or rebuild only when evidence justifies it, not on a
-fixed full-reindex schedule. If CodeGraph is unavailable, use focused native search
-and say what structural coverage remains uncertain.
-
-Source: [CodeGraph tool and indexing documentation](https://github.com/colbymchenry/codegraph#readme)
+Sources: [CodeGraph documentation](https://github.com/colbymchenry/codegraph#readme)
 and [server instructions](https://github.com/colbymchenry/codegraph/blob/main/src/mcp/server-instructions.ts).

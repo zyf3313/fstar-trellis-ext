@@ -1,1 +1,0 @@
-"""Personal Trellis bootstrap package."""

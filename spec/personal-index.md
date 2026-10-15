@@ -22,6 +22,19 @@ Write user-facing explanations and authored deliverables in Chinese unless the u
 
 Treat tool choice, installation/discovery, client loading, task execution and successful acceptance as separate states. These guides choose routes such as CodeGraph, QMD, GitHub/gh, optional DBHub and Emil only when their scenarios apply. If a selected capability is unavailable, use the guide's fallback or report the gap.
 
-When the project was created with the optional `trellis-personal init` wrapper, read `.trellis/personal/bootstrap-report.json` only to discover preparation state. The wrapper may install missing CodeGraph/QMD CLIs and a supported GitHub CLI, and it installs missing Emil Skills for the selected Agent with one pinned `skills@1.7.0` command when `npx` is available. It verifies each Emil result in the actual Codex or Claude Code directory, including `CODEX_HOME` and `CLAUDE_CONFIG_DIR` overrides, and may initialize a missing CodeGraph index in an identifiable code project. The report does not activate a scenario, prove client loading, authenticate GitHub, create QMD collections, download models, connect DBHub/Exa or authorize database writes. A semantic match in the routing table still decides when to use a prepared capability.
+For the five tool-backed routes—code, knowledge, UI, Web and database—first inspect
+the current CLI, MCP, Skill, connector and built-in capabilities. A semantic match in
+the table loads only that guide; it does not load all tool guides. Evaluate real fit,
+permissions and data boundaries rather than name-only presence. Reuse an adequate
+local equivalent. Otherwise the matched guide names the screened default, official
+source, proposed action and impact. Ask the user before installation or configuration;
+after approval the AI performs the stated action and verifies discovery, current-client
+loading and a minimal real task. A user-selected tool has priority. Refusal, unsupported
+environments and failed setup use the matched guide's fallback without repeated prompts.
+
+Native `trellis init --registry ... --template personal-core --append` only imports
+this `spec/` tree. It never installs or configures tools. Login, API keys, model
+downloads, database credentials/connections, write access and external publication
+remain separate authorization boundaries even after a tool installation is approved.
 
 Report implementation, automated checks, environment/device checks and real user acceptance separately. Reuse evidence only when code/content state, environment, command and scope are unchanged. Hashes, links, generated files and passing tests do not by themselves prove semantic consistency, platform compatibility or user confirmation. Keep skips and unresolved checks explicit.

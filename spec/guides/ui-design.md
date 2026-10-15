@@ -19,7 +19,30 @@ For an existing project, discover and cite its confirmed baseline. Do not redesi
 
 ## Core and conditional references
 
-`emil-design-eng` is the single core design Skill for new directions and existing interactions. The optional personal initializer detects it and the three conditional Skills for the selected Agent. When entries are missing and `npx` is available, it installs all missing Emil Skills in one pinned `skills@1.7.0` call and verifies each `SKILL.md` in the actual Agent directory; unavailable `npx` is reported as unsupported. Check the actual Skill entry after environment changes; an initializer report proves only installation state, not that the current client loaded the Skill or that this UI scenario should run. Do not route the same task through a competing core design Skill.
+Honor a user-selected design tool or Skill when it fits the task and project baseline.
+Otherwise inspect the current client's built-in design support, MCPs, Skills and local
+tools. Evaluate whether each candidate can work with the target stack, preserve the
+existing design system, produce the requested artifact and cover the required states;
+do not decide from a name or `SKILL.md` alone. Reuse an adequate local equivalent.
+
+When no adequate equivalent exists, recommend `emil-design-eng` as the screened core
+Skill from the [official Emil Skills repository](https://github.com/emilkowalski/skills#readme).
+Check the current official release, then show the exact reviewed version, target Agent
+and action before changing its environment, for example
+`npx skills@<reviewed-version> add emilkowalski/skills --skill emil-design-eng -g -a <agent> --yes`.
+Do not execute the placeholders or substitute a floating tag.
+This downloads the installer package and writes the Skill into that Agent's global
+Skill directory. Add `--skill break-ui`, `--skill review-animations` or
+`--skill mobile-native` only when the corresponding condition below applies. Ask the
+user to approve the exact Skill list and target Agent; after approval, the AI performs
+that action. Do not route the same task through a competing core design Skill.
+
+Verify the expected `SKILL.md` is discoverable in the target Agent, the current client
+loads the Skill after any required reload, and one minimal real UI task actually
+invokes its guidance. File installation alone is insufficient. If installation is
+declined, unsupported or fails, continue with the confirmed project baseline,
+existing client capabilities and explicit manual checks, and report which specialist
+coverage is missing without repeating a refused request.
 
 | Task condition | Additional reference | Evidence to produce |
 |---|---|---|
@@ -27,7 +50,10 @@ For an existing project, discover and cite its confirmed baseline. Do not redesi
 | Motion is added, changed or implicated in a defect | `review-animations` | Applicable motion/accessibility review and target-browser checks |
 | Phone or touch interaction is targeted | `mobile-native` | Touch/layout review and critical paths on a real target device |
 
-These are conditional specialist checks. Explain applicable and skipped conditions. Project baselines and measured behavior take precedence over generic duration, scale or performance heuristics. If a Skill is unavailable during the task, use the project baseline and existing checks or run the explicit personal preparation path; report the limitation rather than silently changing the Agent environment.
+These are conditional specialist checks. Explain applicable and skipped conditions.
+Project baselines and measured behavior take precedence over generic duration, scale
+or performance heuristics. Installing a Skill does not authorize design-platform
+login, file upload or external publication; those actions retain their own scope.
 
 ## Conditional delivery contract
 
