@@ -24,37 +24,9 @@ Trellis 已经提供 workflow、任务生命周期、项目规范、记忆和多
 
 ## 与 Trellis 的边界
 
-```mermaid
-flowchart TB
-    Project[目标项目]
+![Trellis 原生能力、衔接原则与 Personal Trellis 按需补充能力对照](assets/trellis-capability-comparison.png)
 
-    subgraph Native[官方 Trellis 所有]
-        Init[trellis init]
-        Workflow[workflow 与任务生命周期]
-        Tasks[任务 PRD / design / JSONL]
-        ProjectSpec[项目规范与项目索引]
-        Memory[workspace 与跨会话记忆]
-        Platforms[Codex / Claude Code 等平台资产]
-        Init --> Platforms
-        Init --> ProjectSpec
-        Workflow --> Tasks
-        Workflow --> Memory
-    end
-
-    subgraph Personal[Personal Trellis 所有]
-        Entry[personal-core 场景入口]
-        Guides[7 份按场景指南]
-        Templates[7 份中文模板]
-        Bootstrap[可选 trellis-personal 工具准备]
-    end
-
-    Project --> Init
-    Project -.->|固定 Git ref 导入| Entry
-    Entry --> Guides
-    Guides -.->|需要时| Templates
-    Bootstrap -->|调用原生初始化| Init
-    Bootstrap -.->|不覆盖| ProjectSpec
-```
+*图 1：Personal Trellis 只补充场景指南、中文模板与可选工具准备；原生 runtime、workflow 和项目所有权保持不变。*
 
 Trellis 的 workflow、任务目录、代理调度、项目索引、本地规范和记忆始终由目标项目与官方 runtime 管理。本仓库只拥有 `personal-core` 内容和可选包装器，不修改、fork 或内置 Trellis runtime。
 
@@ -152,22 +124,9 @@ trellis init \
 
 项目自己的索引仍是权威入口。本库不分发 `guides/index.md`；任务先读 `personal-index.md`，再只加载语义命中的指南和必要模板。
 
-```mermaid
-flowchart LR
-    Request[用户需求或任务语义] --> NativePlan[Trellis 原生讨论与设计]
-    NativePlan --> Match{命中个人场景吗}
-    Match -->|否| NativeWork[继续原生实施与检查]
-    Match -->|是| Index[读取 personal-index]
-    Index --> Guide[只加载命中的指南]
-    Guide --> NeedTemplate{需要用户文档或设计产物吗}
-    NeedTemplate -->|是| Template[加载对应中文模板]
-    NeedTemplate -->|否| NeedTool{需要外部工具吗}
-    Template --> NeedTool
-    NeedTool -->|是| Tool[检测、连接并最小调用]
-    NeedTool -->|否| Work[实施]
-    Tool --> Work
-    Work --> Verify[自动检查、环境验收与用户确认分别记录]
-```
+![Trellis 原生讨论设计主干与 Personal Trellis 场景按需路由](assets/scenario-routing.png)
+
+*图 2：个人指南、模板和工具只在命中条件时加载，并带着最小必要上下文回到原生实施与检查。*
 
 已知的小文件直接读取，稳定的本地事实无需额外检索。工具选择、安装或发现、客户端加载、实际调用和任务验收是五个不同状态，不能用其中一个替代另一个。
 
@@ -342,6 +301,9 @@ personal-trellis/
 ├── CHANGELOG.md
 ├── index.json                 # Trellis registry：personal-core
 ├── library.json               # 版本、兼容与发布状态
+├── assets/                    # README 中文关系图
+│   ├── trellis-capability-comparison.png
+│   └── scenario-routing.png
 ├── bin/
 │   └── trellis-personal       # 可选 repository-local 包装入口
 ├── bootstrap/
