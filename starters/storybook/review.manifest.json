@@ -1,0 +1,114 @@
+{
+  "$schemaVersion": 1,
+  "id": "example.requirement-review.v1",
+  "title": "示例项目需求评审",
+  "version": "V1.0",
+  "status": "示例",
+  "updatedAt": "2026-10-17",
+  "hashAlgorithm": "sha256",
+  "artifacts": [
+    {
+      "id": "product-requirements",
+      "kind": "document",
+      "module": "示例需求",
+      "source": "docs/requirements/2026-10-17-example/product-requirements.md",
+      "version": "V1.0",
+      "reviewStatus": "示例",
+      "required": true,
+      "story": {
+        "id": "product-requirements",
+        "group": "文档",
+        "name": "产品需求说明"
+      }
+    },
+    {
+      "id": "technical-design",
+      "kind": "document",
+      "module": "示例需求",
+      "source": "docs/requirements/2026-10-17-example/technical-design.md",
+      "version": "V1.0",
+      "reviewStatus": "示例",
+      "required": false,
+      "story": {
+        "id": "technical-design",
+        "group": "文档",
+        "name": "技术方案"
+      }
+    },
+    {
+      "id": "test-acceptance",
+      "kind": "acceptance",
+      "module": "示例需求",
+      "source": "docs/requirements/2026-10-17-example/test-cases.md",
+      "version": "V1.0",
+      "reviewStatus": "示例",
+      "required": false,
+      "story": {
+        "id": "test-acceptance",
+        "group": "文档",
+        "name": "测试验收"
+      }
+    },
+    {
+      "id": "ui-design",
+      "kind": "design-source",
+      "module": "长期设计资产",
+      "source": "design/ui/ui-design.md",
+      "version": "V1.0",
+      "reviewStatus": "示例",
+      "required": true,
+      "story": {
+        "id": "ui-design-document",
+        "group": "UI 设计语言与资产",
+        "name": "UI 设计说明"
+      }
+    },
+    {
+      "id": "product-prototype",
+      "kind": "executable-prototype",
+      "module": "长期原型资产",
+      "source": "design/prototypes/product-prototype.md",
+      "version": "V1.0",
+      "reviewStatus": "示例",
+      "required": true,
+      "stateSource": "prototype-fence",
+      "story": {
+        "id": "prototype-document",
+        "group": "可交互原型",
+        "name": "原型说明"
+      }
+    }
+  ],
+  "adapters": [
+    {
+      "kind": "pdf",
+      "renderer": "PDF.js",
+      "mode": "同源浏览器预览",
+      "fallback": "显示哈希、大小并下载原件"
+    },
+    {
+      "kind": "image",
+      "renderer": "浏览器图片",
+      "mode": "PNG/JPEG/WebP；SVG 作为隔离图片",
+      "fallback": "下载原件"
+    },
+    {
+      "kind": "office",
+      "renderer": "可选转换服务",
+      "mode": "记录转换器和字体版本",
+      "fallback": "显示元数据并下载，不声称版式一致"
+    },
+    {
+      "kind": "design-source",
+      "renderer": "受控外链或本地导出",
+      "mode": "设计平台 adapter 位",
+      "fallback": "显示快照、来源和哈希"
+    },
+    {
+      "kind": "unknown",
+      "renderer": "元数据",
+      "mode": "不执行、不解压、不嵌入",
+      "fallback": "校验来源后下载"
+    }
+  ]
+}

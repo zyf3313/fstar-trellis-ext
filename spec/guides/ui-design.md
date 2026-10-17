@@ -69,6 +69,22 @@ When the user requests design deliverables, local review or an implementation re
 
 A static image or hotspot prototype can explain an early flow but does not prove input, focus, responsive or application behavior. Do not claim a standalone runnable project unless its dependencies, entry point and commands are present and verified.
 
+Prefer the project's existing asset layout. When none exists, keep long-lived
+authoritative UI sources, tokens, components, pages and exports under `design/ui/`,
+and runnable prototype source, states and version references under
+`design/prototypes/`. A requirement record links an immutable commit or asset
+version; archiving the requirement does not move these long-lived assets or confuse
+the current baseline with historical work.
+
+An optional reusable Storybook runner may live in `review/`. Copy it separately
+from the library's `starters/storybook/` directory at a fixed reviewed ref; the
+normal `personal-core` registry import remains spec-only and never downloads,
+installs or runs the starter. The preview manifest stores source/version/route
+metadata and renders authoritative source files rather than a second editable copy.
+Generated preview content is regenerated, not hand-edited. Missing or drifting
+sources must fail checks. Static build success is preview evidence, not design-tool,
+browser/device or user acceptance.
+
 If the user requests Figma or MasterGo delivery, provide a real format that the target can import, its editable source, import instructions and known losses or substitutions. The user performs the platform import. Do not upload on the user's behalf, rename custom JSON as a native design file, or claim universal lossless compatibility. Record file-structure/read-back checks, actual platform import feedback and user acceptance separately; keep platform acceptance pending until observed.
 
 ## Consistency and acceptance

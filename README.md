@@ -2,7 +2,7 @@
 
 基于 [Trellis](https://github.com/mindfold-ai/Trellis) 的个人扩展规范库：保留
 Trellis 原生任务流程，在其上增加按场景加载的指南，以及面向用户的中文
-PRD、TDD 与 UI 模板。
+产品需求说明、技术方案与 UI 模板。
 
 普通项目通过 Trellis 原生 registry 使用本库，**不需要手工 clone**。Trellis
 读取指定的私有仓库提交，并把 `personal-core` 中的 `spec/` 导入目标项目。
@@ -10,9 +10,9 @@ PRD、TDD 与 UI 模板。
 [官方 Trellis 仓库](https://github.com/mindfold-ai/Trellis) ·
 [官方文档](https://docs.trytrellis.app/) ·
 [Trellis Quick Start](https://docs.trytrellis.app/start/install-and-first-task) ·
-[场景入口](spec/personal-index.md) · [变更记录](CHANGELOG.md)
+[扩展入口](spec/trellis-extensions.md) · [变更记录](CHANGELOG.md)
 
-> 当前状态：`1.3.1` 未公开发布候选 · 私有仓库 · 许可证待定 · 已验证
+> 当前状态：`1.4.0` 未公开发布候选 · 私有仓库 · 许可证待定 · 已验证
 > Trellis CLI `0.6.9`
 
 ## 为什么需要这层扩展
@@ -23,13 +23,13 @@ Trellis 已经提供 workflow、任务生命周期、项目规范、记忆和多
 | 能力 | Trellis 原生负责 | Personal Trellis 增加 |
 |---|---|---|
 | 工作流 | 需求讨论、设计、实施、检查、归档和记忆 | 不改变原生阶段，只在语义命中时补充指南 |
-| 项目规范 | `.trellis/spec/`、项目索引和本地约束 | 一页式场景入口与 9 份专项指南 |
+| 项目规范 | `.trellis/spec/`、项目索引和本地约束 | 一页式扩展入口与 10 份专项指南 |
 | 需求澄清 | 原生需求讨论与任务记录 | 整体范围 → 逐模块规则/字段/异常 → 跨模块复核，主动发现缺口 |
-| 产品与技术设计 | 原生 `prd.md` / `design.md` 作为 AI 任务上下文 | 面向用户评审的中文 PRD、TDD 与类型适配模板 |
+| 产品与技术设计 | 原生 `prd.md` / `design.md` 作为 AI 任务上下文 | 面向用户评审的产品需求说明、技术方案与类型适配模板 |
 | UI 设计 | 项目自行决定设计和实现方式 | 0→1 UI 基线、模块交互、可点击原型与设计一致性规则 |
 | 工具使用 | 支持项目按需组合工具 | 场景命中后先复用本地等价能力，不足时经用户同意由 AI 准备并验证 |
 | 初始化 | `trellis init` 生成原生结构、导入 registry 内容与平台资产 | 只提供 `personal-core` 规范；不安装或配置工具 |
-| 文档一致性 | 原生任务记录和规范更新 | PRD/TDD/UI/实现/测试之间的变更传播与证据规则 |
+| 文档一致性 | 原生任务记录和规范更新 | 产品需求说明/技术方案/UI/实现/测试之间的变更传播与证据规则 |
 | 测试与验收 | 原生检查阶段、项目测试框架与质量要求 | 需求与代码对照、用例评审、自动化关联、执行证据、缺陷和回归按需使用 |
 
 ## 与 Trellis 的边界
@@ -105,20 +105,20 @@ trellis init \
 需要更新已有同名内容时，按审阅结果逐项合并。回滚则恢复上一已验证 SHA
 对应的文件；不要把 `--append` 当作冲突解决器。
 
-## 如何启用场景路由
+## 如何启用扩展路由
 
 讨论阶段的自动路由使用下方项目指令挂载块。项目现有规范索引也可以增加
 以下导航链接，但它单独存在不等于自动启用：
 
 ```md
-- [Personal scenario index](../personal-index.md)
+- [Trellis extensions](../trellis-extensions.md)
 ```
 
 相对路径按实际索引位置调整。也可以只为当前任务在 `implement.jsonl` 或
 `check.jsonl` 加入：
 
 ```json
-{"file":".trellis/spec/personal-index.md","reason":"Route this task to the matching personal scenario guide"}
+{"file":".trellis/spec/trellis-extensions.md","reason":"Route this task to the matching personal extension guide"}
 ```
 
 需求澄清需要在原生讨论开始时可读：应从该项目讨论阶段实际读取的现有入口
@@ -132,7 +132,7 @@ trellis init \
 加载已验收。需要讨论阶段确定加载时，应由项目所有者在该客户端实际读取的
 项目指令入口（如 AGENTS.md / CLAUDE.md 的用户自维护区）明确要求：
 
-> 开始 Trellis 原生需求讨论前，读取 `.trellis/spec/personal-index.md`，
+> 开始 Trellis 原生需求讨论前，读取 `.trellis/spec/trellis-extensions.md`，
 > 按用户语义仅加载匹配指南；大型多模块需求读取模块澄清指南，测试请求读取
 > 测试与验收指南。保留原生流程、阶段与已有项目规范。
 
@@ -144,7 +144,7 @@ trellis init \
 ## Project extension routing (user maintained)
 
 Before handling a request in the native Trellis workflow, read
-`.trellis/spec/personal-index.md` and load only guides matching the user's request.
+`.trellis/spec/trellis-extensions.md` and load only guides matching the user's request.
 Apply clarification during native discussion and testing guidance only for requested
 testing activities. Preserve native phases and project instructions; do not load
 every guide or create extra phases.
@@ -161,21 +161,27 @@ every guide or create extra phases.
 仍待补验，不能将双客户端初始化成功解释为双客户端加载均已通过。
 
 项目自己的索引仍是权威入口。本库不分发 `guides/index.md`，避免覆盖既有项目索引；任务先读
-`personal-index.md`，再只加载语义命中的指南和必要模板。
+`trellis-extensions.md`，再只加载语义命中的指南和必要模板。
+
+从 1.3.x 更新时，把项目拥有的入口链接、AGENTS/CLAUDE 自维护路由块以及
+任务 JSONL 从 `personal-index.md` 改为 `trellis-extensions.md`。旧文件只保留
+一个迁移链接，不能继续维护规则。原生 `guides/index.md` 仍由项目/Trellis
+拥有，本库不会覆盖它。
 
 ![Trellis 原生讨论设计主干与 Personal Trellis 场景按需路由](assets/scenario-routing.png)
 
 *图 2：个人指南、模板和工具只在命中条件时进入，并带着最小必要上下文
 回到原生实施与检查。*
 
-## 9 份场景指南
+## 10 份场景指南
 
 | 场景 | 指南 | 何时触发 | 何时跳过 |
 |---|---|---|---|
 | 逐模块需求澄清 | [模块澄清](spec/guides/module-clarification.md) | 大型/复杂、多模块需求，或用户要求深入澄清、检查遗漏时，在原生讨论环节触发 | 小任务仅澄清关键缺口；已确认内容不重复问，不强制附加文档 |
-| 中文 PRD / TDD | [产品与技术设计](spec/guides/product-technical-design.md) | 用户明确要求；或 0→1、大型迭代、跨模块/系统、核心流程/数据/公共契约变化时，在原生设计收敛后询问一次 | 小修复、文案/样式小改、无可观察合同变化的内部重构默认不生成 |
+| 产品需求说明 / 技术方案 | [产品与技术设计](spec/guides/product-technical-design.md) | 用户明确要求；或 0→1、大型迭代、跨模块/系统、核心流程/数据/公共契约变化时，在原生设计收敛后询问一次 | 小修复、文案/样式小改、无可观察合同变化的内部重构默认不生成 |
 | UI 设计与交互 | [UI 设计](spec/guides/ui-design.md) | 用户明确要求设计稿、原型、预览或平台交付；0→1 UI 且没有已确认风格时，在设计阶段询问一次是否需要完整 UI 方案 | 无 UI 影响时跳过；已有项目和小改复用现有基线 |
-| 文档一致性 | [文档一致性](spec/guides/document-consistency.md) | 已有 PRD/TDD/UI/实现/证据发生受影响变化时 | 内部实现不改变外部行为或契约时，只记录必要结论 |
+| 文档一致性 | [文档一致性](spec/guides/document-consistency.md) | 已有产品需求说明/技术方案/UI/实现/证据发生受影响变化时 | 内部实现不改变外部行为或契约时，只记录必要结论 |
+| 代码注释 | [代码注释](spec/guides/code-comments.md) | 复杂规则、非显然决策、约束、副作用或兼容边界需要解释时 | 明显代码、逐行翻译、无项目依据的全函数注释要求 |
 | 代码结构检索 | [代码检索](spec/guides/code-search.md) | 定义、签名、调用关系、影响范围等结构问题 | 已知小文件、字面量、注释与日志直接读文件或使用 `rg` |
 | 知识与历史检索 | [知识检索](spec/guides/knowledge-search.md) | 跨文档发现、历史决定或大文档集合检索 | 单个已知文档直接读取 |
 | Web / GitHub 调研 | [Web 调研](spec/guides/web-research.md) | 当前事实、官方资料核实、开源项目探索、GitHub 代码/issues 检索 | 本地证据足够回答稳定问题时跳过 |
@@ -188,9 +194,9 @@ every guide or create extra phases.
 
 | 模板 | 用途 | 使用方式 |
 |---|---|---|
-| [中文 PRD](spec/templates/prd.zh-CN.md) | 项目背景、业务全景、模块职责、功能、流程与验收 | 面向用户评审；不替代原生 `prd.md` |
-| [中文 TDD](spec/templates/technical-design.zh-CN.md) | 模块与功能实现方案、契约、数据、测试和影响 | 面向用户/研发评审；不替代原生 `design.md` |
-| [TDD 类型适配](spec/templates/technical-design-profiles.zh-CN.md) | Web/API、前端/移动端、CLI/SDK、数据任务、基础设施等类型裁剪 | 与中文 TDD 组合，按项目类型裁剪 |
+| [产品需求说明](spec/templates/prd.zh-CN.md) | 背景与范围、业务流程，以及模块内的职责、功能、规则、字段、异常和验收 | 面向用户评审；不替代原生 `prd.md` |
+| [技术方案](spec/templates/technical-design.zh-CN.md) | 总体方案、实体/存储、模块实现、专项设计、迁移、测试和配置 | 面向用户/研发评审；不替代原生 `design.md` |
+| [技术方案类型适配](spec/templates/technical-design-profiles.zh-CN.md) | Web/API、前端/移动端、CLI/SDK、数据任务、基础设施等类型裁剪 | 与技术方案组合，按项目类型裁剪 |
 | [UI 基线](spec/templates/ui-baseline.zh-CN.md) | 设计语言、tokens、组件、整体框架、导航和全局状态 | 0→1 或缺少基线的 UI 项目在实现前确认 |
 | [功能交互设计](spec/templates/ui-feature.zh-CN.md) | 页面、模块、功能、状态、交互、异常恢复和原型 | 已有基线后按受影响模块设计 |
 | [评审与变更记录](spec/templates/review-change.zh-CN.md) | 冻结版本、需求到验收映射、变更传播与证据失效 | 并入现有方案或任务记录 |
@@ -199,7 +205,57 @@ every guide or create extra phases.
 | [测试执行与验收](spec/templates/test-execution.zh-CN.md) | 每次运行的结果、缺陷、证据、回归与验收限制 | 与用例定义分离，引用用例和代码版本，可并入已有报告 |
 
 模板随 `personal-core` 进入 `.trellis/spec/templates/`。只读取当前场景所需
-文件；小任务不强制生成 PRD、TDD 或整套 UI 设计。
+文件；小任务不强制生成产品需求说明、技术方案或整套 UI 设计。
+
+## 需求、任务与长期资产
+
+优先沿用项目现有目录。没有约定时，可按需采用以下默认；不创建空文件：
+
+```text
+docs/requirements/YYYY-MM-DD-slug/
+  README.md                 # 身份、状态、任务、权威源和资产版本
+  product-requirements.md
+  technical-design.md
+  test-cases.md
+  test-runs/<run-id>.md
+docs/requirements/archive/YYYY-MM/YYYY-MM-DD-slug/
+design/ui/                  # 长期设计源、tokens、组件、页面和按需导出
+design/prototypes/          # 长期真实原型源码、状态和版本引用
+review/                     # 可选 Storybook 评审运行器
+```
+
+一项需求可以关联多个原生 Trellis 任务；任务只链接对应需求版本和负责模块，
+不复制正文。任务按原生机制归档，需求在相关交付与验收完成后单独归档并修复
+链接。长期 UI/原型资产留在 `design/`，需求记录保存不可变提交或资产版本；
+草稿工作版本和当前/历史基线必须明确区分。
+
+## 可选 Storybook 评审运行器
+
+仓库可在 `starters/storybook/` 提供独立的 Storybook 骨架。普通
+`personal-core` registry 仍只导入 `spec/`，不会下载、安装或运行该目录。
+需要时从已审阅的固定提交单独取出并复制到项目：
+
+```sh
+git clone --filter=blob:none --no-checkout \
+  git@github.com:zyf3313/personal-trellis /tmp/personal-trellis-starter
+git -C /tmp/personal-trellis-starter checkout <VERIFIED_COMMIT_SHA> -- starters/storybook
+cp -R /tmp/personal-trellis-starter/starters/storybook /path/to/project/review
+cd /path/to/project/review
+pnpm install --frozen-lockfile
+pnpm verify
+pnpm dev
+```
+
+`<VERIFIED_COMMIT_SHA>` 必须与审阅和规范导入记录一致。使用新的临时目录；
+命令不会替代对项目现有 `review/` 的比较与合并。配置项目根、manifest、
+可选文档和扩展模块的方法见 [starter README](starters/storybook/README.md)。
+
+骨架的 manifest 只保存来源、版本和路由；正文读取项目的权威文件，生成内容
+不可手改，缺失或漂移必须报错。示例内容只是示例，不能绑定本仓库任务路径或
+用户机器绝对路径。可选文档可省略；增加模块或原型按 starter README 扩展。
+静态构建成功只证明预览产物可生成，不等于设计工具、浏览器/设备或用户验收。
+starter 由独立交付范围生成；若当前固定提交中不存在该目录，应将此能力视为
+待发布，不能从 spec 导入结果推断它已经可用。
 
 ## 场景内 AI 软安装
 
@@ -286,15 +342,15 @@ AI 主动发现规则、字段、权限、状态、异常和验收缺口；每�
 1. `trellis init` 从固定 Git 提交读取 `index.json`，选择 `personal-core`
    并只把 `spec/` 加入目标项目。
 2. 在客户端实际读取的项目指令入口加入上述自维护路由块，明确要求读取
-   `personal-index.md`；单链接仅提供导航，实施/检查 JSONL 仅覆盖对应阶段。
+   `trellis-extensions.md`；单链接仅提供导航，实施/检查 JSONL 仅覆盖对应阶段。
 3. AI 根据当前语义只加载一到数份匹配指南。
 4. 指南决定是否读取模板、复用本地工具、提出经确认的工具准备，或直接使用
    本地证据。
 5. 原生 Trellis 继续负责设计、实施、检查与完成流程。
-6. PRD/TDD/UI、实现和测试发生变化时，只更新受影响的权威来源与投影，并让
+6. 产品需求说明/技术方案/UI、实现和测试发生变化时，只更新受影响的权威来源与投影，并让
    旧证据失效。
 
-中文 PRD/TDD 是面向用户的附加产物，不替代原生 `prd.md` 和 `design.md`。
+产品需求说明和技术方案是面向用户的附加产物，不替代原生 `prd.md` 和 `design.md`。
 
 ## 仓库结构
 
@@ -307,13 +363,15 @@ personal-trellis/
 ├── assets/
 │   ├── trellis-capability-comparison.png
 │   └── scenario-routing.png
-└── spec/
-    ├── personal-index.md      # 单入口场景路由
-    ├── guides/                # 9 份场景指南
+├── spec/
+    ├── trellis-extensions.md  # 维护中的单入口场景路由
+    ├── personal-index.md      # 旧入口迁移链接
+    ├── guides/                # 10 份场景指南
     │   ├── module-clarification.md
     │   ├── product-technical-design.md
     │   ├── ui-design.md
     │   ├── document-consistency.md
+    │   ├── code-comments.md
     │   ├── code-search.md
     │   ├── knowledge-search.md
     │   ├── web-research.md
@@ -329,10 +387,11 @@ personal-trellis/
         ├── exploration.zh-CN.md
         ├── test-cases.zh-CN.md
         └── test-execution.zh-CN.md
+└── starters/
+    └── storybook/             # 可选、独立复制；不在 registry spec 载荷中
 ```
 
-本库不包含个人 workflow、Trellis meta-Skill、工具安装脚本、UI 演示项目、
-Storybook 或自制发布系统。
+本库不包含个人 workflow、Trellis meta-Skill、工具安装脚本或自制发布系统。
 
 ## 更新、兼容与回滚
 
@@ -341,7 +400,7 @@ Trellis runtime 和个人规范 ref 是两个独立版本轴：
 | 变化 | 更新方式 | 验证重点 | 回滚 |
 |---|---|---|---|
 | Trellis runtime | 遵循 [官方升级与变更记录](https://docs.trytrellis.app/changelog) | 原生 workflow、配置、hooks、任务、平台资产和项目索引 | 回到项目已验证的 Trellis 版本 |
-| Personal Trellis | 审阅两个 SHA 的差异，再以新固定 SHA 导入/合并 | 9 指南、9 模板、项目本地修改和场景路由 | 恢复上一已验证 SHA 与对应文件 |
+| Personal Trellis | 审阅两个 SHA 的差异，再以新固定 SHA 导入/合并 | 10 指南、9 模板、项目本地修改、扩展入口和可选 starter | 恢复上一已验证 SHA 与对应文件 |
 
 当前隔离消费验证使用 Trellis CLI `0.6.9`。这不构成对未来 Trellis 版本、
 其他操作系统、真实账号、模型、数据库或设备环境的保证。
@@ -361,7 +420,8 @@ Trellis runtime 和个人规范 ref 是两个独立版本轴：
 <summary><strong>使用 personal-core 之前必须 clone 这个仓库吗？</strong></summary>
 
 不需要。原生 `trellis init --registry ... --template personal-core --append`
-会读取远端固定提交。手工 clone 只用于维护本仓库。
+会读取远端固定提交。手工 clone 只用于维护本仓库，或按上文从固定提交单独
+取出不属于 registry 载荷的可选 Storybook starter。
 
 </details>
 
@@ -391,7 +451,7 @@ Trellis runtime 和个人规范 ref 是两个独立版本轴：
 </details>
 
 <details>
-<summary><strong>每个任务都会生成中文 PRD、TDD 和 UI 设计吗？</strong></summary>
+<summary><strong>每个任务都会生成产品需求说明、技术方案和 UI 设计吗？</strong></summary>
 
 不会。用户明确要求时直接触发；0→1 或大型任务在原生设计收敛后询问一次；
 小修复默认复用现有设计。无 UI 影响时不加载 UI 指南，无数据库语义时不

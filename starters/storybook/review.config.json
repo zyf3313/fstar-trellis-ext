@@ -1,0 +1,5 @@
+{
+  "$schemaVersion": 1,
+  "projectRoot": "example-project",
+  "manifest": "review.manifest.json"
+}

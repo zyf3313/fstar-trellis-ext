@@ -1,0 +1,657 @@
+@import './tokens.css';
+
+html,
+body,
+#storybook-root {
+  min-width: 0;
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+}
+
+.sb-show-main.sb-main-fullscreen {
+  padding: 0;
+}
+
+.review-dossier,
+.review-document-shell,
+.review-attachments {
+  width: min(100%, 96rem);
+  margin: 0 auto;
+  padding: clamp(1rem, 4vw, 3.5rem);
+}
+
+.review-skip-link {
+  position: fixed;
+  inset: 0 auto auto 1rem;
+  z-index: 30;
+  padding: 0.75rem 1rem;
+  color: #fff;
+  background: var(--review-ink);
+  transform: translateY(-130%);
+}
+
+.review-skip-link:focus {
+  transform: translateY(1rem);
+}
+
+.dossier-header,
+.review-document-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(18rem, 29rem);
+  gap: clamp(2rem, 6vw, 6rem);
+  align-items: end;
+  padding-bottom: clamp(2rem, 5vw, 4rem);
+  border-bottom: 1px solid var(--review-rule);
+}
+
+.dossier-header h1,
+.review-document-header h1 {
+  max-width: 15ch;
+  margin: 0 0 1rem;
+  color: var(--review-ink);
+  font-size: clamp(2.35rem, 6vw, 5.4rem);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.review-document-header h1 {
+  max-width: 18ch;
+  font-size: clamp(2.25rem, 5vw, 4.6rem);
+}
+
+.dossier-header > div > p,
+.review-document-heading > p {
+  max-width: 68ch;
+  margin: 0;
+  font-size: 1.04rem;
+  line-height: 1.76;
+}
+
+.source-proof {
+  min-width: 0;
+  padding-top: 0.6rem;
+  border-top: 2px solid var(--review-ink);
+}
+
+.source-proof dl {
+  margin: 0;
+}
+
+.source-proof div {
+  display: grid;
+  grid-template-columns: 6.2rem minmax(0, 1fr);
+  gap: 1rem;
+  padding-block: 0.7rem;
+  border-bottom: 1px solid var(--review-rule);
+}
+
+.source-proof dt {
+  color: var(--review-muted);
+}
+
+.source-proof dd {
+  min-width: 0;
+  margin: 0;
+  color: var(--review-ink);
+  font-weight: 650;
+}
+
+.source-proof a {
+  overflow-wrap: anywhere;
+}
+
+.source-proof code {
+  display: block;
+  font-size: 0.72rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.dossier-section-heading {
+  display: grid;
+  grid-template-columns: minmax(12rem, 0.55fr) minmax(0, 1fr);
+  gap: clamp(1.5rem, 5vw, 5rem);
+  align-items: baseline;
+  margin: 0 0 1.5rem;
+}
+
+.dossier-section-heading h2,
+.dossier-experiment h2,
+.adapter-contract h2 {
+  margin: 0;
+  color: var(--review-ink);
+  font-size: clamp(1.55rem, 3vw, 2.5rem);
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+}
+
+.dossier-section-heading p {
+  max-width: 65ch;
+  margin: 0;
+  line-height: 1.7;
+}
+
+.dossier-ledger,
+.adapter-section {
+  padding-block: clamp(2.5rem, 6vw, 5rem);
+}
+
+.dossier-ledger ol {
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--review-ink);
+  list-style: none;
+}
+
+.dossier-ledger li {
+  display: grid;
+  grid-template-columns: 3rem minmax(16rem, 1fr) minmax(16rem, 0.62fr);
+  gap: clamp(1rem, 3vw, 2.5rem);
+  align-items: start;
+  padding-block: 1.35rem;
+  border-bottom: 1px solid var(--review-rule);
+}
+
+.dossier-index {
+  color: var(--review-accent);
+  font-family: var(--review-font-mono);
+  font-weight: 750;
+}
+
+.dossier-entry-copy > a {
+  color: var(--review-ink);
+  font-size: 1.2rem;
+  font-weight: 760;
+}
+
+.dossier-entry-copy p {
+  max-width: 62ch;
+  margin: 0.55rem 0 0.75rem;
+  line-height: 1.65;
+}
+
+.dossier-entry-copy > code {
+  color: var(--review-muted);
+  font-size: 0.72rem;
+}
+
+.dossier-ledger li > dl {
+  min-width: 0;
+  margin: 0;
+}
+
+.dossier-ledger li > dl div {
+  display: grid;
+  grid-template-columns: 4rem minmax(0, 1fr);
+  gap: 0.75rem;
+  padding-block: 0.28rem;
+}
+
+.dossier-ledger li > dl dt {
+  color: var(--review-muted);
+}
+
+.dossier-ledger li > dl dd {
+  min-width: 0;
+  margin: 0;
+  color: var(--review-ink);
+}
+
+.dossier-ledger li > dl code {
+  display: block;
+  font-size: 0.65rem;
+  overflow-wrap: anywhere;
+}
+
+.dossier-experiment,
+.adapter-contract,
+.review-document-footer {
+  display: grid;
+  grid-template-columns: minmax(12rem, 0.55fr) minmax(0, 1fr);
+  gap: clamp(1.5rem, 5vw, 5rem);
+  align-items: start;
+  padding-block: clamp(2rem, 5vw, 4rem);
+  border-top: 1px solid var(--review-rule);
+}
+
+.dossier-experiment p,
+.adapter-contract p,
+.review-document-footer p {
+  max-width: 68ch;
+  margin: 0;
+  line-height: 1.75;
+}
+
+.dossier-experiment a {
+  grid-column: 2;
+  justify-self: start;
+  min-height: 2.75rem;
+  margin-top: -1.5rem;
+  padding: 0.7rem 1rem;
+  color: #fff;
+  background: var(--review-ink);
+  border-radius: 0.4rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.dossier-experiment a:hover {
+  background: var(--review-accent);
+}
+
+.review-related-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.review-related-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding-inline: 1rem;
+  color: #fff;
+  background: var(--review-ink);
+  border-radius: 0.4rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.review-related-links a:hover {
+  background: var(--review-accent);
+}
+
+.review-document-layout {
+  display: grid;
+  grid-template-columns: minmax(12rem, 16rem) minmax(0, 1fr);
+  gap: clamp(2rem, 6vw, 6rem);
+  align-items: start;
+  padding-block: clamp(2.5rem, 6vw, 5rem);
+}
+
+.review-toc {
+  position: sticky;
+  top: 1.5rem;
+  max-height: calc(100vh - 3rem);
+  padding-top: 0.75rem;
+  border-top: 2px solid var(--review-ink);
+  overflow-y: auto;
+}
+
+.review-toc > strong {
+  color: var(--review-ink);
+}
+
+.review-toc ol {
+  margin: 0.8rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.review-toc li {
+  border-bottom: 1px solid color-mix(in srgb, var(--review-rule) 70%, transparent);
+}
+
+.review-toc a {
+  display: block;
+  padding-block: 0.55rem;
+  color: var(--review-text);
+  font-size: 0.88rem;
+  line-height: 1.42;
+  text-decoration: none;
+}
+
+.review-toc a:hover {
+  color: var(--review-link);
+  text-decoration: underline;
+}
+
+.review-toc .toc-level-3 a,
+.review-toc .toc-level-4 a {
+  padding-left: 1rem;
+  color: var(--review-muted);
+  font-size: 0.8rem;
+}
+
+.review-toc .toc-level-4 a {
+  padding-left: 2rem;
+}
+
+.review-document {
+  min-width: 0;
+  max-width: 74ch;
+  padding: clamp(1.25rem, 4vw, 3.5rem);
+  color: var(--review-text);
+  background: var(--review-paper);
+  box-shadow: var(--review-shadow);
+}
+
+.review-document > :first-child {
+  margin-top: 0;
+}
+
+.review-document h2,
+.review-document h3,
+.review-document h4 {
+  color: var(--review-ink);
+  line-height: 1.24;
+  scroll-margin-top: 1.5rem;
+  text-wrap: balance;
+}
+
+.review-document h2 {
+  margin: 4rem 0 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--review-rule);
+  font-size: 1.72rem;
+  letter-spacing: -0.02em;
+}
+
+.review-document h3 {
+  margin: 2.4rem 0 0.85rem;
+  font-size: 1.22rem;
+}
+
+.review-document h4 {
+  margin: 2rem 0 0.75rem;
+  font-size: 1rem;
+}
+
+.review-document p,
+.review-document li {
+  line-height: 1.82;
+}
+
+.review-document ul,
+.review-document ol:not(.review-flow) {
+  padding-left: 1.4rem;
+}
+
+.review-document code,
+.review-attachments code {
+  color: var(--review-ink);
+  background: #edf2f1;
+  border-radius: 0.22rem;
+  padding: 0.08em 0.28em;
+  font-size: 0.84em;
+}
+
+.review-document pre,
+.review-source-block pre,
+.review-diagram-fallback pre {
+  max-width: 100%;
+  margin: 1.25rem 0;
+  padding: 1rem;
+  color: #eef6f4;
+  background: var(--review-ink);
+  border-radius: 0.45rem;
+  line-height: 1.55;
+  overflow: auto;
+}
+
+.review-document pre code {
+  color: inherit;
+  background: transparent;
+  padding: 0;
+  font-size: 0.78rem;
+}
+
+.review-table-wrap {
+  max-width: 100%;
+  margin-block: 1.25rem 2rem;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+}
+
+.review-table-wrap:focus-visible {
+  border-radius: 0.25rem;
+}
+
+.review-table-wrap table {
+  width: 100%;
+  min-width: 38rem;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.review-table-wrap th,
+.review-table-wrap td {
+  padding: 0.75rem 0.8rem;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--review-rule);
+}
+
+.review-table-wrap th {
+  color: var(--review-ink);
+  background: #edf2f1;
+  font-weight: 750;
+}
+
+.review-callout {
+  margin-block: 1.5rem;
+  padding: 1rem;
+  color: var(--review-text);
+  background: var(--review-accent-soft);
+  border: 1px solid color-mix(in srgb, var(--review-accent) 35%, var(--review-rule));
+  border-radius: 0.5rem;
+}
+
+.review-callout--warning {
+  background: #f7ebdc;
+  border-color: #d7b07d;
+}
+
+.review-callout > strong {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--review-ink);
+}
+
+.review-callout p {
+  margin: 0;
+}
+
+.review-flow {
+  margin: 1.5rem 0 2rem;
+  padding: 0;
+  border-top: 1px solid var(--review-ink);
+  list-style: none;
+  counter-reset: review-flow;
+}
+
+.review-flow li {
+  counter-increment: review-flow;
+  display: grid;
+  grid-template-columns: 2rem minmax(7rem, 0.4fr) minmax(0, 1fr);
+  gap: 1rem;
+  padding-block: 0.85rem;
+  border-bottom: 1px solid var(--review-rule);
+}
+
+.review-flow li::before {
+  content: counter(review-flow);
+  color: var(--review-accent);
+  font-family: var(--review-font-mono);
+  font-weight: 750;
+}
+
+.review-flow span {
+  color: var(--review-muted);
+}
+
+.review-source-block,
+.review-diagram-fallback {
+  margin-block: 1.5rem;
+}
+
+.review-source-block summary {
+  min-height: 2.75rem;
+  padding-block: 0.6rem;
+  color: var(--review-link);
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.review-diagram-fallback {
+  margin-inline: 0;
+}
+
+.review-diagram-fallback figcaption {
+  color: var(--review-muted);
+  line-height: 1.65;
+}
+
+.review-document-footer {
+  margin-left: calc(min(16rem, 20vw) + clamp(2rem, 6vw, 6rem));
+}
+
+.review-document-footer > strong {
+  color: var(--review-ink);
+  font-size: 1.1rem;
+}
+
+.adapter-contract {
+  margin-top: 1rem;
+}
+
+@media (max-width: 900px) {
+  .dossier-header,
+  .review-document-header,
+  .dossier-section-heading,
+  .dossier-experiment,
+  .adapter-contract,
+  .review-document-footer {
+    grid-template-columns: 1fr;
+  }
+
+  .dossier-ledger li {
+    grid-template-columns: 2.5rem minmax(0, 1fr);
+  }
+
+  .dossier-ledger li > dl {
+    grid-column: 2;
+  }
+
+  .dossier-experiment a {
+    grid-column: 1;
+    margin-top: 0;
+  }
+
+  .review-document-layout {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .review-toc {
+    position: static;
+    max-height: none;
+  }
+
+  .review-toc ol {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+  }
+
+  .review-toc li {
+    flex: 0 0 auto;
+    border: 1px solid var(--review-rule);
+    border-radius: 999px;
+  }
+
+  .review-toc a,
+  .review-toc .toc-level-3 a,
+  .review-toc .toc-level-4 a {
+    min-height: 2.75rem;
+    padding: 0.65rem 0.9rem;
+  }
+
+  .review-document-footer {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 620px) {
+  .review-dossier,
+  .review-document-shell,
+  .review-attachments {
+    padding: 1rem;
+  }
+
+  .dossier-header,
+  .review-document-header {
+    gap: 1.5rem;
+    padding-bottom: 2rem;
+  }
+
+  .dossier-ledger li {
+    grid-template-columns: 1fr;
+  }
+
+  .dossier-index,
+  .dossier-ledger li > dl {
+    grid-column: 1;
+  }
+
+  .review-document {
+    width: calc(100% + 2rem);
+    margin-inline: -1rem;
+    padding: 1.25rem 1rem;
+    box-shadow: none;
+  }
+
+  .source-proof div {
+    grid-template-columns: 5.5rem minmax(0, 1fr);
+  }
+
+  .review-flow li {
+    grid-template-columns: 1.5rem minmax(0, 1fr);
+  }
+
+  .review-flow span {
+    grid-column: 2;
+  }
+}
+
+@media print {
+  .review-skip-link,
+  .review-toc,
+  .review-related-links,
+  .review-document-footer {
+    display: none;
+  }
+
+  .review-document-shell {
+    width: 100%;
+    padding: 0;
+  }
+
+  .review-document-layout {
+    display: block;
+    padding: 0;
+  }
+
+  .review-document {
+    max-width: none;
+    padding: 0;
+    box-shadow: none;
+  }
+
+  .review-document h2 {
+    break-before: page;
+  }
+
+  .review-table-wrap,
+  .review-callout,
+  .review-flow,
+  pre {
+    break-inside: avoid;
+  }
+}

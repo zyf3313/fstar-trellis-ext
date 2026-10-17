@@ -24,6 +24,18 @@ Classify mixed changes in every applicable row. “No update” is a conclusion 
 6. Run the verification appropriate to the change and record command/environment/scope, failures and skips.
 7. Record the resulting version, invalidated evidence, remaining gaps and real user confirmation for the changed scope.
 
+When a change belongs to a versioned requirement, update its `README.md` links and
+the native task's requirement/module reference. When a requirement is archived,
+repair incoming links but leave long-lived `design/ui/` and `design/prototypes/`
+assets in place. Their current version and the immutable version referenced by the
+archived requirement must remain distinguishable.
+
+For previews, update the authoritative document or asset first, then regenerate the
+manifest projection. Do not edit generated Storybook content as a second source.
+Adding or deleting one optional document must not force unrelated artifacts into
+existence. Missing sources, stale hashes/versions and broken routes are failures;
+a successful static build alone does not prove the underlying tool or interaction.
+
 Use [the change review template](../templates/review-change.zh-CN.md) when a durable record helps; it may be incorporated into an existing design or native task record rather than creating another planning system. For requested Chinese PRD/TDD generation, use [product and technical design](product-technical-design.md). For design source and UI output rules, use [UI design](ui-design.md).
 
 ## Conflict and evidence rules
