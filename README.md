@@ -205,14 +205,14 @@ review/                     # 可选评审运行器
 普通 registry 只导入 `spec/`，不会下载、安装或运行 starter。
 
 需要 **Node.js 24+、pnpm 10.12.1**。先选用未占用的临时目录，并确认项目中
-尚无 `review/`；已有目录应先比较再合并。以下命令只取出已经验证的
+尚无 `review/`；已有目录应先比较再合并。以下命令从独立轻量分支取出已经验证的
 **1.4.1 Storybook 快照**；其 spec 与当前轻量 registry 分别固定，不保证同字节：
 
 ```sh
-git clone --filter=blob:none --no-checkout \
+git clone --depth 1 --branch storybook/v1.4.1 --single-branch \
   git@github.com:zyf3313/personal-trellis /tmp/personal-trellis-starter
-git -C /tmp/personal-trellis-starter checkout \
-  d0e61a429389a5f5bcd110aa455137d7b37c44aa -- starters/storybook
+git -C /tmp/personal-trellis-starter rev-parse HEAD
+# 输出必须为 a185310cbacf6b755007c6f28c14f9e4a4297007
 cp -R /tmp/personal-trellis-starter/starters/storybook /path/to/project/review
 cd /path/to/project/review
 pnpm install --frozen-lockfile
@@ -270,7 +270,7 @@ UI 路线以 `emil-design-eng` 为核心；边界数据、动效和触摸目标�
 | 产物 | 固定提交 | 内容 |
 |---|---|---|
 | 1.4.1 轻量 registry 候选 | `8fca7f1a23e28d8b5d2dc86b525c814ae3a3afeb` | 本地核对与当前交付同字节；仅 `index.json`、`library.json` 与 21 份 spec 文件 |
-| Storybook 1.4.1 固定快照 | `d0e61a429389a5f5bcd110aa455137d7b37c44aa` | 包含可选 `ui-design` 修复；只用于提取 `starters/storybook`，不代表当前规范、README 或图片 |
+| Storybook 1.4.1 轻量快照 | `a185310cbacf6b755007c6f28c14f9e4a4297007` | `storybook/v1.4.1` 的无父提交，仅含 40 个 starter 文件；包含可选 `ui-design` 修复 |
 
 当前轻量提交对应 `registry/v1.4.1`，消费仍使用完整 SHA。个人规范升级遵循下面步骤；
 **重复 `init --append` 不是升级**，它跳过同名文件，还可能重建当前 spec 的哈希基线。
