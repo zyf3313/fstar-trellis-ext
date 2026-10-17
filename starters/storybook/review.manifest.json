@@ -56,7 +56,7 @@
       "source": "design/ui/ui-design.md",
       "version": "V1.0",
       "reviewStatus": "示例",
-      "required": true,
+      "required": false,
       "story": {
         "id": "ui-design-document",
         "group": "UI 设计语言与资产",

@@ -1,7 +1,12 @@
 <script setup lang="ts">
-import { artifactProvenance } from '../generated/review-data'
+type Provenance = {
+  source: string
+  sourceHash: string
+  version: string
+  reviewStatus: string
+}
 
-const provenance = artifactProvenance['ui-design']
+defineProps<{ provenance: Provenance }>()
 const tokens = [
   { name: '案卷底色', css: '--review-canvas', value: '#F3F5F4' },
   { name: '纸张', css: '--review-paper', value: '#FFFDF8' },

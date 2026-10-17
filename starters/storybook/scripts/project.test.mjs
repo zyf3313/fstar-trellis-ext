@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict'
-import { mkdtemp, mkdir, readFile, rm, symlink, writeFile } from 'node:fs/promises'
+import { cp, mkdtemp, mkdir, readFile, readdir, rm, symlink, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
-import { resolve } from 'node:path'
+import { dirname, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { spawnSync } from 'node:child_process'
 import test from 'node:test'
 import { parseDocument, sha256 } from './lib/content.mjs'
 import { readArtifactSource, readTextInside, resolveInside, resolveProjectRoot, validateManifest } from './lib/project.mjs'
@@ -47,6 +49,152 @@ test('可选来源缺失时跳过对应入口且不生成空 story', async () =>
   const files = createStorybookProjection(manifest, sources)
   assert.deepEqual([...files.keys()], ['Overview.stories.ts', 'ProductRequirements.stories.ts', 'Attachments.stories.ts'])
   assert.deepEqual(generatedFilesFor(manifest), [...files.keys()])
+})
+
+test('ui-design 存在时生成共享设计资产 story 并传入来源证明', () => {
+  const uiDesign = {
+    id: 'ui-design',
+    title: 'UI 设计说明',
+    summary: '示例',
+    source: 'design/ui/ui-design.md',
+    sourceFile: 'ui-design-ui-design.md',
+    sourceHash: 'ui-hash',
+    version: 'V1',
+    reviewStatus: '示例',
+    date: '2026-10-17',
+    story: { id: 'ui-design-document', group: 'UI 设计语言与资产', name: 'UI 设计说明' },
+  }
+  const manifest = { title: '示例', artifacts: [uiDesign], adapters: [] }
+  const files = createStorybookProjection(
+    manifest,
+    new Map([['ui-design', { body: '## 设计原则\n示例' }]]),
+  )
+
+  assert.equal(files.has('DesignLanguage.stories.ts'), true)
+  assert.match(files.get('DesignLanguage.stories.ts'), /id: 'design-language'/)
+  assert.match(files.get('DesignLanguage.stories.ts'), /"sourceHash": "ui-hash"/)
+  assert.deepEqual(generatedFilesFor(manifest), [...files.keys()])
+})
+
+test('manifest 不含 ui-design 时不生成共享设计资产 story', () => {
+  const artifact = {
+    id: 'product-requirements',
+    title: '产品需求说明',
+    summary: '示例',
+    source: 'docs/product-requirements.md',
+    sourceFile: 'product-requirements-product-requirements.md',
+    sourceHash: 'hash',
+    version: 'V1',
+    reviewStatus: '示例',
+    date: '2026-10-17',
+    story: { id: 'product-requirements', group: '文档', name: '产品需求说明' },
+  }
+  const manifest = { title: '示例', artifacts: [artifact], adapters: [] }
+  const files = createStorybookProjection(
+    manifest,
+    new Map([['product-requirements', { body: '## 范围\n示例' }]]),
+  )
+
+  assert.equal(files.has('DesignLanguage.stories.ts'), false)
+  assert.equal(generatedFilesFor(manifest).includes('DesignLanguage.stories.ts'), false)
+})
+
+test('真实生成器从已有 UI 输出切换到省略、缺源、恢复时清理旧 story 与下载源', async () => {
+  const root = await mkdtemp(resolve(tmpdir(), 'review-optional-ui-'))
+  try {
+    const starterRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
+    for (const name of ['scripts', 'example-project', 'review.config.json', 'review.manifest.json']) {
+      await cp(resolve(starterRoot, name), resolve(root, name), { recursive: true })
+    }
+    const manifestPath = resolve(root, 'review.manifest.json')
+    const manifest = JSON.parse(await readFile(manifestPath, 'utf8'))
+    const uiDesign = manifest.artifacts.find(({ id }) => id === 'ui-design')
+    const sourcePath = resolve(root, 'example-project', uiDesign.source)
+    const source = await readFile(sourcePath, 'utf8')
+    const generate = () => {
+      const result = spawnSync(process.execPath, ['scripts/generate.mjs'], {
+        cwd: root, encoding: 'utf8', timeout: 10_000,
+      })
+      assert.equal(result.error, undefined)
+      return result
+    }
+    const assertOutputs = async (hasUiDesign) => {
+      const resolved = JSON.parse(await readFile(resolve(root, 'shared/generated/manifest.resolved.json'), 'utf8'))
+      assert.equal(resolved.artifacts.some(({ id }) => id === 'ui-design'), hasUiDesign)
+      const stories = await readdir(resolve(root, 'src/generated'))
+      for (const file of ['DesignLanguage.stories.ts', 'UiDesignDocument.stories.ts']) {
+        assert.equal(stories.includes(file), hasUiDesign, file)
+      }
+      const sources = await readdir(resolve(root, 'public/sources'))
+      assert.equal(sources.some((file) => file.startsWith('ui-design-')), hasUiDesign)
+      if (!hasUiDesign) {
+        for (const file of stories) {
+          assert.doesNotMatch(await readFile(resolve(root, 'src/generated', file), 'utf8'), /ui-design|design-language--tokens/)
+        }
+        assert.doesNotMatch(await readFile(resolve(root, 'shared/generated/review-data.ts'), 'utf8'), /ui-design/)
+      }
+    }
+
+    assert.equal(generate().status, 0)
+    await assertOutputs(true)
+    await writeFile(manifestPath, JSON.stringify({
+      ...manifest, artifacts: manifest.artifacts.filter(({ id }) => id !== 'ui-design'),
+    }))
+    assert.equal(generate().status, 0)
+    await assertOutputs(false)
+
+    await writeFile(manifestPath, JSON.stringify(manifest))
+    assert.equal(generate().status, 0)
+    await assertOutputs(true)
+    await rm(sourcePath)
+    assert.equal(generate().status, 0)
+    await assertOutputs(false)
+
+    await writeFile(sourcePath, `${source}\nSource restored by regression test.\n`)
+    assert.equal(generate().status, 0)
+    await assertOutputs(true)
+    const story = await readFile(resolve(root, 'src/generated/DesignLanguage.stories.ts'), 'utf8')
+    assert.ok(story.includes(sha256(await readFile(sourcePath))))
+
+    uiDesign.required = true
+    await writeFile(manifestPath, JSON.stringify(manifest))
+    await rm(sourcePath)
+    const requiredUi = generate()
+    assert.equal(requiredUi.status, 1)
+    assert.match(requiredUi.stderr, /缺少必需来源 ui-design:/)
+
+    manifest.artifacts = manifest.artifacts.filter(({ id }) => id !== 'ui-design')
+    const prototype = manifest.artifacts.find(({ id }) => id === 'product-prototype')
+    prototype.required = false
+    await writeFile(manifestPath, JSON.stringify(manifest))
+    await rm(resolve(root, 'example-project', prototype.source))
+    const missingPrototype = generate()
+    assert.equal(missingPrototype.status, 1)
+    assert.match(missingPrototype.stderr, /manifest 缺少 product-prototype 产物/)
+    manifest.artifacts = manifest.artifacts.filter(({ id }) => id !== 'product-prototype')
+    await writeFile(manifestPath, JSON.stringify(manifest))
+    const omittedPrototype = generate()
+    assert.equal(omittedPrototype.status, 1)
+    assert.match(omittedPrototype.stderr, /manifest 必须包含 product-prototype 产物/)
+  } finally {
+    await rm(root, { recursive: true, force: true })
+  }
+})
+
+test('必需 ui-design 来源缺失时生成前失败', async () => {
+  const root = await mkdtemp(resolve(tmpdir(), 'review-required-ui-'))
+  try {
+    await assert.rejects(
+      () => readArtifactSource(root, {
+        id: 'ui-design',
+        source: 'design/ui/missing.md',
+        required: true,
+      }),
+      /缺少必需来源 ui-design: design\/ui\/missing\.md/,
+    )
+  } finally {
+    await rm(root, { recursive: true, force: true })
+  }
 })
 
 test('源文件修改会改变页面使用的 SHA-256', async () => {

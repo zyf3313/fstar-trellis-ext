@@ -61,7 +61,14 @@ review/
 | `ui-design` | `design/ui/ui-design.md` | UI 设计说明 |
 | `product-prototype` | `design/prototypes/product-prototype.md` | 原型说明与四个交互状态 |
 
-`required: false` 的可选文档不存在时会被跳过，不生成空 story 或 autodocs。产品需求说明和原型是默认示例的必需来源；项目可按自己的评审合同调整必需项。
+`required: false` 的可选文档不存在时会被跳过，不生成空 story 或 autodocs。
+`product-prototype` 是 starter 固定必需产物：manifest 缺少该 ID，或其来源缺失，
+生成都会失败。其他文档可按项目评审合同调整必需性。
+
+`ui-design` 是可选产物。manifest 不含该 ID，或它标为 `required: false` 且来源
+不存在时，“共享设计资产”和“UI 设计说明”两个入口都会省略，类型检查和构建
+不会引用缺失来源；来源存在时保持两个入口与来源证明。若将它标为必需，来源缺失
+仍会在生成阶段失败。
 
 普通文档入口由 manifest 的 `story` 字段驱动：
 
@@ -112,8 +119,8 @@ pnpm verify
 - `dev`：生成后启动 Storybook，默认地址 `http://localhost:6106/?path=/story/dossier-home--overview`。
 - `build`：生成并输出 `storybook-static/`。
 - `preview`：在 `127.0.0.1:6107` 预览已有 `storybook-static/`；先运行 `pnpm build`。
-- `check:build`：检查默认示例的 3 个一级组、12 个稳定 story、0 个 autodocs、7 个阅读入口和 5 个保留工具的交互入口。
-- `verify`：运行静态检查、11 个运行时测试、类型检查、来源一致性检查、生产构建和最终索引检查。
+- `check:build`：按当前 manifest 检查最终索引；默认示例为 3 个一级组、12 个稳定 story、0 个 autodocs、7 个阅读入口和 5 个保留工具的交互入口。
+- `verify`：运行静态检查、运行时测试、类型检查、来源一致性检查、生产构建和最终索引检查。
 
 生成器在必需来源缺失、绝对路径、目录逃逸（含符号链接）、manifest 产物或
 story ID 重复、一级标题缺失、显式锚点重复、原型状态缺失或重复时失败。

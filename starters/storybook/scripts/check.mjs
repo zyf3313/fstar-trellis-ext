@@ -62,6 +62,11 @@ assert(
   '生成 story 清单无缺失或额外文件',
   actualFiles.join(',') === generatedFilesFor(expectedResolved).sort().join(','),
 )
+assert(
+  '静态来源清单无已删除产物的残留文件',
+  (await readdir(resolve(root, 'public/sources'))).sort().join(',') ===
+    expectedArtifacts.map(({ sourceFile }) => sourceFile).sort().join(','),
+)
 for (const [file, expected] of expectedProjection) {
   const actual = await readFile(resolve(root, 'src/generated', file), 'utf8')
   assert(`${file} 可逐字节重现`, actual === expected)
@@ -78,7 +83,7 @@ assert(
   await readFile(resolve(root, 'shared/generated/review-data.ts'), 'utf8') === createReviewDataModule(expectedResolved, generatedPrototype),
 )
 
-for (const file of ['.storybook/main.ts', '.storybook/preview.ts', 'src/DesignLanguage.stories.ts', 'src/ReviewFlow.stories.ts']) {
+for (const file of ['.storybook/main.ts', '.storybook/preview.ts', 'src/ReviewFlow.stories.ts']) {
   const source = await readFile(resolve(root, file), 'utf8')
   assert(`${file} 不启用 autodocs`, !source.includes('autodocs'))
 }
@@ -90,7 +95,16 @@ for (const [name, version] of Object.entries(packageJson.devDependencies)) {
 assert('锁文件存在', await exists(resolve(root, 'pnpm-lock.yaml')))
 assert('示例明确标注为示例', expectedArtifacts.every(({ reviewStatus }) => reviewStatus === '示例'))
 assert('侧栏仅含三个业务一级组', storybookSidebarGroups.map(({ title }) => title).join(',') === '文档,UI 设计语言与资产,可交互原型')
-assert('生成 story 使用统一阅读标签', [...expectedProjection.values()].every((source) => source.includes(storybookNoAddonPanelTag)))
+assert(
+  '生成的阅读 story 使用统一标签',
+  [...expectedProjection.entries()]
+    .filter(([file]) => file !== 'DesignLanguage.stories.ts')
+    .every(([, source]) => source.includes(storybookNoAddonPanelTag)),
+)
+assert(
+  '共享设计资产保留交互工具',
+  !expectedProjection.get('DesignLanguage.stories.ts')?.includes(storybookNoAddonPanelTag),
+)
 
 console.log(`一致性检查通过：${checks.length} 项，${expectedArtifacts.length} 份来源。`)
 

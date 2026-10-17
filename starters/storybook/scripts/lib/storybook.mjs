@@ -43,33 +43,10 @@ export const storybookStorySort = {
   ]),
 }
 
-const defaultArtifactStoryIds = [
-  'product-requirements',
-  'technical-design',
-  'ui-design-document',
-  'prototype-document',
-  'test-acceptance',
-]
-
-export const storybookNoAddonPanelStoryIds = [
-  'dossier-home--overview',
-  ...defaultArtifactStoryIds.map((storyId) => `${storyId}--document`),
-  'attachment-formats--formats',
-]
-
-export const storybookGeneratedFiles = [
-  'Overview.stories.ts',
-  'ProductRequirements.stories.ts',
-  'TechnicalDesign.stories.ts',
-  'UiDesignDocument.stories.ts',
-  'PrototypeDocument.stories.ts',
-  'TestAcceptance.stories.ts',
-  'Attachments.stories.ts',
-]
-
 export function generatedFilesFor(manifest) {
   return [
     'Overview.stories.ts',
+    ...(uiDesignArtifact(manifest) ? ['DesignLanguage.stories.ts'] : []),
     ...manifest.artifacts.map(storyDefinition).map(({ file }) => file),
     'Attachments.stories.ts',
   ]
@@ -80,6 +57,8 @@ export function createStorybookProjection(manifest, sources) {
   const artifactBySource = new Map(manifest.artifacts.map((artifact) => [posix.normalize(artifact.source), artifact]))
 
   files.set('Overview.stories.ts', overviewStory(manifest))
+  const uiDesign = uiDesignArtifact(manifest)
+  if (uiDesign) files.set('DesignLanguage.stories.ts', designLanguageStory(uiDesign))
   for (const artifact of manifest.artifacts) {
     const entry = storyDefinition(artifact)
     const source = sources.get(artifact.id)
@@ -96,6 +75,20 @@ export function createStorybookProjection(manifest, sources) {
   }
   files.set('Attachments.stories.ts', attachmentsStory(manifest))
   return files
+}
+
+export function staticStoryContractsFor(manifest) {
+  return [
+    ['dossier-home--overview', '文档', '案卷首页'],
+    ['attachment-formats--formats', '文档', '附件与格式说明'],
+    ...(uiDesignArtifact(manifest)
+      ? [['design-language--tokens', 'UI 设计语言与资产', '共享设计资产']]
+      : []),
+    ['review-flow--draft', '可交互原型', '草稿'],
+    ['review-flow--reviewing', '可交互原型', '评审中'],
+    ['review-flow--changes', '可交互原型', '需修改'],
+    ['review-flow--approved', '可交互原型', '已通过'],
+  ]
 }
 
 export function storybookDocumentHref(storyId, anchor) {
@@ -144,6 +137,32 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Overview: Story = { name: '案卷首页' }
+`
+}
+
+function designLanguageStory(artifact) {
+  return generatedHeader() + `import type { Meta, StoryObj } from '@storybook/vue3-vite'
+import DesignLanguage from '../../shared/components/DesignLanguage.vue'
+
+const meta = {
+  id: 'design-language',
+  title: 'UI 设计语言与资产',
+  component: DesignLanguage,
+  args: {
+    provenance: ${json({
+      source: artifact.source,
+      sourceHash: artifact.sourceHash,
+      version: artifact.version,
+      reviewStatus: artifact.reviewStatus,
+    })},
+  },
+  parameters: { layout: 'fullscreen' },
+} satisfies Meta<typeof DesignLanguage>
+
+export default meta
+type Story = StoryObj<typeof meta>
+
+export const Tokens: Story = { name: '共享设计资产' }
 `
 }
 
@@ -240,6 +259,10 @@ function relatedStoryLinks(id) {
     return [{ label: '运行草稿状态原型', href: './?path=/story/review-flow--draft' }]
   }
   return []
+}
+
+function uiDesignArtifact(manifest) {
+  return manifest.artifacts.find(({ id }) => id === 'ui-design')
 }
 
 function generatedHeader() {

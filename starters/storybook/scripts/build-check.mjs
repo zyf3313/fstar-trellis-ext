@@ -1,27 +1,14 @@
 import { readFile } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { storybookNoAddonPanelTag, storybookSidebarGroups } from './lib/storybook.mjs'
+import { staticStoryContractsFor, storybookNoAddonPanelTag } from './lib/storybook.mjs'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const index = JSON.parse(await readFile(resolve(root, 'storybook-static/index.json'), 'utf8'))
 const resolvedManifest = JSON.parse(await readFile(resolve(root, 'shared/generated/manifest.resolved.json'), 'utf8'))
 const entries = index.entries
-const staticStoryIds = new Set([
-  'dossier-home--overview',
-  'attachment-formats--formats',
-  'design-language--tokens',
-  'review-flow--draft',
-  'review-flow--reviewing',
-  'review-flow--changes',
-  'review-flow--approved',
-])
 const expected = Object.fromEntries([
-  ...storybookSidebarGroups.flatMap(({ title, stories }) =>
-    stories
-      .filter(([id]) => staticStoryIds.has(id))
-      .map(([id, name]) => [id, { title, name }]),
-  ),
+  ...staticStoryContractsFor(resolvedManifest).map(([id, title, name]) => [id, { title, name }]),
   ...resolvedManifest.artifacts.map(({ story }) => [
     `${story.id}--document`,
     { title: story.group, name: story.name },
