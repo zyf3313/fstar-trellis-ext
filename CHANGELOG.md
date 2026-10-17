@@ -19,7 +19,8 @@ spec 同字节。1.4.1 轻量 registry 已同步私库；独立检查通过，CL
 Storybook starter 改为按 manifest 条件生成共享设计资产入口：`ui-design` 缺失，
 或标为可选且来源不存在时，同时省略共享设计资产和 UI 设计说明，类型检查与构建
 不再引用缺失来源；存在时保持原体验。`product-prototype` 继续固定必需。旧
-1.4.0 starter 快照不含此修复，需等待新的固定 Storybook 提交。
+1.4.0 starter 快照不含此修复；新的固定 Storybook 快照为
+`d0e61a429389a5f5bcd110aa455137d7b37c44aa`。
 
 以 1.4.1 固定 registry 安装临时已有项目，再升级到未推送的本地 1.4.2 根提交，
 验证自动更新、`.new` 冲突保留、新增、上游删除保留、原生保护、哈希基线和完整

@@ -205,14 +205,14 @@ review/                     # 可选评审运行器
 普通 registry 只导入 `spec/`，不会下载、安装或运行 starter。
 
 需要 **Node.js 24+、pnpm 10.12.1**。先选用未占用的临时目录，并确认项目中
-尚无 `review/`；已有目录应先比较再合并。以下命令仅取出 **1.4.0 Storybook 历史快照**，
-不包含本次 1.4.1 修订；其 spec 与当前规范不保证同字节。发布新快照后再更新固定 SHA：
+尚无 `review/`；已有目录应先比较再合并。以下命令只取出已经验证的
+**1.4.1 Storybook 快照**；其 spec 与当前轻量 registry 分别固定，不保证同字节：
 
 ```sh
 git clone --filter=blob:none --no-checkout \
   git@github.com:zyf3313/personal-trellis /tmp/personal-trellis-starter
 git -C /tmp/personal-trellis-starter checkout \
-  1bdc642b9d8f5a75eea482de5390ced36162d186 -- starters/storybook
+  d0e61a429389a5f5bcd110aa455137d7b37c44aa -- starters/storybook
 cp -R /tmp/personal-trellis-starter/starters/storybook /path/to/project/review
 cd /path/to/project/review
 pnpm install --frozen-lockfile
@@ -231,8 +231,7 @@ manifest，方法见 [starter 接入说明](starters/storybook/README.md#接入�
 当前交付源已让 `ui-design` 真正可选：manifest 不含该产物，或它标为可选且来源
 缺失时，不生成“共享设计资产”和“UI 设计说明”，类型检查与静态构建也不引用它；
 来源存在时保持原有两个入口。`product-prototype` 仍是 starter 固定必需产物。
-上述 1.4.0 历史快照尚未包含这项修复，使用可选 UI 资产前应等待并固定新的
-Storybook 提交，不能把当前交付源结论套用到旧 SHA。
+上述固定快照已包含这项修复。
 
 ## 工具与来源
 
@@ -271,7 +270,7 @@ UI 路线以 `emil-design-eng` 为核心；边界数据、动效和触摸目标�
 | 产物 | 固定提交 | 内容 |
 |---|---|---|
 | 1.4.1 轻量 registry 候选 | `8fca7f1a23e28d8b5d2dc86b525c814ae3a3afeb` | 本地核对与当前交付同字节；仅 `index.json`、`library.json` 与 21 份 spec 文件 |
-| Storybook 1.4.0 历史快照 | `1bdc642b9d8f5a75eea482de5390ced36162d186` | 仅用于上文旧骨架示例；不代表当前规范、README 或图片，也不保证 spec 同字节 |
+| Storybook 1.4.1 固定快照 | `d0e61a429389a5f5bcd110aa455137d7b37c44aa` | 包含可选 `ui-design` 修复；只用于提取 `starters/storybook`，不代表当前规范、README 或图片 |
 
 当前轻量提交对应 `registry/v1.4.1`，消费仍使用完整 SHA。个人规范升级遵循下面步骤；
 **重复 `init --append` 不是升级**，它跳过同名文件，还可能重建当前 spec 的哈希基线。
