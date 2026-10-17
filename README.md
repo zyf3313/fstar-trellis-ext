@@ -12,8 +12,9 @@ Trellis 原生任务流程，在其上增加按场景加载的指南，以及面
 [Trellis Quick Start](https://docs.trytrellis.app/start/install-and-first-task) ·
 [扩展入口](spec/trellis-extensions.md) · [变更记录](CHANGELOG.md)
 
-> 当前状态：`1.4.0` 未公开发布候选 · 私有仓库 · 许可证待定 · 规范内容已验证
-> Trellis CLI `0.6.9`；轻量 registry release 另待真实远程复验
+> 当前状态：`1.4.0` 未公开发布候选 · 私有仓库 · 许可证待定 · 2026-10-17
+> 已通过真实远程初始化验收：Trellis CLI `0.6.9`（Codex）、`0.6.17`（Claude Code），
+> 各导入 21/21 份规范且保留原生文件。
 
 ## 为什么需要这层扩展
 
@@ -61,6 +62,11 @@ fork 或内置 Trellis runtime。
 轻量提交位于 `registry/v1.4.0` 分支。固定 SHA 是消费身份；分支名只用于维护
 和发现，不应替代命令中的完整提交 SHA。
 
+为什么分开发布：这两个 CLI 版本使用 partial clone，检出整个提交时再下载
+文件，单个 Git 步骤上限为 30 秒。完整 main 的图片和骨架曾使检出超时；
+轻量 registry 只检出规范载荷。该方式已在真实私库验收，仍依赖正常网络和
+读取权限，并未修改 Trellis runtime 或提高其超时上限。
+
 ## Quick Start：先原生初始化，再导入扩展
 
 **2026-10-17 隔离验收发现：CLI 0.6.9 在全新单仓项目中直接使用远程
@@ -72,22 +78,30 @@ backend/frontend 模板，因此不能把一步 registry 初始化作为完整�
 ```sh
 cd /path/to/project
 # Codex
-trellis init --codex --user YOUR_NAME
+trellis init -y --codex --user YOUR_NAME
 # 或 Claude Code
-trellis init --claude --user YOUR_NAME
+trellis init -y --claude --user YOUR_NAME
 # 或两者
-trellis init --codex --claude --user YOUR_NAME
+trellis init -y --codex --claude --user YOUR_NAME
 ```
 
 以上三个命令选择一个即可。Claude Code 状态栏按需增加 `--with-statusline`。
 原生初始化完成后，或项目本来已有 Trellis，再追加个人规范：
 
 ```sh
-trellis init \
+trellis init -y --codex \
   --registry 'git@github.com:zyf3313/personal-trellis#add68c0b2abdec747df7a4c88e12fc23f10b1e11' \
   --template personal-core \
   --append
 ```
+
+上例用于 Codex；Claude Code 将 `--codex` 换成 `--claude`，两者同时使用
+则写 `--codex --claude`，与第一步保持一致。`-y` 接受 CLI 默认选项，
+显式客户端参数避免追加导入时再次弹出工具选择；需要交互选择时可去掉 `-y`。
+
+不要只凭退出码判断导入成功：已测 CLI 下载失败后可能退回空白模板并退出 0。
+确认终端报告模板导入成功，且 `.trellis/spec/trellis-extensions.md` 和对应指南、
+模板确实存在，`.trellis/config.yaml` 中记录上述固定 SHA 与 `personal-core`。
 
 `--append` 只加入缺失文件，并在 `.trellis/config.yaml` 记录 registry source
 与 `personal-core` template。它不会安装工具、合并同名文件或自动挂载扩展入口。
@@ -103,11 +117,13 @@ trellis init \
 
 ```sh
 cd /path/to/project
-trellis init \
+trellis init -y --codex \
   --registry 'git@github.com:zyf3313/personal-trellis#<NEW_VERIFIED_COMMIT_SHA>' \
   --template personal-core \
   --append
 ```
+
+同样按项目实际客户端使用 `--claude` 或 `--codex --claude`。
 
 需要更新已有同名内容时，按审阅结果逐项合并。回滚则恢复上一已验证 SHA
 对应的文件；不要把 `--append` 当作冲突解决器。
