@@ -12,7 +12,7 @@ PRD、TDD 与 UI 模板。
 [Trellis Quick Start](https://docs.trytrellis.app/start/install-and-first-task) ·
 [场景入口](spec/personal-index.md) · [变更记录](CHANGELOG.md)
 
-> 当前状态：`1.2.0` 未公开发布候选 · 私有仓库 · 许可证待定 · 已验证
+> 当前状态：`1.3.0` 未公开发布候选 · 私有仓库 · 许可证待定 · 已验证
 > Trellis CLI `0.6.9`
 
 ## 为什么需要这层扩展
@@ -23,12 +23,14 @@ Trellis 已经提供 workflow、任务生命周期、项目规范、记忆和多
 | 能力 | Trellis 原生负责 | Personal Trellis 增加 |
 |---|---|---|
 | 工作流 | 需求讨论、设计、实施、检查、归档和记忆 | 不改变原生阶段，只在语义命中时补充指南 |
-| 项目规范 | `.trellis/spec/`、项目索引和本地约束 | 一页式场景入口与 7 份专项指南 |
+| 项目规范 | `.trellis/spec/`、项目索引和本地约束 | 一页式场景入口与 9 份专项指南 |
+| 需求澄清 | 原生需求讨论与任务记录 | 整体范围 → 逐模块规则/字段/异常 → 跨模块复核，主动发现缺口 |
 | 产品与技术设计 | 原生 `prd.md` / `design.md` 作为 AI 任务上下文 | 面向用户评审的中文 PRD、TDD 与类型适配模板 |
 | UI 设计 | 项目自行决定设计和实现方式 | 0→1 UI 基线、模块交互、可点击原型与设计一致性规则 |
 | 工具使用 | 支持项目按需组合工具 | 场景命中后先复用本地等价能力，不足时经用户同意由 AI 准备并验证 |
 | 初始化 | `trellis init` 生成原生结构、导入 registry 内容与平台资产 | 只提供 `personal-core` 规范；不安装或配置工具 |
 | 文档一致性 | 原生任务记录和规范更新 | PRD/TDD/UI/实现/测试之间的变更传播与证据规则 |
+| 测试与验收 | 原生检查阶段、项目测试框架与质量要求 | 需求与代码对照、用例评审、自动化关联、执行证据、缺陷和回归按需使用 |
 
 ## 与 Trellis 的边界
 
@@ -52,54 +54,28 @@ fork 或内置 Trellis runtime。
   `<VERIFIED_COMMIT_SHA>` 替换为经过审阅的完整 40 位提交 SHA。不要使用会
   漂移的 `main`。
 
-## Quick Start：只使用原生 registry
+## Quick Start：先原生初始化，再导入扩展
 
-以下命令都由 Trellis 自己读取远端 registry；消费者无需 clone 本仓库。
+**2026-10-17 隔离验收发现：CLI 0.6.9 在全新单仓项目中直接使用远程
+spec 模板，会跳过原生 spec 模板生成。当前扩展包不包含原生 guides/index、
+backend/frontend 模板，因此不能把一步 registry 初始化作为完整新项目入口。**
 
-### Codex
+新项目先运行以下一个原生初始化命令：
 
 ```sh
 cd /path/to/project
-trellis init \
-  --registry 'git@github.com:zyf3313/personal-trellis#<VERIFIED_COMMIT_SHA>' \
-  --template personal-core \
-  --append \
-  --codex \
-  --user YOUR_NAME
+# Codex
+trellis init --codex --user YOUR_NAME
+# 或 Claude Code
+trellis init --claude --user YOUR_NAME
+# 或两者
+trellis init --codex --claude --user YOUR_NAME
 ```
 
-### Claude Code
+以上三个命令选择一个即可。Claude Code 状态栏按需增加 `--with-statusline`。
+原生初始化完成后，或项目本来已有 Trellis，再追加个人规范：
 
 ```sh
-cd /path/to/project
-trellis init \
-  --registry 'git@github.com:zyf3313/personal-trellis#<VERIFIED_COMMIT_SHA>' \
-  --template personal-core \
-  --append \
-  --claude \
-  --user YOUR_NAME
-```
-
-需要 Trellis 为 Claude Code 提供状态栏时，在命令中增加
-`--with-statusline`；它默认关闭，也不影响 `personal-core` 内容。
-
-### Codex + Claude Code
-
-```sh
-cd /path/to/project
-trellis init \
-  --registry 'git@github.com:zyf3313/personal-trellis#<VERIFIED_COMMIT_SHA>' \
-  --template personal-core \
-  --append \
-  --codex \
-  --claude \
-  --user YOUR_NAME
-```
-
-### 只导入规范，或追加到已有 Trellis 项目
-
-```sh
-cd /path/to/project
 trellis init \
   --registry 'git@github.com:zyf3313/personal-trellis#<VERIFIED_COMMIT_SHA>' \
   --template personal-core \
@@ -107,9 +83,12 @@ trellis init \
 ```
 
 `--append` 只加入缺失文件，并在 `.trellis/config.yaml` 记录 registry source
-与 `personal-core` template。它不会安装工具，也不会替你更新或合并已经
-存在的同名文件。执行前检查本地修改，执行后核对 workflow、配置、hooks、
-索引和本地规范。
+与 `personal-core` template。它不会安装工具、合并同名文件或自动挂载扩展入口。
+已有项目的原生 workflow、hooks、索引和本地规范必须保留；配置的 registry
+记录和 `.template-hashes.json` 会按 CLI 行为更新。
+
+**导入后仍需完成下一节的入口挂载。当前不能宣称仅运行上述命令就能在讨论
+阶段自动加载扩展。**
 
 ### 切换个人规范固定提交
 
@@ -128,8 +107,8 @@ trellis init \
 
 ## 如何启用场景路由
 
-导入后，项目只需引用一次 `.trellis/spec/personal-index.md`。在项目现有规范
-索引中增加一条链接：
+讨论阶段的自动路由使用下方项目指令挂载块。项目现有规范索引也可以增加
+以下导航链接，但它单独存在不等于自动启用：
 
 ```md
 - [Personal scenario index](../personal-index.md)
@@ -142,7 +121,46 @@ trellis init \
 {"file":".trellis/spec/personal-index.md","reason":"Route this task to the matching personal scenario guide"}
 ```
 
-项目自己的索引仍是权威入口。本库不分发 `guides/index.md`；任务先读
+需求澄清需要在原生讨论开始时可读：应从该项目讨论阶段实际读取的现有入口
+引用此索引。仅加入实施/检查 JSONL 不会让更早的讨论自动加载它；导入文件
+本身也不等于激活。本库不修改原生讨论 Skill、hooks 或入口文件。
+
+2026-10-17 的真实 CLI/Hook 验证确认：Codex `trellis-start` 明确要求读取
+`guides/index.md`；Claude SessionStart 只列出索引路径供按需读取，并不展开
+索引正文。直接进入 brainstorm 或只运行 UserPromptSubmit hook，也没有读取
+个人索引的保证。因此“加一个链接”仅建立可达路径，不等于所有客户端的自动
+加载已验收。需要讨论阶段确定加载时，应由项目所有者在该客户端实际读取的
+项目指令入口（如 AGENTS.md / CLAUDE.md 的用户自维护区）明确要求：
+
+> 开始 Trellis 原生需求讨论前，读取 `.trellis/spec/personal-index.md`，
+> 按用户语义仅加载匹配指南；大型多模块需求读取模块澄清指南，测试请求读取
+> 测试与验收指南。保留原生流程、阶段与已有项目规范。
+
+挂载是初始化后的“一次性 AI 辅助项目配置”，不是 registry 自动执行的动作。
+可直接要求 AI：保留现有内容，在 Codex 的 `AGENTS.md`、Claude Code 的
+`CLAUDE.md` 自维护区追加以下路由块；双客户端项目两处都加，已存在则跳过：
+
+```md
+## Project extension routing (user maintained)
+
+Before handling a request in the native Trellis workflow, read
+`.trellis/spec/personal-index.md` and load only guides matching the user's request.
+Apply clarification during native discussion and testing guidance only for requested
+testing activities. Preserve native phases and project instructions; do not load
+every guide or create extra phases.
+```
+
+不要改 Trellis 管理块、原生 Skill 或 hooks，也不要把实施 JSONL 当作讨论入口。
+完整消费合同是“原生初始化 → 固定版本导入 → 一次入口挂载 → 场景验证”。
+
+2026-10-17 的真实 Codex CLI 隔离会话已验证：大型需求读取模块澄清指南，
+测试请求读取测试指南与用例模板，单处文案修正不读取这两份指南。请求没有
+指定指南路径，日志记录了真实读取命令。三项均成功完成；这是单轮合成场景
+证据，不代表长期对话效果。Claude Code 已实际启动，但当前配置的服务持续
+返回 HTTP 503，三项在 85 秒截止时间内没有模型结果，因此 Claude 自动路由
+仍待补验，不能将双客户端初始化成功解释为双客户端加载均已通过。
+
+项目自己的索引仍是权威入口。本库不分发 `guides/index.md`，避免覆盖既有项目索引；任务先读
 `personal-index.md`，再只加载语义命中的指南和必要模板。
 
 ![Trellis 原生讨论设计主干与 Personal Trellis 场景按需路由](assets/scenario-routing.png)
@@ -150,10 +168,11 @@ trellis init \
 *图 2：个人指南、模板和工具只在命中条件时进入，并带着最小必要上下文
 回到原生实施与检查。*
 
-## 7 份场景指南
+## 9 份场景指南
 
 | 场景 | 指南 | 何时触发 | 何时跳过 |
 |---|---|---|---|
+| 逐模块需求澄清 | [模块澄清](spec/guides/module-clarification.md) | 大型/复杂、多模块需求，或用户要求深入澄清、检查遗漏时，在原生讨论环节触发 | 小任务仅澄清关键缺口；已确认内容不重复问，不强制附加文档 |
 | 中文 PRD / TDD | [产品与技术设计](spec/guides/product-technical-design.md) | 用户明确要求；或 0→1、大型迭代、跨模块/系统、核心流程/数据/公共契约变化时，在原生设计收敛后询问一次 | 小修复、文案/样式小改、无可观察合同变化的内部重构默认不生成 |
 | UI 设计与交互 | [UI 设计](spec/guides/ui-design.md) | 用户明确要求设计稿、原型、预览或平台交付；0→1 UI 且没有已确认风格时，在设计阶段询问一次是否需要完整 UI 方案 | 无 UI 影响时跳过；已有项目和小改复用现有基线 |
 | 文档一致性 | [文档一致性](spec/guides/document-consistency.md) | 已有 PRD/TDD/UI/实现/证据发生受影响变化时 | 内部实现不改变外部行为或契约时，只记录必要结论 |
@@ -161,10 +180,11 @@ trellis init \
 | 知识与历史检索 | [知识检索](spec/guides/knowledge-search.md) | 跨文档发现、历史决定或大文档集合检索 | 单个已知文档直接读取 |
 | Web / GitHub 调研 | [Web 调研](spec/guides/web-research.md) | 当前事实、官方资料核实、开源项目探索、GitHub 代码/issues 检索 | 本地证据足够回答稳定问题时跳过 |
 | 数据库访问 | [数据库访问](spec/guides/database-access.md) | schema/数据检查、SQL 验证或明确授权的数据变更 | 本地契约、迁移或 fixture 已能回答时跳过；无授权不连接、不写入 |
+| 测试与验收 | [测试与验收](spec/guides/testing-acceptance.md) | 用户要求测试分析、用例生成/评审、自动化、执行、缺陷、回归或验收汇总 | 仅加载本次活动；已有测试优先复用，不给所有任务新增文档或阶段 |
 
 一个任务可以命中多个场景，但不能因此默认加载全部指南。
 
-## 7 份中文模板
+## 9 份中文模板
 
 | 模板 | 用途 | 使用方式 |
 |---|---|---|
@@ -175,13 +195,15 @@ trellis init \
 | [功能交互设计](spec/templates/ui-feature.zh-CN.md) | 页面、模块、功能、状态、交互、异常恢复和原型 | 已有基线后按受影响模块设计 |
 | [评审与变更记录](spec/templates/review-change.zh-CN.md) | 冻结版本、需求到验收映射、变更传播与证据失效 | 并入现有方案或任务记录 |
 | [参考项目探索](spec/templates/exploration.zh-CN.md) | 候选项目、来源、复用点、限制与选型证据 | 重要参考项目探索时使用 |
+| [测试用例](spec/templates/test-cases.zh-CN.md) | 需求依据、代码对照、数据、步骤检查点、优先级和自动化关联 | 用户已有模板优先；表格与详情为主，脑图按需且共用源文件 |
+| [测试执行与验收](spec/templates/test-execution.zh-CN.md) | 每次运行的结果、缺陷、证据、回归与验收限制 | 与用例定义分离，引用用例和代码版本，可并入已有报告 |
 
 模板随 `personal-core` 进入 `.trellis/spec/templates/`。只读取当前场景所需
 文件；小任务不强制生成 PRD、TDD 或整套 UI 设计。
 
 ## 场景内 AI 软安装
 
-工具准备发生在任务真实命中代码、知识、UI、Web 或数据库场景之后，与
+工具准备发生在任务真实命中代码、知识、UI、Web、数据库或测试执行场景之后，与
 `trellis init` 无关：
 
 1. AI 先发现当前客户端已有的 CLI、MCP、Skill、连接器和内建能力。
@@ -232,11 +254,34 @@ Google、X、GitHub、linux.do 等是可选信息来源。私有查询、账号�
 交互。只有用户选择完整交付时，才制作全量模块画板、可点击原型和适用的
 Figma、MasterGo 等交换文件。已有项目优先复用已确认设计系统。
 
+## 需求澄清约定
+
+大型需求先明确整体范围，再按业务流程与依赖逐模块深入，最后检查模块衔接。
+AI 主动发现规则、字段、权限、状态、异常和验收缺口；每轮聚焦关键决策，
+相关字段以建议表审阅，不要求用户填写大问卷。模块列表确认不等于需求收敛。
+
+事实、已确认决定、建议、待确认与暂缓项分别记录在原生任务资料；“可以”
+仅确认当轮明确呈现的范围。用户要求提前开发时，说明可开始的明确范围和
+剩余缺口，遵循原生阶段规则，不把部分明确宣称为整体完成。
+
+## 测试使用约定
+
+用户描述测试目标后，只加载对应活动。开发完成后的用例以已确认需求为预期
+依据，同时读取本次代码差异、相关实现与已有测试；需求与代码冲突时明确记录，
+不按当前代码反推“正确答案”。尚无实现时可以先形成需求用例草案。
+
+生成和评审用例无需安装工具；实际自动化与执行优先复用项目已有框架和本地能力。
+用户模板优先，性能/安全专项字段按需增加，没有指标依据就保留待确认。
+表格、详情和可选脑图共享内容源，每次运行单独记录版本与结果。
+具体规则与候选参考见 [测试与验收指南](spec/guides/testing-acceptance.md)。
+目前未按实测排名选定默认第三方测试 Skill，不安装完整测试平台。
+
 ## 工作原理
 
 1. `trellis init` 从固定 Git 提交读取 `index.json`，选择 `personal-core`
    并只把 `spec/` 加入目标项目。
-2. 项目索引或任务 JSONL 单链接引用 `personal-index.md`。
+2. 在客户端实际读取的项目指令入口加入上述自维护路由块，明确要求读取
+   `personal-index.md`；单链接仅提供导航，实施/检查 JSONL 仅覆盖对应阶段。
 3. AI 根据当前语义只加载一到数份匹配指南。
 4. 指南决定是否读取模板、复用本地工具、提出经确认的工具准备，或直接使用
    本地证据。
@@ -259,22 +304,26 @@ personal-trellis/
 │   └── scenario-routing.png
 └── spec/
     ├── personal-index.md      # 单入口场景路由
-    ├── guides/                # 7 份场景指南
+    ├── guides/                # 9 份场景指南
+    │   ├── module-clarification.md
     │   ├── product-technical-design.md
     │   ├── ui-design.md
     │   ├── document-consistency.md
     │   ├── code-search.md
     │   ├── knowledge-search.md
     │   ├── web-research.md
-    │   └── database-access.md
-    └── templates/             # 7 份中文模板
+    │   ├── database-access.md
+    │   └── testing-acceptance.md
+    └── templates/             # 9 份中文模板
         ├── prd.zh-CN.md
         ├── technical-design.zh-CN.md
         ├── technical-design-profiles.zh-CN.md
         ├── ui-baseline.zh-CN.md
         ├── ui-feature.zh-CN.md
         ├── review-change.zh-CN.md
-        └── exploration.zh-CN.md
+        ├── exploration.zh-CN.md
+        ├── test-cases.zh-CN.md
+        └── test-execution.zh-CN.md
 ```
 
 本库不包含个人 workflow、Trellis meta-Skill、工具安装脚本、UI 演示项目、
@@ -287,7 +336,7 @@ Trellis runtime 和个人规范 ref 是两个独立版本轴：
 | 变化 | 更新方式 | 验证重点 | 回滚 |
 |---|---|---|---|
 | Trellis runtime | 遵循 [官方升级与变更记录](https://docs.trytrellis.app/changelog) | 原生 workflow、配置、hooks、任务、平台资产和项目索引 | 回到项目已验证的 Trellis 版本 |
-| Personal Trellis | 审阅两个 SHA 的差异，再以新固定 SHA 导入/合并 | 7 指南、7 模板、项目本地修改和场景路由 | 恢复上一已验证 SHA 与对应文件 |
+| Personal Trellis | 审阅两个 SHA 的差异，再以新固定 SHA 导入/合并 | 9 指南、9 模板、项目本地修改和场景路由 | 恢复上一已验证 SHA 与对应文件 |
 
 当前隔离消费验证使用 Trellis CLI `0.6.9`。这不构成对未来 Trellis 版本、
 其他操作系统、真实账号、模型、数据库或设备环境的保证。
@@ -323,6 +372,8 @@ Trellis runtime 和个人规范 ref 是两个独立版本轴：
 <summary><strong>Codex 和 Claude Code 都能使用吗？</strong></summary>
 
 可以。原生初始化分别使用 `--codex` 和 `--claude`，也可以同时传入。
+导入后均需完成自维护入口挂载；Codex 按需加载已有单轮验证，Claude Code
+因服务 HTTP 503 尚待补验，不能视为双客户端自动加载均已通过。
 
 </details>
 

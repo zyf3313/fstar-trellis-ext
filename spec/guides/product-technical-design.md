@@ -36,6 +36,11 @@ required.
 
 ## Establish scope and write the documents
 
+For complex or multi-module requirements, apply [module clarification](module-clarification.md)
+inside native brainstorming before treating requirements as converged. Document
+generation does not replace discussion; optional human documents are not required
+to perform that clarification.
+
 1. Reuse confirmed intent and design. Verify repository facts before asking about
    user intent, scope, compatibility or interaction choices. Record sources,
    exclusions, dependencies and blocking decisions in native planning. Resolve
