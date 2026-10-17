@@ -12,8 +12,8 @@ Trellis 原生任务流程，在其上增加按场景加载的指南，以及面
 [Trellis Quick Start](https://docs.trytrellis.app/start/install-and-first-task) ·
 [扩展入口](spec/trellis-extensions.md) · [变更记录](CHANGELOG.md)
 
-> 当前状态：`1.4.0` 未公开发布候选 · 私有仓库 · 许可证待定 · 已验证
-> Trellis CLI `0.6.9`
+> 当前状态：`1.4.0` 未公开发布候选 · 私有仓库 · 许可证待定 · 规范内容已验证
+> Trellis CLI `0.6.9`；轻量 registry release 另待真实远程复验
 
 ## 为什么需要这层扩展
 
@@ -50,9 +50,16 @@ fork 或内置 Trellis runtime。
 - 目标项目目录已经存在，例如 `/path/to/project`。
 - 私有仓库 `zyf3313/personal-trellis` 尚未公开时，当前 Git/SSH 环境必须具有
   读取权限。不要把 token 写入 registry URL、命令历史或项目文件。
-- 将示例中的 `YOUR_NAME` 替换为开发者身份，将
-  `<VERIFIED_COMMIT_SHA>` 替换为经过审阅的完整 40 位提交 SHA。不要使用会
-  漂移的 `main`。
+- 将示例中的 `YOUR_NAME` 替换为开发者身份。规范和 Storybook 使用两个独立
+  的不可变提交，不要使用会漂移的 `main`：
+
+| 产物 | 固定提交 | 用途 |
+|---|---|---|
+| 轻量规范 registry | `add68c0b2abdec747df7a4c88e12fc23f10b1e11` | 无父提交，只包含 `index.json`、`library.json` 和 `spec/**`；供原生 Trellis 导入 |
+| 完整 main 交付 | `1bdc642b9d8f5a75eea482de5390ced36162d186` | 包含同字节规范、README、图片和可选 `starters/storybook/` |
+
+轻量提交位于 `registry/v1.4.0` 分支。固定 SHA 是消费身份；分支名只用于维护
+和发现，不应替代命令中的完整提交 SHA。
 
 ## Quick Start：先原生初始化，再导入扩展
 
@@ -77,7 +84,7 @@ trellis init --codex --claude --user YOUR_NAME
 
 ```sh
 trellis init \
-  --registry 'git@github.com:zyf3313/personal-trellis#<VERIFIED_COMMIT_SHA>' \
+  --registry 'git@github.com:zyf3313/personal-trellis#add68c0b2abdec747df7a4c88e12fc23f10b1e11' \
   --template personal-core \
   --append
 ```
@@ -233,12 +240,13 @@ review/                     # 可选 Storybook 评审运行器
 
 仓库可在 `starters/storybook/` 提供独立的 Storybook 骨架。普通
 `personal-core` registry 仍只导入 `spec/`，不会下载、安装或运行该目录。
-需要时从已审阅的固定提交单独取出并复制到项目：
+需要时从完整 main 交付的已审阅固定提交单独取出并复制到项目：
 
 ```sh
 git clone --filter=blob:none --no-checkout \
   git@github.com:zyf3313/personal-trellis /tmp/personal-trellis-starter
-git -C /tmp/personal-trellis-starter checkout <VERIFIED_COMMIT_SHA> -- starters/storybook
+git -C /tmp/personal-trellis-starter checkout \
+  1bdc642b9d8f5a75eea482de5390ced36162d186 -- starters/storybook
 cp -R /tmp/personal-trellis-starter/starters/storybook /path/to/project/review
 cd /path/to/project/review
 pnpm install --frozen-lockfile
@@ -246,9 +254,10 @@ pnpm verify
 pnpm dev
 ```
 
-`<VERIFIED_COMMIT_SHA>` 必须与审阅和规范导入记录一致。使用新的临时目录；
-命令不会替代对项目现有 `review/` 的比较与合并。配置项目根、manifest、
-可选文档和扩展模块的方法见 [starter README](starters/storybook/README.md)。
+Storybook 固定提交与轻量 registry 固定提交分别记录；两者的 `spec/**` 字节
+一致，但 Git 提交身份和用途不同。使用新的临时目录；命令不会替代对项目现有
+`review/` 的比较与合并。配置项目根、manifest、可选文档和扩展模块的方法见
+[starter README](starters/storybook/README.md)。
 
 骨架的 manifest 只保存来源、版本和路由；正文读取项目的权威文件，生成内容
 不可手改，缺失或漂移必须报错。示例内容只是示例，不能绑定本仓库任务路径或
