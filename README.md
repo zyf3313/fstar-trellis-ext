@@ -7,8 +7,12 @@
 9 份中文模板，以及可选的 Storybook 评审门户。原生 Trellis 继续管理任务流程、
 项目规范和记忆；本库通过原生 registry 导入，在命中场景时补充指导。
 
-**状态：1.4.0 私有候选，未公开发布，许可证待定。** 普通规范消费无需 clone；
+**状态：1.4.1 私有候选，未公开发布，许可证待定。** 普通规范消费无需 clone；
 完整接入需要原生初始化、固定版本导入和一次项目入口挂载。
+
+Personal Trellis 通过 Trellis 生成的平台集成资产支持**当前 Trellis 所支持的全部
+Agent / 平台**，不限定于某两个客户端。实际可用平台、参数和生成文件以本机安装的
+`trellis init --help` 及目标项目现有配置为准；未来 Trellis 版本可能增删或调整它们。
 
 [快速开始](#快速开始) · [场景指南](#场景指南) · [中文模板](#中文模板) ·
 [Storybook 预览](#可选-storybook-预览) · [更新与排障](#更新与排障)
@@ -28,6 +32,14 @@ Trellis 负责 workflow、任务生命周期、代理调度、项目索引和记
 
 ## 快速开始
 
+### 交给 AI 完成接入
+
+把下面这一段完整交给当前项目中的 AI；它会先识别现状，只在确有缺口时执行接入：
+
+```text
+请在当前项目中完成 Personal Trellis 接入。先检查 trellis 命令是否存在以及项目是否已有完整的原生 Trellis 结构。CLI 缺失时先查阅 Trellis 官方安装说明，列明准确版本、安装命令及本地/全局作用域，取得同意后安装并验证；不要静默全局安装，也不要对不存在的命令运行 --help。CLI 已可用后运行 trellis init --help，并检查现有平台目录、设置和 Trellis 生成文件，识别项目实际使用且当前 CLI 支持的 Agent / 平台。只使用帮助中与这些平台精确对应的 flags，多个平台可组合；不要凭印象编造参数或路径。优先从现有 Trellis 配置、项目资料和 Git 身份解析开发者身份。若尚未初始化，使用这些平台 flags 和已解析身份执行原生 trellis init；只有平台、身份或私库读取权限确实无法可靠判断且会影响执行时，才向我询问必要信息。若个人规范已导入，核对配置与文件；相同版本跳过导入，版本变化按本文“固定版本与更新”处理，不重复 init 来升级。首次导入前检查同路径冲突，发现冲突先停止导入并审阅合并方案；无冲突时用相同平台 flags，通过原生 registry 从 git@github.com:zyf3313/personal-trellis#8fca7f1a23e28d8b5d2dc86b525c814ae3a3afeb 导入 personal-core，并使用 --append。普通 registry 消费不要 git clone。保留现有 workflow、hooks、索引、本地规范、平台集成文件和其他项目文件；不要覆盖同名本地规范。检查该平台实际读取的项目指令、Skill、workflow、prompt、hook 或设置入口，并把扩展路由放在适用的用户自维护区、Trellis 管理或生成块之外；只追加或幂等更新这一个路由块，不重写其他内容。Codex 的 AGENTS.md、Claude Code 的 CLAUDE.md 只是示例，不要把它们当成所有平台的固定入口。要求 AI 在原生 Trellis 工作流处理请求前读取 .trellis/spec/trellis-extensions.md，并且只加载与当前请求匹配的指南，不新增阶段。不要静默安装第三方工具、登录账号、下载模型、暴露 token/密钥，或扩大权限；这些动作如确有必要，另行说明具体影响并取得授权。完成后检查真实文件与配置：扩展入口、10 份指南、9 份模板、registry 的精确 SHA 与 personal-core、既有文件保留情况、所选平台 flags、实际路由入口和一次真实场景读取；不要把退出码 0 单独当成成功。最后按 passed / failed / blocked 报告每项结果、证据和仍需我处理的事项。
+```
+
 ### 1. 准备并初始化项目
 
 先按 [Trellis 官方安装说明](https://docs.trytrellis.app/start/install-and-first-task)
@@ -39,29 +51,55 @@ Trellis 负责 workflow、任务生命周期、代理调度、项目索引和记
 
 ```sh
 cd /path/to/project
-# Codex
+# 将占位符替换成下表中与实际平台匹配的一个或多个 flags
+trellis init -y <PLATFORM_FLAGS> --user YOUR_NAME
+
+# 示例：Codex
 trellis init -y --codex --user YOUR_NAME
-# 或 Claude Code
+# 示例：Claude Code
 trellis init -y --claude --user YOUR_NAME
-# 或两者同时使用
-trellis init -y --codex --claude --user YOUR_NAME
+# 示例：Cursor 与 Pi Agent 同时使用
+trellis init -y --cursor --pi --user YOUR_NAME
 ```
 
-Claude Code 状态栏可按需增加 `--with-statusline`。先初始化原生基线，再追加
+当前 CLI 0.6.9 的平台参数如下。多个 flags 可以组合；`--windsurf` 是映射到
+Devin 的废弃别名，应优先使用 `--devin`。
+
+| 平台 | flag | 平台 | flag |
+|---|---|---|---|
+| Cursor | `--cursor` | Claude Code | `--claude` |
+| OpenCode | `--opencode` | Codex | `--codex` |
+| Kilo CLI | `--kilo` | Kiro Code | `--kiro` |
+| Gemini CLI | `--gemini` | Antigravity | `--antigravity` |
+| Devin | `--devin` | Qoder | `--qoder` |
+| CodeBuddy | `--codebuddy` | GitHub Copilot | `--copilot` |
+| Factory Droid | `--droid` | Pi Agent | `--pi` |
+| Reasonix | `--reasonix` | ZCode | `--zcode` |
+| Oh My Pi | `--omp` | Trae IDE | `--trae` |
+| Grok Build | `--grok` | Kimi Code | `--kimi` |
+| Snow CLI | `--snow` |  |  |
+
+Claude Code 状态栏可按需增加 `--with-statusline`。其他 Trellis 版本先重新运行
+`trellis init --help`，不要照抄这份 0.6.9 清单。先初始化原生基线，再追加
 扩展：已测 CLI 0.6.9 在全新单仓项目直接使用远程 spec 模板时，会跳过原生
 spec 模板生成，而本库不包含原生 backend/frontend 模板及 `guides/index.md`。
 
 ### 2. 导入固定版本的个人规范
 
-以下为 Codex 路径；Claude Code 将 `--codex` 换成 `--claude`，双客户端使用
-`--codex --claude`，与第 1 步保持一致。`-y` 接受默认选项；需交互时可移除。
+首次导入前先备份并检查 21 个目标路径；存在同名本地规范时停止导入，先审阅冲突。
+已有个人规范的项目使用“固定版本与更新”，不重复初始化。
+继续使用第 1 步实际选择的同一组 `<PLATFORM_FLAGS>`。`-y` 接受默认选项；
+需交互时可移除。
 
 ```sh
-trellis init -y --codex \
-  --registry 'git@github.com:zyf3313/personal-trellis#add68c0b2abdec747df7a4c88e12fc23f10b1e11' \
+trellis init -y <PLATFORM_FLAGS> \
+  --registry 'git@github.com:zyf3313/personal-trellis#8fca7f1a23e28d8b5d2dc86b525c814ae3a3afeb' \
   --template personal-core \
   --append
 ```
+
+例如 Codex 使用 `--codex`，Claude Code 使用 `--claude`，多平台项目可组合
+`--codex --claude`、`--cursor --pi` 或帮助中其他实际适用的 flags。
 
 导入成功后，`.trellis/spec/` 应包含 `trellis-extensions.md`、10 份指南、
 9 份模板及旧入口迁移文件；`.trellis/config.yaml` 应记录上述 SHA 和
@@ -73,9 +111,15 @@ trellis init -y --codex \
 
 ### 3. 一次挂载，按场景读取
 
-请项目中的 AI 保留现有内容，在 Codex 的 `AGENTS.md`、Claude Code 的
-`CLAUDE.md` **用户自维护区**加入以下内容；双客户端两处都加，已存在则跳过。
-不要写进 Trellis 管理块、原生 Skill 或 hooks。
+项目入口随平台而异。请项目中的 AI 检查第 1 步生成或复用的平台目录、设置、
+Skill、workflow、prompt 与 hooks，找出该平台在主会话中实际读取的项目级入口；
+以项目真实文件为准，不推测不存在的统一路径。Codex 常见入口是 `AGENTS.md`，
+Claude Code 常见入口是 `CLAUDE.md`，它们只是示例，其他平台可能通过 Skill、
+workflow、prompt、扩展或设置接入。
+
+在确认适用的入口后保留全部现有内容，把下面路由加入**用户自维护区**；多平台项目
+分别挂到每个实际入口，已存在则跳过。若入口文件同时含 Trellis 管理/生成块，
+把路由放在块外并保留生成内容；若实际入口没有可维护区域，报告这一限制，不另造路径。
 
 ```md
 ## Project extension routing (user maintained)
@@ -161,7 +205,8 @@ review/                     # 可选评审运行器
 普通 registry 只导入 `spec/`，不会下载、安装或运行 starter。
 
 需要 **Node.js 24+、pnpm 10.12.1**。先选用未占用的临时目录，并确认项目中
-尚无 `review/`；已有目录应先比较再合并。以下命令取出固定完整交付中的骨架：
+尚无 `review/`；已有目录应先比较再合并。以下命令仅取出 **1.4.0 Storybook 历史快照**，
+不包含本次 1.4.1 修订；其 spec 与当前规范不保证同字节。发布新快照后再更新固定 SHA：
 
 ```sh
 git clone --filter=blob:none --no-checkout \
@@ -183,6 +228,13 @@ manifest，方法见 [starter 接入说明](starters/storybook/README.md#接入�
 修改源后重新生成并检查哈希；可选文档可省略，必需源缺失或投影漂移应失败。
 静态构建成功只证明预览可生成，浏览器、设备与用户验收另行完成。
 
+**当前已知限制（包括上述 1.4.0 固定快照）**：共享设计资产页面静态依赖
+`ui-design` 的来源记录。接入时保留 manifest 中的 `ui-design` 及其真实源文件，
+也保留固定原型 `product-prototype`；不要删除 `ui-design`，或将其设为可选后省略源。
+否则可能在类型检查或页面运行时失败，不能套用普通可选文档的省略规则。
+starter 内“项目可调整必需项”的说明在这一项上超出了实现能力；本轮仅披露限制，
+条件化生成或提前校验缺失项的代码修复将独立跟进。
+
 ## 工具与来源
 
 以下是指南已有的工具路线；按场景先发现并复用本地 CLI、MCP、Skill 或内建能力，
@@ -197,11 +249,15 @@ manifest，方法见 [starter 接入说明](starters/storybook/README.md#接入�
 | [Exa MCP](https://github.com/exa-labs/exa-mcp-server) | 已有 Web 搜索不足时补充检索 | [Web 调研](spec/guides/web-research.md) |
 | [Emil Skills](https://github.com/emilkowalski/skills) | 核心 UI 设计与条件专项检查 | [UI 设计](spec/guides/ui-design.md) |
 | [DBHub](https://github.com/bytebase/dbhub) | 经授权的 schema、数据与 SQL 访问 | [数据库访问](spec/guides/database-access.md) |
-| [linux.do](https://linux.do/) | 按需社区信源，技术结论仍核对上游 | [Web 调研](spec/guides/web-research.md) |
+| [linux.do](https://linux.do/) | 候选发现，以及入围后的真实体验、故障与维护成本证据；技术事实仍核对上游 | [Web 调研](spec/guides/web-research.md) |
 
 UI 路线以 `emil-design-eng` 为核心；边界数据、动效和触摸目标分别按需使用
 `break-ui`、`review-animations`、`mobile-native`。已有设计基线与适用工具优先。
 测试生成和评审不要求新工具；执行优先复用项目框架，没有默认第三方测试 Skill。
+
+社区讨论同时服务于早期发现和入围后的选择核验。重要或体验敏感的选型会在候选
+收敛后做一次有界复查，并区分个人经验、流行度与可验证功能；论坛共识不作为技术
+事实证明，证照、版本和实现能力仍回到上游核对。
 
 拒绝安装或环境不支持时使用已有能力与明确降级方案。登录、API key、模型下载、
 数据库连接/写入和外部发布分别处理授权；安装成功不能替代真实可用性验证。
@@ -210,17 +266,43 @@ UI 路线以 `emil-design-eng` 为核心；边界数据、动效和触摸目标�
 
 ### 固定版本与更新
 
-规范与可选骨架使用两个独立固定提交，避免消费会漂移的 `main`：
+规范与可选骨架分别固定提交，避免消费会漂移的 `main`。当前 1.4.1 轻量候选
+已同步私库并通过 CLI 0.6.9 / Codex 的全新项目远程导入，具体证据见“已验证范围”：
 
 | 产物 | 固定提交 | 内容 |
 |---|---|---|
-| 轻量 registry | `add68c0b2abdec747df7a4c88e12fc23f10b1e11` | `index.json`、`library.json` 与 21 份 spec 文件 |
-| 完整交付 | `1bdc642b9d8f5a75eea482de5390ced36162d186` | 同字节 spec、README、图片与 Storybook starter |
+| 1.4.1 轻量 registry 候选 | `8fca7f1a23e28d8b5d2dc86b525c814ae3a3afeb` | 本地核对与当前交付同字节；仅 `index.json`、`library.json` 与 21 份 spec 文件 |
+| Storybook 1.4.0 历史快照 | `1bdc642b9d8f5a75eea482de5390ced36162d186` | 仅用于上文旧骨架示例；不代表当前规范、README 或图片，也不保证 spec 同字节 |
 
-轻量提交由 `registry/v1.4.0` 分支维护，命令仍应使用完整 SHA。
-更新时审阅旧、新 SHA 差异，在隔离项目验证后，用新固定 SHA 重跑第 2 步；
-同名文件逐项比较合并，回滚则恢复上一已验证 SHA 的对应文件。
-Trellis runtime 另按 [官方升级说明](https://docs.trytrellis.app/changelog) 管理。
+当前轻量提交对应 `registry/v1.4.1`，消费仍使用完整 SHA。个人规范升级遵循下面步骤；
+**重复 `init --append` 不是升级**，它跳过同名文件，还可能重建当前 spec 的哈希基线。
+
+1. 备份项目文件、`.trellis/config.yaml` 和 `.trellis/.template-hashes.json`，保留
+   本地修改；审阅新旧 SHA 差异并先在隔离副本验证。核对所用 CLI 与项目 runtime
+   版本，不自动升级 CLI 或允许降级。
+2. 只修改配置中的 `registry.spec.source` 为已审阅的新完整 SHA，保持
+   `registry.spec.template: personal-core` 及其他配置。
+3. 先运行下列预览，确认 registry 拉取成功，并逐项审阅**整个**变更计划。
+   `trellis update` 同时处理当前 CLI 携带的原生模板、平台集成和迁移，
+   并非仅更新个人 spec；只有全部计划都在授权范围内才执行实际更新。
+
+```sh
+trellis update --help
+trellis update --dry-run
+# 审阅完整计划并在隔离副本验证后：
+trellis update
+```
+
+新增文件可加入；内容相同的文件跳过；有可靠哈希基线且未本地修改的文件可自动
+刷新。本地修改选择 Skip 或 Create copy（`.new`）后人工合并，只有明确审阅后的
+单文件才选择 Overwrite；不使用 `--force` 批量覆盖。上游删除或重命名的个人
+registry 文件需人工审阅引用并清理，不能假定 update 自动移除。
+
+若曾重复 init、哈希基线不可信、版本不匹配或预览包含未授权的原生变更，停止自动
+更新：保留备份，取得精确新旧快照，按旧版/本地/新版差异逐文件审阅合并，不覆盖
+本地内容，不手工伪造哈希。记录实际合并和保留项；回滚恢复备份中的文件、配置与
+哈希基线。无论退出码如何，均检查实际内容、registry SHA、冲突保留项和路由。
+Trellis runtime 升级另按 [官方升级说明](https://docs.trytrellis.app/changelog) 审阅。
 
 从 1.3.x 迁移时，把项目入口、自维护路由块和任务 JSONL 中的 `personal-index.md`
 改为 `trellis-extensions.md`；旧文件仅保留迁移链接。原生 `guides/index.md`
@@ -232,8 +314,8 @@ Trellis runtime 另按 [官方升级说明](https://docs.trytrellis.app/changelo
 |---|---|
 | 退出 0，但看不到指南 | 检查终端是否退回空白模板，核对 21 份 spec 和 config 中的 SHA/template |
 | 私库拉取失败或超时 | 检查 Git/SSH 读取权限和网络，确认使用轻量 registry SHA；不要换成完整 main |
-| 文件已导入，讨论却未读取 | 检查实际客户端的 AGENTS/CLAUDE 自维护路由块；索引链接与后期 JSONL 不能保证讨论激活 |
-| 再次 append 后旧内容没更新 | append 不覆盖同名文件；按版本差异审阅合并，保留本地修改 |
+| 文件已导入，讨论却未读取 | 检查实际 Agent / 平台生成文件与设置，确认路由位于其真正读取的项目指令、Skill 或 workflow 用户自维护入口；Codex 的 `AGENTS.md`、Claude Code 的 `CLAUDE.md` 只是示例，索引链接与后期 JSONL 不能保证讨论激活 |
+| 再次 append 后旧内容没更新 | 停止重复 init；按上述更新步骤审阅基线与差异，保留本地修改 |
 | 小任务生成了整套设计文档 | 回到匹配指南的触发边界；小修复默认复用现有设计，用户明确要求除外 |
 
 轻量 registry 用于缩小检出载荷：已测 CLI 的单个 Git 步骤有 30 秒上限，
@@ -241,7 +323,15 @@ Trellis runtime 另按 [官方升级说明](https://docs.trytrellis.app/changelo
 
 ## 已验证范围
 
-以下是截至 **2026-10-17** 的证据边界，不构成通用平台或长期运行保证：
+截至 **2026-10-17**，本次 1.4.1 固定 registry 在全新项目通过真实远程导入：
+CLI 0.6.9 / Codex 导入耗时 29.124 秒，21/21 spec 与交付源逐字节一致，
+111 个受保护原生文件未变，registry SHA 和 template 正确。没有使用本地镜像或
+URL 重写；未重新执行模型路由或旧版升级冲突实验。
+
+以下表格保留 **1.4.0 旧快照** 的补充证据，不代表 1.4.1 已重复验证这些场景。
+表内只记录已执行的
+Codex / Claude Code 证据子集，并不把 Personal Trellis 的支持范围限制为这两个
+平台；其他 Trellis 支持的平台仍通过其生成集成资产接入，需在各自真实环境验收：
 
 | 范围 | 结果 |
 |---|---|
@@ -253,6 +343,16 @@ Trellis runtime 另按 [官方升级说明](https://docs.trytrellis.app/changelo
 `library.json` 的 `tested_trellis` 记录 0.6.9 基线；上表补充具体 0.6.17 远程导入
 结果，不扩展其他能力的兼容承诺。工具安装/调用、真实数据库、模型、浏览器/设备、
 多轮对话质量和用户最终验收分别记录，不能由静态文件或导入测试推断通过。
+
+## 致谢
+
+感谢 [Trellis](https://github.com/mindfold-ai/Trellis) 团队提供原生工作流与 registry
+基础。本库的可选路线与示例也参考了 [CodeGraph](https://github.com/colbymchenry/codegraph)、
+[QMD](https://github.com/tobi/qmd)、[GitHub CLI](https://cli.github.com/)、
+[Exa MCP](https://github.com/exa-labs/exa-mcp-server)、
+[Emil Skills](https://github.com/emilkowalski/skills)、[DBHub](https://github.com/bytebase/dbhub)
+和 [Storybook](https://storybook.js.org/)，也感谢 [linux.do](https://linux.do/)
+社区分享真实使用经验与讨论；各项目和社区内容由其上游或作者独立维护并适用各自条款。
 
 ## 许可与项目资料
 

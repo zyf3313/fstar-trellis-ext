@@ -54,20 +54,43 @@ read blocked content or repeat a refused request.
 3. Use Exa only as a supplement when existing search lacks coverage, with a narrow
    query and bounded results. Check actual tools, limits and access; do not hard-code
    pricing, allowances or availability.
-4. Treat linux.do as an ordinary relevant or requested source, verify technical
-   claims upstream, and report access limits. Use intranet tools only with existing
+4. Treat linux.do and other relevant forums or community discussions as both
+   discovery sources and possible post-shortlist selection evidence. Verify technical
+   claims upstream and report access limits. Use intranet tools only with existing
    authorized access. Never send internal material to a public search engine.
 5. For reference-project exploration or consequential selection, inspect source at
    an exact release/ref and use the [exploration template](../templates/exploration.zh-CN.md).
    Record version, license, maintenance evidence, verified capability, adaptation
    gaps and the adopt/adapt/reject decision. A simple fact lookup needs no report.
 
+## Community evidence after shortlisting
+
+When two or more plausible candidates remain, or a decision is consequential or
+experience-sensitive, run one bounded second pass across relevant Web and community
+sources. Include linux.do when relevant or requested, and consider GitHub issues or
+discussions, vendor-independent comparisons and other communities with real use
+experience. Use multiple independent sources where feasible; do not count reposts or
+unsourced summaries as independent confirmation.
+
+Keep firsthand anecdotes and popularity signals separate from verified functionality.
+Use community evidence to examine failure modes, migration and maintenance cost,
+ecosystem fit and operational surprises; verify technical capabilities, license and
+version claims against upstream documentation, source or an exact release. Record the
+evidence date, likely recency and representativeness limits, source relationships and
+material conflicts. Forum consensus is a lead or experience signal, not proof.
+
+Stop when the decision is supported and additional sources repeat existing evidence or
+no longer change the ranking. Record whether the second pass changed or did not change
+each adopt/adapt/reject decision, with the evidence and remaining uncertainty. Do not
+expand a routine fact lookup into this pass.
+
 ## Result
 
 Return direct evidence links, dates/revisions where material, supported conclusions
 and clearly marked inference or unresolved contradictions. Bound result counts and
 fields; expand only when evidence requires it. Recheck changing claims when reused,
-and preserve the user's model and client choices.
+and preserve the user's model and client choices. For selection work, include the
+community-evidence effect on the final ranking even when it made no change.
 
 Sources: [GitHub CLI search](https://cli.github.com/manual/gh_search),
 [repository metadata](https://cli.github.com/manual/gh_repo_view),
