@@ -64,11 +64,41 @@ tool. Produce Chinese deliverables unless requested otherwise.
   requirement has cases or an explicit gap. Counts and AI coverage scores do not
   establish completeness. Critical unknowns block only the affected cases.
 
-Default presentation is a concise case table with details for complex cases.
-Generate an optional coverage mind map from the same source IDs; it is a summary,
-not a second editable truth. Case definitions remain separate from per-run results.
-An existing Storybook portal may project those files directly; do not install a
-portal or copy separate preview facts just to generate tests.
+## Shared source and delivery self-check
+
+Humans and AI use one authoritative Chinese case source. Generation alone defaults
+to one case document; review updates that document and reports findings without a
+mandatory separate review file. Split large documents by business module, never by
+human/AI audience. Keep stable IDs across splits. Automation belongs in the project's
+native test directories and references those IDs; it is executable verification,
+not another editable case specification.
+
+Default presentation is a concise table with details for complex cases. Optional
+Storybook, detail views and coverage mind maps derive from the same source and IDs.
+Do not maintain separate AI cases or preview-only facts, or install a portal just
+to generate cases. Each execution adds a separate run report and needed evidence;
+case definitions do not store a permanent "passed" status.
+
+Before delivering or translating cases into automation, check:
+
+- Label each numerical expectation's unit: business quantity, record count and
+  event count differ. Recalculate expected values from the stated initial data;
+  distinguish final totals from increments and isolate fixtures.
+- Trace applicable state transitions and data conservation (for example, available
+  and reserved inventory). Specify rollback and retry effects: failed operations
+  leave no unintended partial changes; idempotent repeats add no duplicate effects,
+  only where the approved contract requires this.
+- Separate approved acceptance assertions from implementation observations. Do not
+  promote unconfirmed payload fields, internal IDs or exact error text into business
+  requirements. Mark missing premises "待确认" and name affected assertions.
+- Recheck setup feasibility, scope coverage and duplicate intent against existing
+  cases/tests. Fix ambiguous expectations before claiming cases are automation-ready.
+
+For example, if an approved contract says one successful request creates one
+reservation and one event, "quantity=2 means 2 records and 2 events" is wrong.
+Write "reserve 2 items; add 1 reservation and 1 event; available stock decreases
+by 2" with the initial stock and contract source. Do not assert an unconfirmed
+event payload schema.
 
 ## Automation and tool selection
 
@@ -107,7 +137,9 @@ load tests and external-system changes need their actual scope authorized, not j
 permission to generate cases. Follow [database access](database-access.md) if applicable.
 
 Use the [execution report](../templates/test-execution.zh-CN.md) or the project's
-equivalent. Record exact command/tool, environment, code/content identity, time,
+equivalent. Each run has a unique ID and references the exact case version/hash,
+target code/content identity and environment; keep its report outside case definitions.
+Record exact command/tool, environment, code/content identity, time,
 executed/pass/fail/blocked/not-executed counts and evidence. Zero discovered tests,
 generation success, mocks or a script exit alone do not prove end-to-end acceptance.
 Redact secrets and keep evidence local unless sharing was authorized.
@@ -119,7 +151,9 @@ case generation or test execution does not silently authorize product changes.
 Do not create a separate defect system unless requested.
 
 Regression runs must verify the original failure plus affected dependencies/old
-behavior. Preserve earlier run records and link the new revision and result.
+behavior. Create a new run report and link the prior failure, new revision and result.
+Finalized run records and evidence are immutable; append a traceable correction
+if needed, never overwrite an earlier failure or relabel old evidence as a new run.
 Apply [document consistency](document-consistency.md): change expectations only when
 their source is legitimately revised; update related cases, automation and generated
 views, and invalidate stale evidence. Case definition version and run version differ.
