@@ -7,7 +7,7 @@
 9 份中文模板，以及可选的 Storybook 评审门户。原生 Trellis 继续管理任务流程、
 项目规范和记忆；本库通过原生 registry 导入，在命中场景时补充指导。
 
-**状态：1.4.1 私有候选，未公开发布，许可证待定。** 普通规范消费无需 clone；
+**状态：1.4.2 私有候选，未公开发布，许可证待定。** 普通规范消费无需 clone；
 完整接入需要原生初始化、固定版本导入和一次项目入口挂载。
 
 Personal Trellis 通过 Trellis 生成的平台集成资产支持**当前 Trellis 所支持的全部
@@ -261,7 +261,7 @@ manifest，方法见 [starter 接入说明](starters/storybook/README.md#接入�
 | 工具 / 上游 | 用途 | 详细规则 |
 |---|---|---|
 | [CodeGraph](https://github.com/colbymchenry/codegraph) | 定义、调用关系与变更影响 | [代码检索](spec/guides/code-search.md) |
-| [QMD](https://github.com/tobi/qmd) | 文档集合与历史知识检索 | [知识检索](spec/guides/knowledge-search.md) |
+| [QMD](https://github.com/tobi/qmd) | 文档集合与历史知识检索；关键词路线已实测 2.8.3，模型与 MCP 未启用 | [知识检索](spec/guides/knowledge-search.md) |
 | [GitHub CLI](https://cli.github.com/) | 仓库、代码、issues 与一手源码 | [Web 调研](spec/guides/web-research.md) |
 | [Exa MCP](https://github.com/exa-labs/exa-mcp-server) | 已有 Web 搜索不足时补充检索 | [Web 调研](spec/guides/web-research.md) |
 | [Emil Skills](https://github.com/emilkowalski/skills) | 核心 UI 设计与条件专项检查 | [UI 设计](spec/guides/ui-design.md) |
@@ -288,8 +288,11 @@ UI 路线以 `emil-design-eng` 为核心；边界数据、动效和触摸目标�
 这是一组受提示约束的只读探针，不是普通业务请求下完整的软安装黑盒。若首条提示
 明确禁止安装、配置、登录和真实连接，则“没有安装”只证明该探针遵守了限制，不能
 证明所有普通请求都会自动跳过安装。2026-10-18 的普通知识检索会话另行覆盖了
-“能力缺失后推荐 QMD 并询问安装授权”的正向分支，但没有覆盖安装后的客户端可用性；
-两类证据都不替代明确授权后的真实安装与最小任务验证。
+“能力缺失后推荐 QMD 并询问安装授权”的正向分支；随后用户明确授权，已实际安装
+`@tobilu/qmd@2.8.3` 并完成当前会话 CLI 与关键词检索的最小真实任务验证，模型下载
+与 MCP 保持未启用。三类的证据边界不同：探针证明遵守限制，推荐分支证明会先征询
+授权，真实安装证明默认关键词路线可用；仍未验证 MCP/常驻服务、向量检索质量与
+跨项目集合。
 
 | 场景 | 只读探针 | 通过条件 | 必须区分 |
 |---|---|---|---|
@@ -382,10 +385,11 @@ Trellis runtime 升级另按 [官方升级说明](https://docs.trytrellis.app/ch
 
 ## 已验证范围
 
-截至 **2026-10-18**，本次 1.4.1 固定 registry 在全新项目通过真实远程导入：
+截至 **2026-10-18**，1.4.1 固定 registry 已在全新项目通过真实远程导入：
 CLI 0.6.9 / Codex 导入耗时 29.124 秒，21/21 spec 与交付源逐字节一致，
 111 个受保护原生文件未变，registry SHA 和 template 正确。没有使用本地镜像或
-URL 重写。
+URL 重写。当前 1.4.2 只新增知识检索证据记录、指南与版本号，
+**尚未重跑全新项目远程导入**，导入结论沿用 1.4.1，未随本次内容变更重新验证。
 
 在 fstar 写入 Codex 项目路由后，又以五个**真正新建的 Codex 项目会话**完成黑盒
 验收；本轮新增的三条普通请求证据记录在任务研究报告中：
@@ -405,8 +409,16 @@ URL 重写。
 - 普通知识检索请求读取扩展入口与知识检索指南，在 PATH 中未发现 `qmd`，且当前发现
   未找到可用的跨项目语义集合；随后只读核验 QMD 官方 `v2.8.3` 资料，建议固定版本
   安装并询问授权。没有安装、配置 collection、下载模型；公网工具参数未携带私有内容。
-  该结果证明“缺能力 → 推荐 → 询问”分支，不证明安装后可用性、语义检索质量或长期
-  版本推荐。
+  该结果证明“缺能力 → 推荐 → 询问”分支；安装后可用性由下一条的授权实测补充，
+  仍不证明语义检索质量、MCP 可用性或长期版本推荐。
+- 授权后的关键词检索实测：全局安装 `@tobilu/qmd@2.8.3`（约 205.1 MiB），在项目
+  `.tmp/` 隔离目录对 fstar 的 `.trellis/spec` 建集合，85 份 Markdown（424,581 bytes）
+  建索引 0.864 秒、索引目录约 1.56 MiB；`content_vectors` 与 `llm_cache` 均为 0，
+  无 `.gguf`，没有下载模型，也没有启动 MCP 或改动 Codex 配置。中英文关键词均命中
+  预期文件，`qmd get` 窗口与源文件一致；宽泛单词 `projection` 命中 56 份、目标排
+  第 33，改用短语 `"manifest projection"` 后命中 3 份、目标排第 2。该结论仅覆盖
+  关键字路线，向量模型、MCP 与跨项目集合未验证；细节见
+  [知识检索](spec/guides/knowledge-search.md)。
 - 测试请求读取扩展入口、测试与验收指南、中文用例模板和代码检索指南，生成 24 条
   BPM 审批人快照中文用例草案；没有修改产品代码，也没有执行测试。小型文案请求只
   读取文档一致性指南，修改根 README 一句并运行 `diff --check`，取证后由主线程

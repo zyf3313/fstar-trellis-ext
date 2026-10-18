@@ -32,6 +32,44 @@ unsupported or fails, fall back to project indexes, scoped text search and origi
 files, and report the coverage or recall gap without asking again for the refused
 action.
 
+## Verified baseline
+
+Measured 2026-10-18 on macOS arm64 (Node 24.14.0, npm 11.9.0) with
+`npm install -g @tobilu/qmd@2.8.3`, after explicit user approval. Only the keyword
+path was exercised; models and MCP stayed off.
+
+| Item | Measured result |
+|---|---|
+| Installed release | `qmd 2.8.3 (facd35e)`; global npm executable, no Skill or MCP added |
+| Current-session use | `qmd --version` worked in the installing session and from a non-login shell |
+| Keyword indexing | 85 Markdown files (424,581 bytes) indexed in 0.864 s |
+| Index footprint | ~1.56 MiB for that collection including config; one SQLite file |
+| Model state | `content_vectors` 0, `llm_cache` 0, no `.gguf`; no model download |
+| Chinese and English keywords | Expected documents returned for both; `qmd get` matched the source file |
+
+`qmd search` uses BM25/FTS and needs no model, but it still reads an indexed
+collection: `collection add` scans and indexes the chosen path immediately. Treat
+collection creation as its own approval scope even when no model is involved, and
+confirm the exact directories before indexing.
+
+Query quality depends on term shape. A broad single word ranked poorly
+(`projection`: 56 files, target 33rd), while a phrase ranked correctly
+(`"manifest projection"`: 3 files, target 2nd). Prefer a module name plus a stable
+term or phrase, and escalate to semantic retrieval only when keyword recall is
+insufficient.
+
+If semantic retrieval is later approved, budget for models separately. Upstream
+default download sizes, not local measurements: embedding
+`embeddinggemma-300M-Q8_0.gguf` 334 MB, reranking `qwen3-reranker-0.6b-q8_0.gguf`
+639 MB, query expansion `qmd-query-expansion-1.7B-q4_k_m.gguf` 1.28 GB — roughly
+2.25 GB, so reserve 3–4 GB with download headroom. Default state lives in
+`~/.cache/qmd/models/`, `~/.cache/qmd/index.sqlite` and `~/.config/qmd/index.yml`;
+environment variables and named indexes can relocate these. The default embedding
+model has limited Chinese coverage, so a Chinese corpus may need another embedding
+model whose size and quality are re-checked in the target environment. `embed`,
+`query`, `vsearch`, `pull` and MCP or HTTP serving each keep their own authorization
+scope; keyword search requires none of them.
+
 ## Minimum route
 
 Start with keywords, then retrieve only the relevant window. For an existing `docs`
