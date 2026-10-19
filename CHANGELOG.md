@@ -1,5 +1,22 @@
 # 变更记录
 
+## 2026-10-19 · 1.4.3 公开化与 registry 元数据同步
+
+仓库权限从私有改为公开后，安装路径不再需要 GitHub 登录或 SSH key。README 的 AI
+接入提示、导入命令与排障条目改用无需认证的 `gh:zyf3313/personal-trellis#<SHA>`，
+Storybook 示例改为匿名 HTTPS clone；状态文案从“私有候选”更新为“公开候选”。
+
+新建 `registry/v1.4.3` 无父轻量提交
+（`6b379fe58fddf7198261e89b9e0bbe7249f8fc07`，23 个文件），把 registry 内
+`library.json` 同步为 `version: 1.4.3` 与 `visibility: public`。`index.json`
+与 21 份 spec 和 `registry/v1.4.2` 逐字节一致，因此本次只推进元数据，不改变
+任何指南或模板内容。README 的固定 SHA 引用同步到该提交。
+
+分发验证：该 SHA 已通过匿名 HTTPS `git fetch` 按完整提交检出，23 个文件齐全。
+本机对 `raw.githubusercontent.com` 的连接被重置，CLI `gh:` registry 端到端导入
+因此在本环境 blocked；该限制与仓库权限无关，1.4.2 记录过的成功导入不视为本次
+独立复测。许可证仍为 pending，`publication` 仍为 `not_published`。
+
 ## 2026-10-18 · 1.4.2 知识检索实测沉淀
 
 用户明确授权后实际安装 `@tobilu/qmd@2.8.3`，并把“当前会话可调用 + 关键词检索”的
