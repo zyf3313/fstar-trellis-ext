@@ -413,6 +413,27 @@ GitLab 风格的 `/-/raw/` 路径，在 github.com 上并不存在——只是�
 `trellis init` 的那次成功只是落在网络可用窗口内。结论：默认仍用 `gh:`，带端口形式
 只在 raw 被重置且 `github.com` 通畅时作临时绕行，二者都未取得稳定的端到端通过证据。
 
+#### 用 dry-run 验证固定提交是否可拉取
+
+`trellis update` 的 registry 拉取发生在 `--dry-run` 提前返回**之前**（CLI 0.6.9：
+`probeRegistryIndex` / `downloadTemplateById` / `fetchRegistrySpecTemplates` 在
+`update.js:497-525`，`if (options.dryRun)` 早退在 `update.js:1861`）。因此
+`--dry-run` 已经真实完成 clone、fetch 与逐文件比对，只是不落盘——它是验证 pin
+可用性的**零写入**手段，不需要拿项目文件去赌一次真更新。
+
+判读方式有两处：
+
+1. 不再出现 `Warning: registry spec update skipped: …` 即表示拉取成功；出现即失败。
+2. `Unchanged files (will skip)` 的计数会因 spec 拉取成功而增大。在 fstar 上实测：
+   拉取失败时该计数为 `… and 83 more`，拉取成功时为 `… and 103 more`，差值 20 恰为
+   本库分发的 spec 份数，可与"20 份全部取回并判定为未变更"互相印证。
+
+2026-10-19 在 fstar 用带端口形式跑 `trellis update --dry-run`，按上述两条判为拉取
+通过（无 skipped 警告、103 且差值为 20）；这是继 `trellis init` 之后第二次成功取回
+该固定提交。但同目录紧接着的 4 次真跑 `trellis update --skip-all` 全部报
+`Git registry operation failed`，即真更新仍未取得通过证据；`--dry-run` 与真跑共用
+同一拉取路径，差异只在网络窗口，故不要把这 4 次失败理解为配置错误。
+
 已测 CLI 的下载与检出步骤各有 30 秒上限（HTTP 与 git 两条后端都受此约束）。
 2026-10-19 把两张示意图改为索引调色板后（1.42 MiB → 240 KiB），实测 `main` 的
 `api.github.com` tarball 下载 11–13 秒、`git clone` + checkout 13.2 秒，均在 30 秒内；

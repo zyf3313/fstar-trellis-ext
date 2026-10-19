@@ -1,5 +1,27 @@
 # 变更记录
 
+## 2026-10-19 · 确认 --dry-run 已覆盖 registry 拉取，取得第二次取回证据
+
+读 CLI 0.6.9 源码确认：`trellis update` 的 registry 拉取（`probeRegistryIndex` /
+`downloadTemplateById` / `fetchRegistrySpecTemplates`，`update.js:497-525`）发生在
+`if (options.dryRun)` 早退（`update.js:1861`）之前。因此 `--dry-run` 已真实完成
+clone、fetch 与逐文件比对，只是不落盘，是验证固定提交可拉取性的零写入手段；此前
+把 dry-run 一律当作“未验证 pin”的说法偏保守，已在 README 排障节修正并给出判读方法。
+
+判读两条：不再出现 `registry spec update skipped` 即拉取成功；`Unchanged files`
+计数会随之增大。fstar 实测失败时 `… and 83 more`、成功时 `… and 103 more`，差值 20
+恰为本库分发的 spec 份数。
+
+在 fstar 以带端口形式实测：`--dry-run` 按上述两条判为通过（继 `trellis init` 之后
+第二次成功取回该固定提交）；随后 4 次真跑 `trellis update --skip-all` 全部报
+`Git registry operation failed`，真更新仍未取得通过证据。全程未改动消费者长期配置：
+试验用的带端口 source 已退回 `gh:` 形式，与已提交状态逐字节一致。
+
+副作用记录：真跑在 fstar 生成 `.trellis/.backup-2026-10-19T14-58-16`（27 MiB，已被
+`.trellis/.gitignore` 的 `.backup-*` 覆盖）。`--skip-all` 跳过 7 个“本地已修改”文件，
+`.trellis/config.yaml`、`.trellis/.template-hashes.json`、`AGENTS.md` 与 87 份 spec
+经 git 与哈希比对确认未被改动，无文件删除。
+
 ## 2026-10-19 · registry 形式的实测差异，取得一次端到端导入通过
 
 排障表新增一行与一节，记录四种 registry source 形式在 CLI 0.6.9 下的实测差异。
