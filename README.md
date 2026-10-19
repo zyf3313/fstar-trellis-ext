@@ -384,9 +384,34 @@ prune，该键惰性、不影响后续更新。原生 `guides/index.md` 仍由�
 |---|---|
 | 退出 0，但看不到指南 | 检查终端是否退回空白模板，核对 20 份 spec 和 config 中的 SHA/template |
 | registry 拉取失败或超时 | 确认网络可访问 `github.com` 与 `raw.githubusercontent.com`，registry 使用 `gh:zyf3313/fstar-trellis-ext#<完整 SHA>`；无需 GitHub 登录或 SSH key，SHA 取自 `main` |
+| `raw.githubusercontent.com` 被重置，`gh:` 形式取不到 | 改用 `https://github.com:443/zyf3313/fstar-trellis-ext#<完整 SHA>`：带端口的 host 形式会让 CLI 走 git 后端、不再探测 raw。仅作诊断绕行，见下段限制 |
 | 文件已导入，讨论却未读取 | 检查实际 Agent / 平台生成文件与设置，确认路由位于其真正读取的项目指令、Skill 或 workflow 用户自维护入口；路由写入后启动真正新会话或按客户端机制 reload，再核对实际读取路径。Codex 的 `AGENTS.md`、Claude Code 的 `CLAUDE.md` 只是示例，索引链接与后期 JSONL 不能保证讨论激活 |
 | 再次 append 后旧内容没更新 | 停止重复 init；按上述更新步骤审阅基线与差异，保留本地修改 |
 | 小任务生成了整套设计文档 | 回到匹配指南的触发边界；小修复默认复用现有设计，用户明确要求除外 |
+
+#### registry 形式的实测差异
+
+用 CLI 自身的 `parseRegistrySource` 与真实导入核对四种形式（同一完整 SHA）：
+
+| 形式 | `preferGit` | index 探测 | 本机结果 |
+|---|---|---|---|
+| `gh:zyf3313/fstar-trellis-ext#<SHA>` | false | `raw.githubusercontent.com` | 失败：`Could not reach registry index: fetch failed` |
+| `https://github.com/zyf3313/fstar-trellis-ext#<SHA>` | false | 同上（归一后与 `gh:` 完全一致） | 失败：同上，**不能绕开 raw** |
+| `https://github.com:443/…#<SHA>` | true | `git clone`，不碰 raw | 一次端到端通过：33 秒、20/20 spec 逐字节一致、config 写入该 source |
+| `git@github.com:…#<SHA>` | true | `git clone`（SSH） | 失败：本机 SSH key 未授权，`Authentication failed` |
+
+要点：`https://github.com/...#<SHA>` 与 `gh:` 解析结果逐字段相同，换成它不会改变
+任何行为；真正绕开 raw 的是**带端口**的形式，因为它被当成自建 GitLab 主机、
+`preferGit` 变为 true，index 探测改走 `git clone`。该形式的 `rawBaseUrl` 会算成
+GitLab 风格的 `/-/raw/` 路径，在 github.com 上并不存在——只是走 git 后端时不会用到，
+因此不要把它当 HTTP 源使用。
+
+限制：git 后端要求 `github.com` 在 CLI 的 30 秒单步上限内可连。本机 `github.com`
+间歇性劣化，手动复现同一串 `git clone` 时测得 75 秒连接失败（git 自身默认超时）与
+174 秒 `expected flush after ref listing`，都远超 30 秒；因此在同一目录上
+`trellis update --dry-run` 连续 4 次报 `Git registry operation failed`，而先前
+`trellis init` 的那次成功只是落在网络可用窗口内。结论：默认仍用 `gh:`，带端口形式
+只在 raw 被重置且 `github.com` 通畅时作临时绕行，二者都未取得稳定的端到端通过证据。
 
 已测 CLI 的下载与检出步骤各有 30 秒上限（HTTP 与 git 两条后端都受此约束）。
 2026-10-19 把两张示意图改为索引调色板后（1.42 MiB → 240 KiB），实测 `main` 的
@@ -443,6 +468,11 @@ source 同步改为新名下的完整 SHA。改名后实测：新 URL 的匿名 
 `api.github.com` tarball 下载由 48.8 秒降至 11–13 秒、`git clone` + checkout 由
 25.0 秒降至 13.2 秒，均在 CLI 的 30 秒单步上限内。CLI `gh:` registry 端到端导入
 在本机仍因 `raw.githubusercontent.com` 连接重置 blocked，未记为通过。
+
+同日改用带端口的 registry 形式（`https://github.com:443/…#<SHA>`，走 git 后端、不探测
+raw）取得一次 CLI 端到端导入通过：33 秒、20 份 spec 与 `6ad69cc` 逐字节一致、
+`.trellis/config.yaml` 写入该 source。同一目录随后 `trellis update --dry-run` 连续 4 次
+因 `github.com` 连接劣化失败，故该证据为单次、不稳定，详见“registry 形式的实测差异”。
 
 1.4.5/1.4.6 同样未重复 CLI `gh:` registry 端到端导入实测（本机
 `raw.githubusercontent.com` 仍被重置），分发结论继承同 spec 内容的 1.4.2 证据。

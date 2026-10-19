@@ -1,5 +1,28 @@
 # 变更记录
 
+## 2026-10-19 · registry 形式的实测差异，取得一次端到端导入通过
+
+排障表新增一行与一节，记录四种 registry source 形式在 CLI 0.6.9 下的实测差异。
+用 CLI 自身的 `parseRegistrySource` 核对：`https://github.com/org/repo#<SHA>` 与
+`gh:org/repo#<SHA>` 解析结果逐字段相同（`preferGit: false`、同一 raw 域名），因此换成
+HTTPS 形式**不能**绕开 `raw.githubusercontent.com` 的 index 探测——两者在本机同样以
+`Could not reach registry index: fetch failed` 失败。
+
+真正绕开 raw 的是带端口的 `https://github.com:443/org/repo#<SHA>`：它被 CLI 当作自建
+GitLab 主机，`preferGit` 变为 true，index 探测改走 `git clone`。在同一完整 SHA 上实测
+一次端到端导入通过（33 秒、20 份 spec 与 `6ad69cc` 逐字节一致、config 写入该 source）。
+该形式的 `rawBaseUrl` 会算成 GitLab 风格的 `/-/raw/` 路径，在 github.com 上并不存在，
+只是走 git 后端时不会用到，因此文档明确它不可当 HTTP 源使用。
+
+该证据记为单次、不稳定：同一目录随后 `trellis update --dry-run` 连续 4 次报
+`Git registry operation failed`；手动复现 CLI 的同一串 `git clone` 测得 75 秒连接失败
+与 174 秒 `expected flush after ref listing`，均远超 CLI 的 30 秒单步上限。即 git 后端
+把失败模式从「raw 被重置」换成「`github.com` 需在 30 秒内可连」，本机两条路径都不稳定。
+`git@github.com:` SSH 形式同样 `preferGit: true`，但本机 SSH key 未授权，报
+`Authentication failed`。默认推荐形式不变，仍为 `gh:`。
+
+验证在 `/tmp` 的隔离 scratch 项目完成，未改动任何消费者仓库的 config。
+
 ## 2026-10-19 · 仓库改名为 fstar-trellis-ext，收敛为 main 单一分支
 
 GitHub 仓库由 `zyf3313/trellis-extensions` 改名为 `zyf3313/fstar-trellis-ext`，
