@@ -1,5 +1,41 @@
 # 变更记录
 
+## 2026-10-19 · 仓库改名为 fstar-trellis-ext，收敛为 main 单一分支
+
+GitHub 仓库由 `zyf3313/trellis-extensions` 改名为 `zyf3313/fstar-trellis-ext`，
+README 标题与品牌措辞同步；两张示意图的替代文字改为中性表述，因为位图内容本身
+仍写着旧品牌（`trellis-capability-comparison.png` 内 3 处 “Personal Trellis”，
+需重新出图，见下方遗留项）。
+
+项目处于测试验证阶段，取消多分支的版本矩阵：删除 `registry/v1.4.0`–`registry/v1.4.6`
+与 `storybook/v1.4.1` 共 8 个快照分支，仓库只保留 `main`。README 相应删除固定版本表，
+“固定版本与更新”改写为“版本策略与更新”，registry source 统一钉 `main` 上的完整提交
+SHA；“已验证范围”保留当时的 1.4.x 编号并在段首标注这些快照分支已删除、其固定 SHA
+不再保证可拉取，只作历史留存。模板 id 仍为 `personal-core`，入口文件与 `spec/`
+内容不变。
+
+Storybook 取用命令从已失效的 `--branch storybook/v1.4.1` 改为浅克隆 `main`；实测
+该命令取到 67 个文件，其中 `starters/storybook/` 40 个，与已删快照的 40 个文件
+逐字节一致（`git hash-object` 全量比对，0 差异）。
+
+`main` 此前不能直接作 registry 目标：实测 CLI 的 HTTP 后端
+（`api.github.com/repos/.../tarball/<main-tip SHA>`）取 main 顶端耗时 48.8 秒，
+超过 CLI 0.6.9 的 30 秒下载上限；git 后端 `clone` + `checkout` 亦需 25.0 秒。
+把两张示意图改为索引调色板（1.42 MiB → 240 KiB，分辨率不变）后复测：tarball
+11–13 秒、`git clone` + checkout 13.2 秒，均在 30 秒内。
+
+消费者侧：`vibe/fstar` 的固定 source 原钉 `17321b18`（1.4.2 快照），该提交只在
+已删分支上，删分支前已改为 `gh:zyf3313/fstar-trellis-ext#6ad69cc…`；
+`zyf/fstar-cfb` 原钉 `cd131c30`，该提交在 `main` 历史中，只同步仓库名与传输形式，
+SHA 不变。fstar 中残留的 `personal-index.md` 迁移壳已人工删除——当前 CLI 不会自动
+清理上游已移除的 spec，`.trellis/.template-hashes.json` 对应键按 CLI 行为保留。
+
+验证：改名后新 URL 的匿名 `git ls-remote`、浅克隆与按完整 SHA 的 `git fetch` 均通过；
+删分支前已用 `git bundle --all` 备份完整历史与全部引用。缩写 SHA 的 `git fetch`
+被远端拒绝（`couldn't find remote ref`），故消费必须使用完整 40 位 SHA。CLI `gh:`
+registry 端到端导入在本机仍因 `raw.githubusercontent.com` 连接重置 blocked，
+未记为通过。
+
 ## 2026-10-19 · 1.4.5/1.4.6 仓库与库名改为 trellis-extensions
 
 GitHub 仓库由 `zyf3313/personal-trellis` 改名为 `zyf3313/trellis-extensions`，

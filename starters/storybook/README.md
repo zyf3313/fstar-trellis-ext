@@ -6,7 +6,7 @@
 
 ## 复制到项目
 
-从固定版本的 Trellis Extensions 仓库取出本目录，然后复制为目标项目的 `review/`：
+从本仓库 `main` 的已审阅提交取出本目录，然后复制为目标项目的 `review/`：
 
 ```bash
 cp -R starters/storybook /path/to/project/review
