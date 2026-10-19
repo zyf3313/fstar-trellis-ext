@@ -4,7 +4,7 @@
     {
       "id": "personal-core",
       "type": "spec",
-      "name": "Personal Trellis extension guides and Chinese templates",
+      "name": "Trellis extension guides and Chinese templates",
       "description": "Optional extension routing, scenario guidance and Chinese templates imported through the native Trellis registry",
       "path": "spec",
       "tags": [

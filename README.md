@@ -1,4 +1,4 @@
-# Personal Trellis
+# Trellis Extensions
 
 把需求澄清、中文设计文档、UI 交付和测试验收中的个人实践，带进每一个
 [Trellis](https://github.com/mindfold-ai/Trellis) 项目。
@@ -7,10 +7,10 @@
 9 份中文模板，以及可选的 Storybook 评审门户。原生 Trellis 继续管理任务流程、
 项目规范和记忆；本库通过原生 registry 导入，在命中场景时补充指导。
 
-**状态：1.4.4 公开候选，尚未正式发布，许可证待定。** 普通规范消费无需 clone，
+**状态：1.4.6 公开候选，尚未正式发布，许可证待定。** 普通规范消费无需 clone，
 也不需要 GitHub 登录；完整接入需要原生初始化、固定版本导入和一次项目入口挂载。
 
-Personal Trellis 通过 Trellis 生成的平台集成资产支持**当前 Trellis 所支持的全部
+Trellis Extensions 通过 Trellis 生成的平台集成资产支持**当前 Trellis 所支持的全部
 Agent / 平台**，不限定于某两个客户端。实际可用平台、参数和生成文件以本机安装的
 `trellis init --help` 及目标项目现有配置为准；未来 Trellis 版本可能增删或调整它们。
 
@@ -25,9 +25,9 @@ Agent / 平台**，不限定于某两个客户端。实际可用平台、参数�
 - **工具按需进入**：先复用已有能力，确有缺口时再经确认准备工具，避免每个项目全量安装。
 - **长期资产有入口**：需求版本、设计源与原型分别维护，可通过 Storybook 在同一入口评审。
 
-![Trellis 原生能力、衔接原则与 Personal Trellis 按需补充能力对照](assets/trellis-capability-comparison.png)
+![Trellis 原生能力、衔接原则与 Trellis Extensions 按需补充能力对照](assets/trellis-capability-comparison.png)
 
-Trellis 负责 workflow、任务生命周期、代理调度、项目索引和记忆；Personal Trellis
+Trellis 负责 workflow、任务生命周期、代理调度、项目索引和记忆；Trellis Extensions
 提供场景指南与中文模板。目标项目的既有规范保持权威，本库不 fork 或内置 runtime。
 
 ## 快速开始
@@ -37,14 +37,14 @@ Trellis 负责 workflow、任务生命周期、代理调度、项目索引和记
 把下面这一段完整交给当前项目中的 AI；它会先识别现状，只在确有缺口时执行接入：
 
 ```text
-请在当前项目中完成 Personal Trellis 接入。先检查 trellis 命令是否存在以及项目是否已有完整的原生 Trellis 结构。CLI 缺失时先查阅 Trellis 官方安装说明，列明准确版本、安装命令及本地/全局作用域，取得同意后安装并验证；不要静默全局安装，也不要对不存在的命令运行 --help。CLI 已可用后运行 trellis init --help，并检查现有平台目录、设置和 Trellis 生成文件，识别项目实际使用且当前 CLI 支持的 Agent / 平台。只使用帮助中与这些平台精确对应的 flags，多个平台可组合；不要凭印象编造参数或路径。优先从现有 Trellis 配置、项目资料和 Git 身份解析开发者身份。若尚未初始化，使用这些平台 flags 和已解析身份执行原生 trellis init；只有平台、身份或 registry 访问问题确实无法可靠判断且会影响执行时，才向我询问必要信息。若个人规范已导入，核对配置与文件；相同版本跳过导入，版本变化按本文“固定版本与更新”处理，不重复 init 来升级。首次导入前检查同路径冲突，发现冲突先停止导入并审阅合并方案；无冲突时用相同平台 flags，通过原生 registry 从 gh:zyf3313/personal-trellis#5002f63256660f94f273a111b832142c3d0f5b6d 导入 personal-core，并使用 --append。仓库是公开的，普通 registry 消费不要 git clone，也不要要求 GitHub 登录或 SSH key。保留现有 workflow、hooks、索引、本地规范、平台集成文件和其他项目文件；不要覆盖同名本地规范。检查该平台实际读取的项目指令、Skill、workflow、prompt、hook 或设置入口，并把扩展路由放在适用的用户自维护区、Trellis 管理或生成块之外；只追加或幂等更新这一个路由块，不重写其他内容。Codex 的 AGENTS.md、Claude Code 的 CLAUDE.md 只是示例，不要把它们当成所有平台的固定入口。要求 AI 在原生 Trellis 工作流处理请求前读取 .trellis/spec/trellis-extensions.md，并且只加载与当前请求匹配的指南，不新增阶段。不要静默安装第三方工具、登录账号、下载模型、暴露 token/密钥，或扩大权限；这些动作如确有必要，另行说明具体影响并取得授权。完成后检查真实文件与配置：扩展入口、10 份指南、9 份模板、registry 的精确 SHA 与 personal-core、既有文件保留情况、所选平台 flags、实际路由入口和一次真实场景读取；不要把退出码 0 单独当成成功。最后按 passed / failed / blocked 报告每项结果、证据和仍需我处理的事项。
+请在当前项目中完成 Trellis Extensions 接入。先检查 trellis 命令是否存在以及项目是否已有完整的原生 Trellis 结构。CLI 缺失时先查阅 Trellis 官方安装说明，列明准确版本、安装命令及本地/全局作用域，取得同意后安装并验证；不要静默全局安装，也不要对不存在的命令运行 --help。CLI 已可用后运行 trellis init --help，并检查现有平台目录、设置和 Trellis 生成文件，识别项目实际使用且当前 CLI 支持的 Agent / 平台。只使用帮助中与这些平台精确对应的 flags，多个平台可组合；不要凭印象编造参数或路径。优先从现有 Trellis 配置、项目资料和 Git 身份解析开发者身份。若尚未初始化，使用这些平台 flags 和已解析身份执行原生 trellis init；只有平台、身份或 registry 访问问题确实无法可靠判断且会影响执行时，才向我询问必要信息。若个人规范已导入，核对配置与文件；相同版本跳过导入，版本变化按本文“固定版本与更新”处理，不重复 init 来升级。首次导入前检查同路径冲突，发现冲突先停止导入并审阅合并方案；无冲突时用相同平台 flags，通过原生 registry 从 gh:zyf3313/trellis-extensions#8e33b09af617a40ec925b38ac05278cfab4a66f6 导入 personal-core，并使用 --append。仓库是公开的，普通 registry 消费不要 git clone，也不要要求 GitHub 登录或 SSH key。保留现有 workflow、hooks、索引、本地规范、平台集成文件和其他项目文件；不要覆盖同名本地规范。检查该平台实际读取的项目指令、Skill、workflow、prompt、hook 或设置入口，并把扩展路由放在适用的用户自维护区、Trellis 管理或生成块之外；只追加或幂等更新这一个路由块，不重写其他内容。Codex 的 AGENTS.md、Claude Code 的 CLAUDE.md 只是示例，不要把它们当成所有平台的固定入口。要求 AI 在原生 Trellis 工作流处理请求前读取 .trellis/spec/trellis-extensions.md，并且只加载与当前请求匹配的指南，不新增阶段。不要静默安装第三方工具、登录账号、下载模型、暴露 token/密钥，或扩大权限；这些动作如确有必要，另行说明具体影响并取得授权。完成后检查真实文件与配置：扩展入口、10 份指南、9 份模板、registry 的精确 SHA 与 personal-core、既有文件保留情况、所选平台 flags、实际路由入口和一次真实场景读取；不要把退出码 0 单独当成成功。最后按 passed / failed / blocked 报告每项结果、证据和仍需我处理的事项。
 ```
 
 ### 1. 准备并初始化项目
 
 先按 [Trellis 官方安装说明](https://docs.trytrellis.app/start/install-and-first-task)
 准备 CLI 及其运行环境，并确认当前网络可以访问公开仓库
-`zyf3313/personal-trellis`。无需 GitHub 登录、SSH key 或私有仓库权限。
+`zyf3313/trellis-extensions`。无需 GitHub 登录、SSH key 或私有仓库权限。
 示例中的 `/path/to/project` 和 `YOUR_NAME` 分别替换为已有项目目录与开发者身份；
 不要在命令或项目文件中放入 token。
 
@@ -94,7 +94,7 @@ spec 模板生成，而本库不包含原生 backend/frontend 模板及 `guides/
 
 ```sh
 trellis init -y <PLATFORM_FLAGS> \
-  --registry 'gh:zyf3313/personal-trellis#5002f63256660f94f273a111b832142c3d0f5b6d' \
+  --registry 'gh:zyf3313/trellis-extensions#8e33b09af617a40ec925b38ac05278cfab4a66f6' \
   --template personal-core \
   --append
 ```
@@ -156,7 +156,7 @@ every guide or create extra phases.
 以及是否发生文件修改或外部动作。文件存在、链接有效、进程退出 0、哈希一致或
 合成字符串匹配只能作为静态前置检查，不能替代真正新模型会话的读取证据。
 
-![Trellis 原生讨论设计主干与 Personal Trellis 场景按需路由](assets/scenario-routing.png)
+![Trellis 原生讨论设计主干与 Trellis Extensions 场景按需路由](assets/scenario-routing.png)
 
 一个任务可命中多个场景，但不默认加载全部指南。个人指导融入原生讨论、设计、
 实施和检查；小修复只读取必要内容。
@@ -231,10 +231,10 @@ review/                     # 可选评审运行器
 
 ```sh
 git clone --depth 1 --branch storybook/v1.4.1 --single-branch \
-  https://github.com/zyf3313/personal-trellis.git /tmp/personal-trellis-starter
-git -C /tmp/personal-trellis-starter rev-parse HEAD
+  https://github.com/zyf3313/trellis-extensions.git /tmp/trellis-extensions-starter
+git -C /tmp/trellis-extensions-starter rev-parse HEAD
 # 输出必须为 a185310cbacf6b755007c6f28c14f9e4a4297007
-cp -R /tmp/personal-trellis-starter/starters/storybook /path/to/project/review
+cp -R /tmp/trellis-extensions-starter/starters/storybook /path/to/project/review
 cd /path/to/project/review
 pnpm install --frozen-lockfile
 pnpm verify
@@ -320,20 +320,26 @@ UI 路线以 `emil-design-eng` 为核心；边界数据、动效和触摸目标�
 
 ### 固定版本与更新
 
-规范与可选骨架分别固定提交，避免消费会漂移的 `main`。当前 1.4.4 轻量候选已同步
-公开仓库，入口统一为 `trellis-extensions.md` 并删除 `personal-index.md` 迁移壳，
-因此 spec 从 21 份变为 20 份；其余内容与 1.4.3 逐字节一致。1.4.2/1.4.3 的记录
-保留各自当时的 21 份计数，不回填；具体范围见“已验证范围”：
+规范与可选骨架分别固定提交，避免消费会漂移的 `main`。仓库与项目名已从
+`personal-trellis` 改为 `trellis-extensions`；1.4.4 统一入口为
+`trellis-extensions.md` 并删除 `personal-index.md` 迁移壳，spec 因此从 21 份变为
+20 份。1.4.5/1.4.6 只推进元数据：`library.json` 的库名与版本号，以及
+`index.json` 的模板显示名；`index.json` 除显示名外与 20 份 spec 同 1.4.4
+逐字节一致。模板 id 保持 `personal-core` 不变，已装项目的
+`.trellis/config.yaml` 因此无需改动。1.4.2/1.4.3 的记录保留各自当时的 21 份
+计数，不回填；具体范围见“已验证范围”：
 
 | 产物 | 固定提交 | 内容 |
 |---|---|---|
-| 1.4.4 轻量 registry 候选（当前） | `5002f63256660f94f273a111b832142c3d0f5b6d` | 仅 `index.json`、`library.json` 与 20 份 spec 文件；入口统一为 `trellis-extensions.md`，删除 `personal-index.md` 迁移壳；其余 spec 与 `index.json` 同 1.4.3 逐字节一致 |
+| 1.4.6 轻量 registry 候选（当前） | `8e33b09af617a40ec925b38ac05278cfab4a66f6` | 仅 `index.json`、`library.json` 与 20 份 spec 文件；在 1.4.5 基础上把 `index.json` 的模板显示名去掉旧品牌并推进版本号；模板 id 仍为 `personal-core`，spec 与 `index.json` 其余内容同 1.4.4 逐字节一致 |
+| 1.4.5 轻量 registry 候选 | `c80610dc30f1c42cbb9c352b681b948401768d8d` | 仅 `index.json`、`library.json` 与 20 份 spec 文件；仓库改名为 `trellis-extensions` 后推进 `library.json` 的库名与版本号，`index.json` 与 spec 同 1.4.4 逐字节一致 |
+| 1.4.4 轻量 registry 候选 | `5002f63256660f94f273a111b832142c3d0f5b6d` | 仅 `index.json`、`library.json` 与 20 份 spec 文件；入口统一为 `trellis-extensions.md`，删除 `personal-index.md` 迁移壳；其余 spec 与 `index.json` 同 1.4.3 逐字节一致 |
 | 1.4.3 轻量 registry 候选 | `6b379fe58fddf7198261e89b9e0bbe7249f8fc07` | 仅 `index.json`、`library.json` 与 21 份 spec 文件；spec 与 `index.json` 同 1.4.2 逐字节一致，只把 `library.json` 推进到 1.4.3 并标为 `visibility: public`；已验证匿名 HTTPS 可检出该 SHA，未重复 CLI 远程导入实测 |
 | 1.4.2 轻量 registry 候选 | `17321b18eb5fa5e35cd0341ae863797cbcf21388` | 本地核对与当前交付同字节；仅 `index.json`、`library.json` 与 21 份 spec 文件；新增知识检索实测记录；通过 CLI 0.6.9 全新项目远程导入（48.530 秒，21/21 spec 逐字节一致） |
 | 1.4.1 轻量 registry 候选 | `8fca7f1a23e28d8b5d2dc86b525c814ae3a3afeb` | 通过 CLI 0.6.9 / Codex 全新项目远程导入；仅 `index.json`、`library.json` 与 21 份 spec 文件 |
 | Storybook 1.4.1 轻量快照 | `a185310cbacf6b755007c6f28c14f9e4a4297007` | `storybook/v1.4.1` 的无父提交，仅含 40 个 starter 文件；包含可选 `ui-design` 修复 |
 
-当前轻量提交对应 `registry/v1.4.4`，消费仍使用完整 SHA。个人规范升级遵循下面步骤；
+当前轻量提交对应 `registry/v1.4.6`，消费仍使用完整 SHA。个人规范升级遵循下面步骤；
 **重复 `init --append` 不是升级**，它跳过同名文件，还可能重建当前 spec 的哈希基线。
 
 1. 完整备份项目文件、`.trellis/config.yaml` 和 `.trellis/.template-hashes.json`，
@@ -384,7 +390,7 @@ CLI 不会自动删除上游已移除的 spec，已装项目需按“固定版�
 | 现象 | 处理方式 |
 |---|---|
 | 退出 0，但看不到指南 | 检查终端是否退回空白模板，核对 20 份 spec 和 config 中的 SHA/template |
-| registry 拉取失败或超时 | 确认网络可访问 `github.com` 与 `raw.githubusercontent.com`，registry 使用 `gh:zyf3313/personal-trellis#<完整 SHA>`；无需 GitHub 登录或 SSH key，不要换成完整 main |
+| registry 拉取失败或超时 | 确认网络可访问 `github.com` 与 `raw.githubusercontent.com`，registry 使用 `gh:zyf3313/trellis-extensions#<完整 SHA>`；无需 GitHub 登录或 SSH key，不要换成完整 main |
 | 文件已导入，讨论却未读取 | 检查实际 Agent / 平台生成文件与设置，确认路由位于其真正读取的项目指令、Skill 或 workflow 用户自维护入口；路由写入后启动真正新会话或按客户端机制 reload，再核对实际读取路径。Codex 的 `AGENTS.md`、Claude Code 的 `CLAUDE.md` 只是示例，索引链接与后期 JSONL 不能保证讨论激活 |
 | 再次 append 后旧内容没更新 | 停止重复 init；按上述更新步骤审阅基线与差异，保留本地修改 |
 | 小任务生成了整套设计文档 | 回到匹配指南的触发边界；小修复默认复用现有设计，用户明确要求除外 |
@@ -421,6 +427,14 @@ CLI 管理文件被更新，没有删除，没有使用本地镜像或 URL 重�
 因入口文件是删除而非改名，当前 CLI 的 update 计划不会清理该文件：已装项目需按
 “固定版本与更新”比较新旧 SHA 后人工移除 `personal-index.md`。
 `trellis-extensions.md` 路径不变，现有项目路由与既有激活验收证据继续有效。
+
+**2026-10-19** 仓库改名为 `zyf3313/trellis-extensions`，并追加发布 1.4.5/1.4.6
+两个纯元数据快照。改名后实测：新 URL 的匿名 `git ls-remote` 与按完整 SHA 的
+`git fetch` 均通过，旧 `zyf3313/personal-trellis` 由 GitHub 重定向继续可用，
+因此已装项目 config 中指向旧名的固定 source 仍可解析；模板 id 未变，
+`trellis update` 不需要额外迁移。1.4.5/1.4.6 同样未重复 CLI `gh:` registry
+端到端导入实测（本机 `raw.githubusercontent.com` 仍被重置），分发结论继承
+同 spec 内容的 1.4.2 证据。
 
 在 fstar 写入 Codex 项目路由后，又以五个**真正新建的 Codex 项目会话**完成黑盒
 验收；本轮新增的三条普通请求证据记录在任务研究报告中：
@@ -473,7 +487,7 @@ CLI 管理文件被更新，没有删除，没有使用本地镜像或 URL 重�
 
 以下表格保留 **1.4.0 旧快照** 的补充证据，不代表 1.4.1 已重复验证这些场景。
 表内只记录已执行的
-Codex / Claude Code 证据子集，并不把 Personal Trellis 的支持范围限制为这两个
+Codex / Claude Code 证据子集，并不把 Trellis Extensions 的支持范围限制为这两个
 平台；其他 Trellis 支持的平台仍通过其生成集成资产接入，需在各自真实环境验收：
 
 | 范围 | 结果 |

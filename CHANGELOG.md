@@ -1,5 +1,30 @@
 # 变更记录
 
+## 2026-10-19 · 1.4.5/1.4.6 仓库与库名改为 trellis-extensions
+
+GitHub 仓库由 `zyf3313/personal-trellis` 改名为 `zyf3313/trellis-extensions`，
+与 1.4.4 统一后的入口文件同名。README 标题、品牌措辞（7 处）、AI 接入提示、
+registry source、Storybook clone 示例与临时目录名同步更新；starter 文档 1 处
+品牌措辞同步。
+
+分发标识推进为两个纯元数据快照：1.4.5（`c80610dc30f1c42cbb9c352b681b948401768d8d`）
+把 `library.json` 的 `name` 改为 `trellis-extensions-library` 并升版本号；
+1.4.6（`8e33b09af617a40ec925b38ac05278cfab4a66f6`）另把 `index.json` 的模板显示名
+去掉旧品牌。两者 `spec/` 与 1.4.4 逐字节一致，快照均为 22 个文件。
+
+模板 id 有意保持 `personal-core` 不变：该值已写入各消费项目
+`.trellis/config.yaml` 的 `registry.spec.template`，改名会让已装项目的
+`trellis update` 查找失败，收益不抵风险。
+
+验证：新 URL 的匿名 `git ls-remote` 与在独立空仓库中按完整 SHA 的
+`git fetch` + checkout 均通过（22 文件，`library.json` 为
+`trellis-extensions-library` / 1.4.6）；旧 `zyf3313/personal-trellis` 由 GitHub
+重定向继续可用，已装项目指向旧名的固定 source 不受影响。CLI `gh:` registry
+端到端导入在本机仍因 `raw.githubusercontent.com` 连接重置 blocked，未记为通过。
+
+遗留：`assets/trellis-capability-comparison.png` 内仍有 3 处 “Personal Trellis”
+字样，为位图内容，需重新出图；`assets/scenario-routing.png` 不含旧品牌，无需改。
+
 ## 2026-10-19 · 1.4.4 入口统一，移除迁移壳
 
 确认 `spec/personal-index.md` 不是 Trellis 原生读取的入口：CLI 0.6.9 全文检索无
