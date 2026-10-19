@@ -7,8 +7,8 @@
 9 份中文模板，以及可选的 Storybook 评审门户。原生 Trellis 继续管理任务流程、
 项目规范和记忆；本库通过原生 registry 导入，在命中场景时补充指导。
 
-**状态：1.4.2 私有候选，未公开发布，许可证待定。** 普通规范消费无需 clone；
-完整接入需要原生初始化、固定版本导入和一次项目入口挂载。
+**状态：1.4.2 公开候选，尚未正式发布，许可证待定。** 普通规范消费无需 clone，
+也不需要 GitHub 登录；完整接入需要原生初始化、固定版本导入和一次项目入口挂载。
 
 Personal Trellis 通过 Trellis 生成的平台集成资产支持**当前 Trellis 所支持的全部
 Agent / 平台**，不限定于某两个客户端。实际可用平台、参数和生成文件以本机安装的
@@ -37,15 +37,16 @@ Trellis 负责 workflow、任务生命周期、代理调度、项目索引和记
 把下面这一段完整交给当前项目中的 AI；它会先识别现状，只在确有缺口时执行接入：
 
 ```text
-请在当前项目中完成 Personal Trellis 接入。先检查 trellis 命令是否存在以及项目是否已有完整的原生 Trellis 结构。CLI 缺失时先查阅 Trellis 官方安装说明，列明准确版本、安装命令及本地/全局作用域，取得同意后安装并验证；不要静默全局安装，也不要对不存在的命令运行 --help。CLI 已可用后运行 trellis init --help，并检查现有平台目录、设置和 Trellis 生成文件，识别项目实际使用且当前 CLI 支持的 Agent / 平台。只使用帮助中与这些平台精确对应的 flags，多个平台可组合；不要凭印象编造参数或路径。优先从现有 Trellis 配置、项目资料和 Git 身份解析开发者身份。若尚未初始化，使用这些平台 flags 和已解析身份执行原生 trellis init；只有平台、身份或私库读取权限确实无法可靠判断且会影响执行时，才向我询问必要信息。若个人规范已导入，核对配置与文件；相同版本跳过导入，版本变化按本文“固定版本与更新”处理，不重复 init 来升级。首次导入前检查同路径冲突，发现冲突先停止导入并审阅合并方案；无冲突时用相同平台 flags，通过原生 registry 从 git@github.com:zyf3313/personal-trellis#17321b18eb5fa5e35cd0341ae863797cbcf21388 导入 personal-core，并使用 --append。普通 registry 消费不要 git clone。保留现有 workflow、hooks、索引、本地规范、平台集成文件和其他项目文件；不要覆盖同名本地规范。检查该平台实际读取的项目指令、Skill、workflow、prompt、hook 或设置入口，并把扩展路由放在适用的用户自维护区、Trellis 管理或生成块之外；只追加或幂等更新这一个路由块，不重写其他内容。Codex 的 AGENTS.md、Claude Code 的 CLAUDE.md 只是示例，不要把它们当成所有平台的固定入口。要求 AI 在原生 Trellis 工作流处理请求前读取 .trellis/spec/trellis-extensions.md，并且只加载与当前请求匹配的指南，不新增阶段。不要静默安装第三方工具、登录账号、下载模型、暴露 token/密钥，或扩大权限；这些动作如确有必要，另行说明具体影响并取得授权。完成后检查真实文件与配置：扩展入口、10 份指南、9 份模板、registry 的精确 SHA 与 personal-core、既有文件保留情况、所选平台 flags、实际路由入口和一次真实场景读取；不要把退出码 0 单独当成成功。最后按 passed / failed / blocked 报告每项结果、证据和仍需我处理的事项。
+请在当前项目中完成 Personal Trellis 接入。先检查 trellis 命令是否存在以及项目是否已有完整的原生 Trellis 结构。CLI 缺失时先查阅 Trellis 官方安装说明，列明准确版本、安装命令及本地/全局作用域，取得同意后安装并验证；不要静默全局安装，也不要对不存在的命令运行 --help。CLI 已可用后运行 trellis init --help，并检查现有平台目录、设置和 Trellis 生成文件，识别项目实际使用且当前 CLI 支持的 Agent / 平台。只使用帮助中与这些平台精确对应的 flags，多个平台可组合；不要凭印象编造参数或路径。优先从现有 Trellis 配置、项目资料和 Git 身份解析开发者身份。若尚未初始化，使用这些平台 flags 和已解析身份执行原生 trellis init；只有平台、身份或 registry 访问问题确实无法可靠判断且会影响执行时，才向我询问必要信息。若个人规范已导入，核对配置与文件；相同版本跳过导入，版本变化按本文“固定版本与更新”处理，不重复 init 来升级。首次导入前检查同路径冲突，发现冲突先停止导入并审阅合并方案；无冲突时用相同平台 flags，通过原生 registry 从 gh:zyf3313/personal-trellis#17321b18eb5fa5e35cd0341ae863797cbcf21388 导入 personal-core，并使用 --append。仓库是公开的，普通 registry 消费不要 git clone，也不要要求 GitHub 登录或 SSH key。保留现有 workflow、hooks、索引、本地规范、平台集成文件和其他项目文件；不要覆盖同名本地规范。检查该平台实际读取的项目指令、Skill、workflow、prompt、hook 或设置入口，并把扩展路由放在适用的用户自维护区、Trellis 管理或生成块之外；只追加或幂等更新这一个路由块，不重写其他内容。Codex 的 AGENTS.md、Claude Code 的 CLAUDE.md 只是示例，不要把它们当成所有平台的固定入口。要求 AI 在原生 Trellis 工作流处理请求前读取 .trellis/spec/trellis-extensions.md，并且只加载与当前请求匹配的指南，不新增阶段。不要静默安装第三方工具、登录账号、下载模型、暴露 token/密钥，或扩大权限；这些动作如确有必要，另行说明具体影响并取得授权。完成后检查真实文件与配置：扩展入口、10 份指南、9 份模板、registry 的精确 SHA 与 personal-core、既有文件保留情况、所选平台 flags、实际路由入口和一次真实场景读取；不要把退出码 0 单独当成成功。最后按 passed / failed / blocked 报告每项结果、证据和仍需我处理的事项。
 ```
 
 ### 1. 准备并初始化项目
 
 先按 [Trellis 官方安装说明](https://docs.trytrellis.app/start/install-and-first-task)
-准备 CLI 及其运行环境，并确认当前 Git/SSH 身份可以读取私库
-`zyf3313/personal-trellis`。示例中的 `/path/to/project` 和 `YOUR_NAME`
-分别替换为已有项目目录与开发者身份；不要在命令或项目文件中放入 token。
+准备 CLI 及其运行环境，并确认当前网络可以访问公开仓库
+`zyf3313/personal-trellis`。无需 GitHub 登录、SSH key 或私有仓库权限。
+示例中的 `/path/to/project` 和 `YOUR_NAME` 分别替换为已有项目目录与开发者身份；
+不要在命令或项目文件中放入 token。
 
 在项目目录运行以下**一个**原生初始化命令；已有完整 Trellis 项目可跳到第 2 步：
 
@@ -93,7 +94,7 @@ spec 模板生成，而本库不包含原生 backend/frontend 模板及 `guides/
 
 ```sh
 trellis init -y <PLATFORM_FLAGS> \
-  --registry 'git@github.com:zyf3313/personal-trellis#17321b18eb5fa5e35cd0341ae863797cbcf21388' \
+  --registry 'gh:zyf3313/personal-trellis#17321b18eb5fa5e35cd0341ae863797cbcf21388' \
   --template personal-core \
   --append
 ```
@@ -225,11 +226,12 @@ review/                     # 可选评审运行器
 
 需要 **Node.js 24+、pnpm 10.12.1**。先选用未占用的临时目录，并确认项目中
 尚无 `review/`；已有目录应先比较再合并。以下命令从独立轻量分支取出已经验证的
-**1.4.1 Storybook 快照**；其 spec 与当前轻量 registry 分别固定，不保证同字节：
+**1.4.1 Storybook 快照**，使用无需认证的 HTTPS；其 spec 与当前轻量 registry
+分别固定，不保证同字节：
 
 ```sh
 git clone --depth 1 --branch storybook/v1.4.1 --single-branch \
-  git@github.com:zyf3313/personal-trellis /tmp/personal-trellis-starter
+  https://github.com/zyf3313/personal-trellis.git /tmp/personal-trellis-starter
 git -C /tmp/personal-trellis-starter rev-parse HEAD
 # 输出必须为 a185310cbacf6b755007c6f28c14f9e4a4297007
 cp -R /tmp/personal-trellis-starter/starters/storybook /path/to/project/review
@@ -319,7 +321,7 @@ UI 路线以 `emil-design-eng` 为核心；边界数据、动效和触摸目标�
 ### 固定版本与更新
 
 规范与可选骨架分别固定提交，避免消费会漂移的 `main`。当前 1.4.2 轻量候选
-已同步私库并完成真实远程导入复核；1.4.1 的历史结论保留在表中，具体证据见
+已同步公开仓库并完成真实远程导入复核；1.4.1 的历史结论保留在表中，具体证据见
 “已验证范围”：
 
 | 产物 | 固定提交 | 内容 |
@@ -377,7 +379,7 @@ Trellis runtime 升级另按 [官方升级说明](https://docs.trytrellis.app/ch
 | 现象 | 处理方式 |
 |---|---|
 | 退出 0，但看不到指南 | 检查终端是否退回空白模板，核对 21 份 spec 和 config 中的 SHA/template |
-| 私库拉取失败或超时 | 检查 Git/SSH 读取权限和网络，确认使用轻量 registry SHA；不要换成完整 main |
+| registry 拉取失败或超时 | 确认网络可访问 `github.com` 与 `raw.githubusercontent.com`，registry 使用 `gh:zyf3313/personal-trellis#<完整 SHA>`；无需 GitHub 登录或 SSH key，不要换成完整 main |
 | 文件已导入，讨论却未读取 | 检查实际 Agent / 平台生成文件与设置，确认路由位于其真正读取的项目指令、Skill 或 workflow 用户自维护入口；路由写入后启动真正新会话或按客户端机制 reload，再核对实际读取路径。Codex 的 `AGENTS.md`、Claude Code 的 `CLAUDE.md` 只是示例，索引链接与后期 JSONL 不能保证讨论激活 |
 | 再次 append 后旧内容没更新 | 停止重复 init；按上述更新步骤审阅基线与差异，保留本地修改 |
 | 小任务生成了整套设计文档 | 回到匹配指南的触发边界；小修复默认复用现有设计，用户明确要求除外 |
@@ -451,8 +453,8 @@ Codex / Claude Code 证据子集，并不把 Personal Trellis 的支持范围限
 
 | 范围 | 结果 |
 |---|---|
-| 真实私有远程导入：CLI 0.6.9 / Codex | 21/21 spec 字节一致，71 个受保护原生文件未变，registry 配置正确 |
-| 真实私有远程导入：CLI 0.6.17 / Claude Code | 21/21 spec 字节一致，69 个受保护原生文件未变，registry 配置正确 |
+| 真实远程导入（导入时仓库尚为私有）：CLI 0.6.9 / Codex | 21/21 spec 字节一致，71 个受保护原生文件未变，registry 配置正确 |
+| 真实远程导入（导入时仓库尚为私有）：CLI 0.6.17 / Claude Code | 21/21 spec 字节一致，69 个受保护原生文件未变，registry 配置正确 |
 | Codex 挂载后单轮路由 | 1.4.0 的大型需求、测试请求和小文案修改三个历史合成场景通过；2026-10-18 当前 fstar 已取得大型需求、五类受约束工具、知识检索、测试和小文案五类新会话证据，仍只覆盖报告列出的请求范围 |
 | Claude Code 模型路由 | 服务返回 HTTP 503，未取得模型结果；导入通过不代表路由通过 |
 
@@ -472,8 +474,8 @@ Codex / Claude Code 证据子集，并不把 Personal Trellis 的支持范围限
 
 ## 许可与项目资料
 
-本库当前为私有候选，**许可证尚未确定**；可访问仓库不代表已取得开放再分发许可。
-版本、分发和许可状态见 [library.json](library.json)，原生模板入口见
+本库当前为公开候选，**许可证尚未确定**；公开可访问不代表已取得开放再分发许可。
+版本、可见性和许可状态见 [library.json](library.json)，原生模板入口见
 [index.json](index.json)。各外部工具与 Skill 遵循各自上游条款。
 
 [Trellis 官方仓库](https://github.com/mindfold-ai/Trellis) ·
