@@ -1,5 +1,28 @@
 # 变更记录
 
+## 2026-10-19 · 1.4.4 入口统一，移除迁移壳
+
+确认 `spec/personal-index.md` 不是 Trellis 原生读取的入口：CLI 0.6.9 全文检索无
+任何对该路径的引用，原生 spec 约定只有 `spec/<package>/<layer>/index.md` 与
+`spec/guides/index.md`，顶层不放 `.md`；原生术语中的 “personal index” 反而指
+`.trellis/workspace/<developer>/index.md` 的会话索引。因此 1.4.0 的改名不是为了
+迁就某个原生文件名，而是避免与 workspace 索引混淆，本次沿该方向收敛。
+
+删除 1.4.0 遗留的 307 字节迁移壳 `spec/personal-index.md`，入口统一为
+`spec/trellis-extensions.md`。spec 由 21 份变为 20 份，registry 快照由 23 个文件
+变为 22 个，其余内容与 1.4.3 逐字节一致。README 的导入预检计数、导入成功期望、
+排障计数与固定版本表同步为 20 份，并把固定 SHA 指向新的 `registry/v1.4.4`。
+
+新建无父轻量提交 `5002f63256660f94f273a111b832142c3d0f5b6d`。实测：匿名 HTTPS
+`git fetch` 按完整 SHA 检出 22 文件，壳文件不存在、入口存在，快照 `spec/` 内无
+指向已删文件的引用且相对链接零断链。本机 `raw.githubusercontent.com` 连接被重置、
+GitHub SSH key 未授权，CLI `gh:` registry 端到端导入仍 blocked，未记为通过。
+
+迁移提示：该变更是删除而非改名，当前 CLI 的 update/dry-run 计划不会清理上游移除
+的 spec，已装项目需比较新旧 SHA 后人工删除 `personal-index.md`。由于
+`trellis-extensions.md` 路径未变，现有项目路由与 2026-10-18 的激活验收证据继续有效。
+1.4.1/1.4.2/1.4.3 的历史记录保留各自当时的 21 份计数，不回填。
+
 ## 2026-10-19 · 1.4.3 公开化与 registry 元数据同步
 
 仓库权限从私有改为公开后，安装路径不再需要 GitHub 登录或 SSH key。README 的 AI
